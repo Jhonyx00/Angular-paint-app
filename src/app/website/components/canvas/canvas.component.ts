@@ -147,12 +147,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         break;
       case 1:
         this.shapeList.push(this.rectangleDimensions);
-        this.ctx.save();
 
         break;
       case 2:
         this.shapeList.push(this.ovalDimensions);
-        this.ctx.save();
 
         break;
       default:
@@ -186,7 +184,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       } else if ('radiusX' in shape) {
         this.ctx.beginPath();
         // this.ctx.fillStyle = shape.color;
-
+        this.ctx.fillStyle = shape.color;
         this.ctx.ellipse(
           shape.x,
           shape.y,
@@ -223,10 +221,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //1
   public drawRectangle(event: MouseEvent) {
-    //this.ctx.clearRect(0, 0, this.width, this.height);
     this.paintAllShapes();
     this.ctx.fillStyle = this.color;
-    /// this.paintAllShapes();
 
     this.ctx.fillRect(
       this.x,
@@ -247,7 +243,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //2
   public drawEllipse(event: MouseEvent) {
-    //this.ctx.clearRect(0, 0, this.width, this.height);
     this.paintAllShapes();
     this.ctx.fillStyle = this.color;
 
