@@ -34,18 +34,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
-  height: number = 0;
-  width: number = 0;
+  height: number = 500;
+  width: number = 800;
   color: string = '#000000';
   option = 0;
   private shape: number = 0;
-  @Input('properties') set properties(newCanvas: {
-    width: number;
-    height: number;
-  }) {
-    this.width = newCanvas.width;
-    this.height = newCanvas.height;
-  }
 
   public ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
