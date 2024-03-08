@@ -31,12 +31,8 @@ export class ActionsComponent implements OnInit {
     if (this.shapeList.length > 0) {
       this.isUndoDisabled = false;
       this.shapeList2.push(this.shapeList.pop());
-      //Insert array into canvas
-      this.propertiesService.setShapeList(this.shapeList);
-      //console.log('undo from actions', this.shapeList);
       //canvas state
       this.canvasStateService.updateCanvas();
-      console.log('redo list', this.shapeList2);
     }
   }
 
