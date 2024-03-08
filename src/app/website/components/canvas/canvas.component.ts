@@ -7,7 +7,10 @@ import {
   ViewChild,
 } from '@angular/core';
 import { PropertiesService } from '../../services/properties.service';
-import { Elipse, Rectangle } from '../../interfaces/rectangle.interface';
+import { Ellipse } from '../../interfaces/ellipse.interface';
+import { Rectangle } from '../../interfaces/rectangle.interface';
+import { Line } from '../../interfaces/line.interface';
+import { CanvasStateService } from '../../services/canvas-state.service';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -16,11 +19,18 @@ import { Elipse, Rectangle } from '../../interfaces/rectangle.interface';
 export class CanvasComponent implements AfterViewInit, OnInit {
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
 
-  constructor(private propertiesService: PropertiesService) {}
+  constructor(
+    private propertiesService: PropertiesService,
+    private canvasStateService: CanvasStateService
+  ) {}
   ngOnInit(): void {
     this.propertiesService.canvasSize({
       width: this.width,
       height: this.height,
+    });
+
+    this.canvasStateService.updateCanvasValue.subscribe(() => {
+      this.paintAllShapes();
     });
   }
 
@@ -37,15 +47,26 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.height = newCanvas.height;
   }
 
-  private ctx!: CanvasRenderingContext2D;
+  public ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
 
   //position
   private x: number = 0;
   private y: number = 0;
 
+  //SHAPE ARRAY
+  public shapeList: (Rectangle | Ellipse | Line)[] = [];
+  public newShapeList: (Rectangle | Ellipse | Line)[] = [];
   //SHAPES
-  public shapeList = new Array();
+  // Objects that represents the shapes in order to be drawn on the canvas before a new drawing
+  // is being painted
+  public lineDimensions: Line = {
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 0,
+  };
+
   public rectangleDimensions: Rectangle = {
     x: 0,
     y: 0,
@@ -54,7 +75,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     color: '#000000',
   };
 
-  public ovalDimensions: Elipse = {
+  public ovalDimensions: Ellipse = {
     x: 0,
     y: 0,
     radiusX: 0,
@@ -85,7 +106,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
       if (this.option === 1) {
         this.saveWork();
-
         console.log(this.option);
       }
     });
@@ -95,14 +115,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   mouseDown(event: MouseEvent) {
     //press mouse
     this.isDrawing = true;
-
     this.x = event.offsetX;
     this.y = event.offsetY;
   }
 
   mouseMove(event: MouseEvent) {
     //this.ctx.fillStyle = this.color;
-
     if (this.isDrawing) {
       //SHAPE SELECTION
       switch (this.shape) {
@@ -113,7 +131,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.drawRectangle(event);
           break;
         case 2:
-          this.drawOval(event);
+          this.drawEllipse(event);
           break;
         case 3:
           break;
@@ -121,7 +139,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           break;
       }
     }
-
     //SET properties to be accesibble from other components
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
   }
@@ -129,13 +146,28 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   mouseUp(event: MouseEvent) {
     this.isDrawing = false;
 
-    if (this.shape == 1) {
-      this.shapeList.push(this.rectangleDimensions);
-    } else {
-      this.shapeList.push(this.ovalDimensions);
+    switch (this.shape) {
+      case 0:
+        //PUSH INTO LINE ARRAY
+        this.shapeList.push(this.lineDimensions);
+        //this.canvas.nativeElement.save();
+        break;
+      case 1:
+        this.shapeList.push(this.rectangleDimensions);
+        this.ctx.save();
+
+        break;
+      case 2:
+        this.shapeList.push(this.ovalDimensions);
+        this.ctx.save();
+
+        break;
+      default:
+        break;
     }
 
     console.log('Todas las figuras', this.shapeList);
+    this.propertiesService.setShapeList(this.shapeList);
   }
 
   mouseEnter() {
@@ -149,23 +181,30 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   paintAllShapes() {
+    this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
+      this.shapeList = currentShapeList;
+    });
+
+    this.ctx.clearRect(0, 0, this.width, this.height);
     this.shapeList.forEach((shape) => {
-      this.ctx.fillStyle = shape.color;
-      this.ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+      if ('w' in shape) {
+        this.ctx.fillStyle = shape.color;
+        this.ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+      } else if ('radiusX' in shape) {
+        this.ctx.beginPath();
+        // this.ctx.fillStyle = shape.color;
 
-      this.ctx.beginPath();
-      // this.ctx.fillStyle = shape.color;
-
-      this.ctx.ellipse(
-        shape.x,
-        shape.y,
-        shape.radiusX,
-        shape.radiusY,
-        shape.rotation,
-        shape.startAngle,
-        shape.endAngle
-      );
-      this.ctx.fill();
+        this.ctx.ellipse(
+          shape.x,
+          shape.y,
+          shape.radiusX,
+          shape.radiusY,
+          shape.rotation,
+          shape.startAngle,
+          shape.endAngle
+        );
+        this.ctx.fill();
+      }
     });
   }
 
@@ -174,18 +213,24 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   //0
   public drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
-
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
     this.ctx.stroke();
     this.x = event.offsetX;
     this.y = event.offsetY;
+
+    this.lineDimensions = {
+      x: this.x,
+      x2: this.y,
+      y: event.offsetX,
+      y2: event.offsetY,
+    };
   }
 
   //1
   public drawRectangle(event: MouseEvent) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+    //this.ctx.clearRect(0, 0, this.width, this.height);
     this.paintAllShapes();
     this.ctx.fillStyle = this.color;
     /// this.paintAllShapes();
@@ -197,7 +242,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       event.offsetY - this.y
     );
 
-    //Set rectangle values
+    //Rectangle object
     this.rectangleDimensions = {
       x: this.x,
       y: this.y,
@@ -208,8 +253,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //2
-  public drawOval(event: MouseEvent) {
-    this.ctx.clearRect(0, 0, this.width, this.height);
+  public drawEllipse(event: MouseEvent) {
+    //this.ctx.clearRect(0, 0, this.width, this.height);
     this.paintAllShapes();
     this.ctx.fillStyle = this.color;
 
@@ -217,6 +262,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     const relativeY = event.offsetY - this.y;
     let newX = 0;
     let newY = 0;
+    const endAngle = 2 * Math.PI;
 
     if (relativeX > 0 && relativeY < 0) {
       newX = this.x + Math.abs(this.x - event.offsetX) / 2;
@@ -236,8 +282,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       //console.log('CUADRANTE 4');
     }
 
-    //this.ctx.fillStyle = this.color;
-
     this.ctx.beginPath();
     this.ctx.ellipse(
       newX,
@@ -246,10 +290,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       Math.abs(event.offsetY - this.y) / 2,
       0,
       0,
-      2 * Math.PI
+      endAngle
     );
     this.ctx.fill();
 
+    //Oval object
     this.ovalDimensions = {
       x: newX,
       y: newY,
@@ -257,24 +302,19 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       radiusY: Math.abs(event.offsetY - this.y) / 2,
       rotation: 0,
       startAngle: 0,
-      endAngle: 2 * Math.PI,
+      endAngle: endAngle,
       color: this.color,
     };
   }
 
   //OPTIONS FROM TOOLBAR
-
   public saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();
-
-    let imageName = prompt('Enter name');
-
+    let imageName = prompt('Enter image name');
     const downloadLink = document.createElement('a');
     downloadLink.href = base64ImageData;
-
     downloadLink.download = imageName || 'image1';
     downloadLink.click();
-
     window.URL.revokeObjectURL(downloadLink.href);
   }
 }

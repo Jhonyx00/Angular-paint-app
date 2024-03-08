@@ -8,6 +8,7 @@ import { ColorComponent } from './website/components/color/color.component';
 import { StatusComponent } from './website/components/status/status.component';
 import { ToolbarComponent } from './website/components/toolbar/toolbar.component';
 import { OptionsComponent } from './website/components/options/options.component';
+import { ActionsComponent } from './website/components/actions/actions.component';
 
 @NgModule({
   declarations: [
@@ -18,8 +19,10 @@ import { OptionsComponent } from './website/components/options/options.component
     StatusComponent,
     ToolbarComponent,
     OptionsComponent,
+    ActionsComponent,
   ],
   imports: [BrowserModule, FormsModule],
   bootstrap: [AppComponent],
+  // providers: [CanvasComponent],
 })
 export class AppModule {}

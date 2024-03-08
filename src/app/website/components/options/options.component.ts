@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Figure } from '../../interfaces/figure.interface';
+import { FigureIcon } from '../../interfaces/figure-icon.interface';
 import { PropertiesService } from '../../services/properties.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { PropertiesService } from '../../services/properties.service';
 export class OptionsComponent {
   constructor(private propertiesService: PropertiesService) {}
   public selectedOption = 0;
-  public opsions: Figure[] = [
+  public opsions: FigureIcon[] = [
     { id: 1, url: '../../../../assets/svg/save.svg' },
     { id: 2, url: '../../../../assets/svg/open.svg' },
     { id: 3, url: '../../../../assets/svg/file.svg' },

@@ -1,4 +1,4 @@
-export interface Figure {
+export interface FigureIcon {
   id: number;
   url: string;
 }

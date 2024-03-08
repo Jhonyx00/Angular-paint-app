@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Figure } from '../../interfaces/figure.interface';
+import { FigureIcon } from '../../interfaces/figure-icon.interface';
 import { PropertiesService } from '../../services/properties.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class FiguresComponent implements OnInit {
   public selectedFigure = 0;
   public selectedFigureStyle = '';
 
-  public srcImages: Figure[] = [
+  public srcImages: FigureIcon[] = [
     { id: 1, url: '../../../../assets/svg/rectangle.svg' },
     { id: 2, url: '../../../../assets/svg/oval.svg' },
     { id: 3, url: '../../../../assets/svg/hexagon.svg' },

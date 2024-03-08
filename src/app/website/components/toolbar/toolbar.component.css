@@ -16,7 +16,15 @@
   font-size: 12px;
 }
 
-.shapes-container,
+.toolbar-container div {
+  border-bottom: 2px solid rgb(198, 198, 198);
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+/* .shapes-container,
 .options-container,
 .color-container {
   border-bottom: 2px solid rgb(198, 198, 198);
@@ -25,4 +33,4 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
+} */
