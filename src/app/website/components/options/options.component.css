@@ -1,0 +1,10 @@
+.shape-icon {
+  width: 1.8em;
+  height: 1.8em;
+  background-color: transparent;
+}
+
+.option-list {
+  display: flex;
+  list-style: none;
+}

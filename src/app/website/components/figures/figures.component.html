@@ -1,0 +1,7 @@
+<div class="figures" id="figuresContainer">
+  <ul>
+    <li *ngFor="let item of srcImages" (click)="selectShape(item.id)">
+      <img src="{{ item.url }}" alt="" />
+    </li>
+  </ul>
+</div>

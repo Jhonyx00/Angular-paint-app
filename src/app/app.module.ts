@@ -1,16 +1,25 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppComponent } from './app.component';
+import { CanvasComponent } from './website/components/canvas/canvas.component';
+import { FormsModule } from '@angular/forms';
+import { FiguresComponent } from './website/components/figures/figures.component';
+import { ColorComponent } from './website/components/color/color.component';
+import { StatusComponent } from './website/components/status/status.component';
+import { ToolbarComponent } from './website/components/toolbar/toolbar.component';
+import { OptionsComponent } from './website/components/options/options.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CanvasComponent,
+    FiguresComponent,
+    ColorComponent,
+    StatusComponent,
+    ToolbarComponent,
+    OptionsComponent,
   ],
-  imports: [
-    BrowserModule
-  ],
-  providers: [],
-  bootstrap: [AppComponent]
+  imports: [BrowserModule, FormsModule],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
