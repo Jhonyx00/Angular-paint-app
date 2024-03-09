@@ -25,4 +25,6 @@ export class OptionsComponent {
         break;
     }
   }
+
+  //PLACE HERE saveWork FUNCTION
 }

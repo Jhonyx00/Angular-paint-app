@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
-  Input,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -37,9 +36,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   width: number = 800;
   height: number = 500;
 
-  color: string = '#000000';
-  option = '';
-  private shape: number = 0;
+  private color: string = '#000000';
+  private option = '';
 
   private toolName = '';
   private ctx!: CanvasRenderingContext2D;
@@ -116,7 +114,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   mouseMove(event: MouseEvent) {
     //this.ctx.fillStyle = this.color;
-    this.paintAllShapes();
+    if (this.toolName !== 'Line') {
+      this.paintAllShapes(); //condicionar este para que solo limpie la pantalla cuando sea diferente de linea
+    }
+
     if (this.isDrawing) {
       //SHAPE SELECTION
 
@@ -142,7 +143,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
   }
 
-  mouseUp(event: MouseEvent) {
+  mouseUp() {
     this.isDrawing = false;
 
     switch (this.toolName) {
@@ -193,22 +194,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
             this.ctx.lineTo(line.points[x].x, line.points[x].y);
           }
           this.ctx.stroke();
-          /////////////////////////////////////////////////////////////////////////
-          // const line = shape as Line;
-          // this.ctx.strokeStyle = line.color;
 
-          // this.ctx.moveTo(line.points[0].x, line.points[0].y);
-          // this.ctx.lineTo(line.points[0].x, line.points[0].y);
-
-          // this.ctx.stroke();
-          //////////////////////////////////////////////////////////////////////////
-          // const line = shape as Line;
-          // this.ctx.strokeStyle = shape.color;
-
-          // this.ctx.moveTo(this.x, this.y);
-          // this.ctx.lineTo(this.x, this.y);
-
-          // this.ctx.stroke();
           break;
 
         case 'Rectangle':
@@ -244,6 +230,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
 
+    this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
     this.ctx.stroke();
@@ -337,9 +324,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //HACER AQUI LAS FUNCIONES PARA CREAR LOS OBJETOS QUE VAN EN shapeList
-  //
 
-  //OPTIONS FROM TOOLBAR
+  //OPTIONS FROM FILE COMPONENT
+
+  //MOVE THIS FUNCTION TO OPTIONS COMPONENT//////////////////////////////////////////////////////////////////
+
   public saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();
     let imageName = prompt('Enter image name');
