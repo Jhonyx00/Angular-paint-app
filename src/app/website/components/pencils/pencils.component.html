@@ -1,0 +1,7 @@
+<div class="figures" id="figuresContainer">
+  <ul>
+    <li *ngFor="let pencil of pencils" (click)="selectShape(pencil.toolName)">
+      <img src="{{ pencil.imageURL }}" alt="" />
+    </li>
+  </ul>
+</div>

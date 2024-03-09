@@ -1,13 +1,13 @@
+import { Cord } from './cord.interface';
+
 export interface Shape {
   shapeType: string;
-  x: number;
-  y: number;
+
   color: string;
 }
 
 export interface Line extends Shape {
-  x2: number;
-  y2: number;
+  points: Cord[];
 }
 
 export interface Rectangle extends Shape {
@@ -18,6 +18,8 @@ export interface Rectangle extends Shape {
 }
 
 export interface Ellipse extends Shape {
+  x: number;
+  y: number;
   radiusX: number;
   radiusY: number;
   rotation: number;

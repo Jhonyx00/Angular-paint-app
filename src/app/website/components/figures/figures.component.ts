@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FigureIcon } from '../../interfaces/figure-icon.interface';
+import { SelectedTool } from '../../interfaces/selected-tool.interface';
 import { PropertiesService } from '../../services/properties.service';
 
 @Component({
@@ -13,26 +13,35 @@ export class FiguresComponent implements OnInit {
     // const selectedFigure: number = this.selectShape();
   }
 
-  public selectedFigure = 0;
-  public selectedFigureStyle = '';
+  public figureName = '';
 
-  public srcImages: FigureIcon[] = [
-    { id: 1, url: '../../../../assets/svg/rectangle.svg' },
-    { id: 2, url: '../../../../assets/svg/oval.svg' },
-    { id: 3, url: '../../../../assets/svg/hexagon.svg' },
-    { id: 4, url: '../../../../assets/svg/triangle.svg' },
-    { id: 5, url: '../../../../assets/svg/star.svg' },
-    { id: 5, url: '../../../../assets/svg/star.svg' },
-    { id: 5, url: '../../../../assets/svg/star.svg' },
-    { id: 5, url: '../../../../assets/svg/star.svg' },
+  public srcImages: SelectedTool[] = [
+    {
+      id: 1,
+      toolName: 'Rectangle',
+      imageURL: '../../../../assets/svg/rectangle.svg',
+    },
+    { id: 2, toolName: 'Ellipse', imageURL: '../../../../assets/svg/oval.svg' },
+    {
+      id: 3,
+      toolName: 'Hexagon',
+      imageURL: '../../../../assets/svg/hexagon.svg',
+    },
+    {
+      id: 4,
+      toolName: 'Triangle',
+      imageURL: '../../../../assets/svg/triangle.svg',
+    },
+    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
+    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
+    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
+    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
   ];
 
-  selectShape(figureId: number) {
-    this.selectedFigure = figureId;
-    console.log('figure: ', figureId);
+  selectShape(figureName: string) {
+    this.figureName = figureName;
+    console.log('figure: ', figureName);
 
-    this.selectedFigureStyle = 'selected-shape';
-
-    this.propertiesService.setSelectedShape(this.selectedFigure);
+    this.propertiesService.setSelectedShape(this.figureName);
   }
 }

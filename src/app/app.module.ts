@@ -9,6 +9,7 @@ import { StatusComponent } from './website/components/status/status.component';
 import { ToolbarComponent } from './website/components/toolbar/toolbar.component';
 import { OptionsComponent } from './website/components/options/options.component';
 import { ActionsComponent } from './website/components/actions/actions.component';
+import { PencilsComponent } from './website/components/pencils/pencils.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { ActionsComponent } from './website/components/actions/actions.component
     ToolbarComponent,
     OptionsComponent,
     ActionsComponent,
+    PencilsComponent,
   ],
   imports: [BrowserModule, FormsModule],
   bootstrap: [AppComponent],

@@ -15,8 +15,8 @@ export class PropertiesService {
   private strokeStyle = new BehaviorSubject<string>('#000000');
   private XY = new BehaviorSubject<Cord>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
-  private selectedShape = new BehaviorSubject<number>(0);
-  private selectedOption = new BehaviorSubject<number>(0);
+  private selectedShape = new BehaviorSubject<string>('Line');
+  private selectedOption = new BehaviorSubject<string>('');
   private sizeX = new BehaviorSubject<Size>({ width: 0, height: 0 });
   private shapeList = new BehaviorSubject<(Rectangle | Ellipse | Line)[]>([]);
 
@@ -44,11 +44,11 @@ export class PropertiesService {
     this.isOutsideCanvas.next(isOutside);
   }
 
-  setSelectedShape(selectedShape: number) {
+  setSelectedShape(selectedShape: string) {
     this.selectedShape.next(selectedShape);
   }
 
-  setSelectedOption(selectedOption: number) {
+  setSelectedOption(selectedOption: string) {
     this.selectedOption.next(selectedOption);
   }
 

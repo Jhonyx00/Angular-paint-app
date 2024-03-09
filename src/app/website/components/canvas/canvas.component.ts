@@ -11,6 +11,7 @@ import { Ellipse } from '../../interfaces/shape.interface';
 import { Rectangle } from '../../interfaces/shape.interface';
 import { Line } from '../../interfaces/shape.interface';
 import { CanvasStateService } from '../../services/canvas-state.service';
+import { Cord } from '../../interfaces/cord.interface';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -37,10 +38,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   height: number = 500;
 
   color: string = '#000000';
-  option = 0;
+  option = '';
   private shape: number = 0;
 
-  public ctx!: CanvasRenderingContext2D;
+  private toolName = '';
+  private ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
 
   //position
@@ -49,17 +51,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //SHAPE ARRAY
   public shapeList: (Rectangle | Ellipse | Line)[] = [];
-  public newShapeList: (Rectangle | Ellipse | Line)[] = [];
   //SHAPES
   // Objects that represents the shapes in order to be drawn on the canvas before a new drawing
   // is being painted
   public lineDimensions: Line = {
-    x: 0,
-    y: 0,
-    x2: 0,
-    y2: 0,
     color: '#000000',
     shapeType: '',
+    points: [{ x: 0, y: 0 }],
   };
 
   public rectangleDimensions: Rectangle = {
@@ -93,15 +91,15 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.ctx.fillStyle = this.color;
     });
 
-    this.propertiesService.selectedShapeValue.subscribe((currentShape) => {
-      this.shape = currentShape;
+    this.propertiesService.selectedShapeValue.subscribe((currentTool) => {
+      this.toolName = currentTool;
     });
 
     //GET properties canvas needs
     this.propertiesService.selectedOptionValue.subscribe((currentOption) => {
       this.option = currentOption;
 
-      if (this.option === 1) {
+      if (this.option === 'Save') {
         this.saveWork();
         console.log(this.option);
       }
@@ -118,21 +116,23 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   mouseMove(event: MouseEvent) {
     //this.ctx.fillStyle = this.color;
+    this.paintAllShapes();
     if (this.isDrawing) {
       //SHAPE SELECTION
-      switch (this.shape) {
-        case 0:
+
+      switch (this.toolName) {
+        case 'Line':
           this.drawLine(event);
           break;
-        case 1:
+        case 'Rectangle':
           this.drawRectangle(event);
           //COLOCAR AQUI UNA LLAMADA A LA FUNCION PARA CREAR UN OBJETO DE TIPO RECTANGULO QUE SERÁ ALMACENADO EN EL ARREGLO DE FIGURAS
           //
           break;
-        case 2:
+        case 'Ellipse':
           this.drawEllipse(event);
           break;
-        case 3:
+        case '':
           break;
         default:
           break;
@@ -145,19 +145,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   mouseUp(event: MouseEvent) {
     this.isDrawing = false;
 
-    switch (this.shape) {
-      case 0:
-        //PUSH INTO LINE ARRAY
+    switch (this.toolName) {
+      case 'Line':
         this.shapeList.push(this.lineDimensions);
-        //this.canvas.nativeElement.save();
+        this.points = []; //this cause the lone to be invisible
+        //////////////////////////////////////////////////////////////////////////////////////
         break;
-      case 1:
+      case 'Rectangle':
         this.shapeList.push(this.rectangleDimensions);
-
         break;
-      case 2:
+      case 'Ellipse':
         this.shapeList.push(this.ellipseDimensions);
-
         break;
       default:
         break;
@@ -184,19 +182,35 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
     this.ctx.clearRect(0, 0, this.width, this.height);
 
-    // for (const shape of this.shapeList) {
-    // }
-
     this.shapeList.forEach((shape) => {
       switch (shape.shapeType) {
         case 'Line':
           const line = shape as Line;
           this.ctx.strokeStyle = line.color;
           this.ctx.beginPath();
-          this.ctx.moveTo(line.x, line.y);
-          this.ctx.lineTo(line.x2, line.y2);
+
+          for (let x = 0; x < line.points.length; x++) {
+            this.ctx.lineTo(line.points[x].x, line.points[x].y);
+          }
           this.ctx.stroke();
+          /////////////////////////////////////////////////////////////////////////
+          // const line = shape as Line;
+          // this.ctx.strokeStyle = line.color;
+
+          // this.ctx.moveTo(line.points[0].x, line.points[0].y);
+          // this.ctx.lineTo(line.points[0].x, line.points[0].y);
+
+          // this.ctx.stroke();
+          //////////////////////////////////////////////////////////////////////////
+          // const line = shape as Line;
+          // this.ctx.strokeStyle = shape.color;
+
+          // this.ctx.moveTo(this.x, this.y);
+          // this.ctx.lineTo(this.x, this.y);
+
+          // this.ctx.stroke();
           break;
+
         case 'Rectangle':
           const rectangle = shape as Rectangle;
           this.ctx.fillStyle = rectangle.color;
@@ -218,46 +232,43 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           );
           this.ctx.fill();
           break;
-
         default:
           break;
       }
     });
   }
-
   //DRAWING FUNCTIONS
-
   //0
+  public points: Cord[] = [];
+
   public drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
-    this.ctx.beginPath();
+
     this.ctx.moveTo(this.x, this.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
     this.ctx.stroke();
     this.x = event.offsetX;
     this.y = event.offsetY;
 
+    this.points.push({
+      x: this.x,
+      y: this.y,
+    });
+
     this.lineDimensions = {
       shapeType: 'Line',
-      x: this.x,
-      x2: this.y,
-      y: event.offsetX,
-      y2: event.offsetY,
       color: this.color,
+      points: this.points,
     };
   }
 
   //1
   public drawRectangle(event: MouseEvent) {
-    this.paintAllShapes();
     this.ctx.fillStyle = this.color;
-
     const w = event.offsetX - this.x;
     const h = event.offsetY - this.y;
     this.ctx.fillRect(this.x, this.y, w, h);
-
     //SI SE HACE LO DE LA LINEA 129 PODEMOS REMOVER ESTE CODIGO PARA DIBUJAR SOLO UN RECTANGULO
-
     //Rectangle object
     this.rectangleDimensions = {
       shapeType: 'Rectangle',
@@ -271,31 +282,32 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //2
   public drawEllipse(event: MouseEvent) {
-    this.paintAllShapes();
     this.ctx.fillStyle = this.color;
-
     const relativeX = event.offsetX - this.x;
     const relativeY = event.offsetY - this.y;
     let newX = 0;
     let newY = 0;
     const endAngle = 2 * Math.PI;
 
+    // Quadrant 1
     if (relativeX > 0 && relativeY < 0) {
       newX = this.x + Math.abs(this.x - event.offsetX) / 2;
       newY = this.y - Math.abs(this.y - event.offsetY) / 2;
-      //console.log('CUADRANTE 1');
-    } else if (relativeX < 0 && relativeY < 0) {
+    }
+    // Quadrant 2
+    else if (relativeX < 0 && relativeY < 0) {
       newX = this.x - Math.abs(this.x - event.offsetX) / 2;
       newY = this.y - Math.abs(this.y - event.offsetY) / 2;
-      // console.log('CUADRANTE 2');
-    } else if (relativeX < 0 && relativeY > 0) {
+    }
+    // Quadrant 3
+    else if (relativeX < 0 && relativeY > 0) {
       newX = this.x - Math.abs(this.x - event.offsetX) / 2;
       newY = this.y + Math.abs(this.y - event.offsetY) / 2;
-      // console.log('CUADRANTE 3');
-    } else {
+    }
+    //Quadrant 4
+    else {
       newX = this.x + Math.abs(this.x - event.offsetX) / 2;
       newY = this.y + Math.abs(this.y - event.offsetY) / 2;
-      //console.log('CUADRANTE 4');
     }
 
     this.ctx.beginPath();
@@ -325,6 +337,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //HACER AQUI LAS FUNCIONES PARA CREAR LOS OBJETOS QUE VAN EN shapeList
+  //
 
   //OPTIONS FROM TOOLBAR
   public saveWork() {

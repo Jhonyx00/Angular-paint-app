@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { FigureIcon } from '../../interfaces/figure-icon.interface';
 import { PropertiesService } from '../../services/properties.service';
+import { SelectedTool } from '../../interfaces/selected-tool.interface';
 
 @Component({
   selector: 'app-options',
@@ -9,17 +9,17 @@ import { PropertiesService } from '../../services/properties.service';
 })
 export class OptionsComponent {
   constructor(private propertiesService: PropertiesService) {}
-  public selectedOption = 0;
-  public opsions: FigureIcon[] = [
-    { id: 1, url: '../../../../assets/svg/save.svg' },
-    { id: 2, url: '../../../../assets/svg/open.svg' },
-    { id: 3, url: '../../../../assets/svg/file.svg' },
+  public selectedOption = '';
+  public opsions: SelectedTool[] = [
+    { id: 1, toolName: 'Save', imageURL: '../../../../assets/svg/save.svg' },
+    { id: 2, toolName: 'Open', imageURL: '../../../../assets/svg/open.svg' },
+    { id: 3, toolName: 'File', imageURL: '../../../../assets/svg/file.svg' },
   ];
 
-  selectOption(optionId: number) {
-    this.selectedOption = optionId;
-    switch (optionId) {
-      case 1:
+  selectOption(optionName: string) {
+    this.selectedOption = optionName;
+    switch (optionName) {
+      case 'Save':
         //save file
         this.propertiesService.setSelectedOption(this.selectedOption);
         break;
