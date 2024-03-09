@@ -126,6 +126,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           break;
         case 1:
           this.drawRectangle(event);
+          //COLOCAR AQUI UNA LLAMADA A LA FUNCION PARA CREAR UN OBJETO DE TIPO RECTANGULO QUE SERÁ ALMACENADO EN EL ARREGLO DE FIGURAS
+          //
           break;
         case 2:
           this.drawEllipse(event);
@@ -220,25 +222,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         default:
           break;
       }
-
-      // if ('w' in shape) {
-      //   this.ctx.fillStyle = shape.color;
-      //   this.ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
-      // } else if ('radiusX' in shape) {
-      //   this.ctx.beginPath();
-      //   // this.ctx.fillStyle = shape.color;
-      //   this.ctx.fillStyle = shape.color;
-      //   this.ctx.ellipse(
-      //     shape.x,
-      //     shape.y,
-      //     shape.radiusX,
-      //     shape.radiusY,
-      //     shape.rotation,
-      //     shape.startAngle,
-      //     shape.endAngle
-      //   );
-      //   this.ctx.fill();
-      // }
     });
   }
 
@@ -272,6 +255,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     const w = event.offsetX - this.x;
     const h = event.offsetY - this.y;
     this.ctx.fillRect(this.x, this.y, w, h);
+
+    //SI SE HACE LO DE LA LINEA 129 PODEMOS REMOVER ESTE CODIGO PARA DIBUJAR SOLO UN RECTANGULO
 
     //Rectangle object
     this.rectangleDimensions = {
@@ -338,6 +323,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       color: this.color,
     };
   }
+
+  //HACER AQUI LAS FUNCIONES PARA CREAR LOS OBJETOS QUE VAN EN shapeList
 
   //OPTIONS FROM TOOLBAR
   public saveWork() {
