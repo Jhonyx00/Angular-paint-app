@@ -1,4 +1,5 @@
 export interface Shape {
+  shapeType: string;
   x: number;
   y: number;
   color: string;

@@ -7,9 +7,9 @@ import {
   ViewChild,
 } from '@angular/core';
 import { PropertiesService } from '../../services/properties.service';
-import { Ellipse } from '../../interfaces/ellipse.interface';
-import { Rectangle } from '../../interfaces/rectangle.interface';
-import { Line } from '../../interfaces/line.interface';
+import { Ellipse } from '../../interfaces/shape.interface';
+import { Rectangle } from '../../interfaces/shape.interface';
+import { Line } from '../../interfaces/shape.interface';
 import { CanvasStateService } from '../../services/canvas-state.service';
 @Component({
   selector: 'app-canvas',
@@ -33,9 +33,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.paintAllShapes();
     });
   }
-
-  height: number = 500;
   width: number = 800;
+  height: number = 500;
+
   color: string = '#000000';
   option = 0;
   private shape: number = 0;
@@ -58,6 +58,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     y: 0,
     x2: 0,
     y2: 0,
+    color: '#000000',
+    shapeType: '',
   };
 
   public rectangleDimensions: Rectangle = {
@@ -66,9 +68,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     w: 0,
     h: 0,
     color: '#000000',
+    shapeType: '',
   };
 
-  public ovalDimensions: Ellipse = {
+  public ellipseDimensions: Ellipse = {
     x: 0,
     y: 0,
     radiusX: 0,
@@ -77,6 +80,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     startAngle: 0,
     endAngle: 0,
     color: '#000000',
+    shapeType: '',
   };
 
   ngAfterViewInit(): void {
@@ -150,7 +154,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
         break;
       case 2:
-        this.shapeList.push(this.ovalDimensions);
+        this.shapeList.push(this.ellipseDimensions);
 
         break;
       default:
@@ -177,25 +181,64 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
 
     this.ctx.clearRect(0, 0, this.width, this.height);
+
+    // for (const shape of this.shapeList) {
+    // }
+
     this.shapeList.forEach((shape) => {
-      if ('w' in shape) {
-        this.ctx.fillStyle = shape.color;
-        this.ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
-      } else if ('radiusX' in shape) {
-        this.ctx.beginPath();
-        // this.ctx.fillStyle = shape.color;
-        this.ctx.fillStyle = shape.color;
-        this.ctx.ellipse(
-          shape.x,
-          shape.y,
-          shape.radiusX,
-          shape.radiusY,
-          shape.rotation,
-          shape.startAngle,
-          shape.endAngle
-        );
-        this.ctx.fill();
+      switch (shape.shapeType) {
+        case 'Line':
+          const line = shape as Line;
+          this.ctx.strokeStyle = line.color;
+          this.ctx.beginPath();
+          this.ctx.moveTo(line.x, line.y);
+          this.ctx.lineTo(line.x2, line.y2);
+          this.ctx.stroke();
+          break;
+        case 'Rectangle':
+          const rectangle = shape as Rectangle;
+          this.ctx.fillStyle = rectangle.color;
+          this.ctx.fillRect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
+          break;
+        case 'Ellipse':
+          const ellipse = shape as Ellipse;
+          this.ctx.beginPath();
+          // this.ctx.fillStyle = shape.color;
+          this.ctx.fillStyle = ellipse.color;
+          this.ctx.ellipse(
+            ellipse.x,
+            ellipse.y,
+            ellipse.radiusX,
+            ellipse.radiusY,
+            ellipse.rotation,
+            ellipse.startAngle,
+            ellipse.endAngle
+          );
+          this.ctx.fill();
+          break;
+
+        default:
+          break;
       }
+
+      // if ('w' in shape) {
+      //   this.ctx.fillStyle = shape.color;
+      //   this.ctx.fillRect(shape.x, shape.y, shape.w, shape.h);
+      // } else if ('radiusX' in shape) {
+      //   this.ctx.beginPath();
+      //   // this.ctx.fillStyle = shape.color;
+      //   this.ctx.fillStyle = shape.color;
+      //   this.ctx.ellipse(
+      //     shape.x,
+      //     shape.y,
+      //     shape.radiusX,
+      //     shape.radiusY,
+      //     shape.rotation,
+      //     shape.startAngle,
+      //     shape.endAngle
+      //   );
+      //   this.ctx.fill();
+      // }
     });
   }
 
@@ -212,10 +255,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.y = event.offsetY;
 
     this.lineDimensions = {
+      shapeType: 'Line',
       x: this.x,
       x2: this.y,
       y: event.offsetX,
       y2: event.offsetY,
+      color: this.color,
     };
   }
 
@@ -224,19 +269,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.paintAllShapes();
     this.ctx.fillStyle = this.color;
 
-    this.ctx.fillRect(
-      this.x,
-      this.y,
-      event.offsetX - this.x,
-      event.offsetY - this.y
-    );
+    const w = event.offsetX - this.x;
+    const h = event.offsetY - this.y;
+    this.ctx.fillRect(this.x, this.y, w, h);
 
     //Rectangle object
     this.rectangleDimensions = {
+      shapeType: 'Rectangle',
       x: this.x,
       y: this.y,
-      w: event.offsetX - this.x,
-      h: event.offsetY - this.y,
+      w: w,
+      h: h,
       color: this.color,
     };
   }
@@ -283,7 +326,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.ctx.fill();
 
     //Oval object
-    this.ovalDimensions = {
+    this.ellipseDimensions = {
+      shapeType: 'Ellipse',
       x: newX,
       y: newY,
       radiusX: Math.abs(event.offsetX - this.x) / 2,

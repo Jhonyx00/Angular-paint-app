@@ -14,7 +14,6 @@ export class ActionsComponent implements OnInit {
   ) {}
 
   private shapeList = new Array();
-
   private shapeList2 = new Array();
 
   public isUndoDisabled = false;

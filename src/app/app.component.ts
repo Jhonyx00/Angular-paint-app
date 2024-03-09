@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -7,17 +7,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AppComponent implements OnInit {
   title = 'PaintXD';
-  public preferedWidth = 0;
-  public preferedHeight = 0;
-  public color = '#000s';
 
-  ngOnInit(): void {
-    this.preferedWidth = 800;
-    this.preferedHeight = 600;
-  }
+  ngOnInit(): void {}
 
-  current: string = 'red';
-  change(color: string) {
-    this.current = color;
-  }
+  // @HostListener('window:resize', ['event']) onResize(event: any) {
+  //   console.log(event);
+  // }
+
+  // elZoom = '';
+
+  // @HostListener('window:resize', ['$event']) onResize(event: any) {
+  //   this.elZoom = '100% ';
+  //   alert(event.shiftKey);
+
+  //   window.devicePixelRatio = 1.5;
+  //   console.log(window.devicePixelRatio);
+  // }
 }

@@ -1,18 +1,13 @@
 .toolbar-container {
-  position: fixed;
+  /* position: fixed;
   left: 0;
-  top: 0;
-  border: 1px solid black;
-  backdrop-filter: blur(1em);
-  background-color: rgba(255, 255, 255, 0.8);
+  top: 0; */
 
-  height: 100%;
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
 }
 .toolbar-container span {
-  padding: 0.2em 0em;
   font-size: 12px;
 }
 

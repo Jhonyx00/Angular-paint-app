@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Cord } from '../interfaces/cord.interface';
 import { Size } from '../interfaces/size.interface';
-import { Rectangle } from '../interfaces/rectangle.interface';
-import { Ellipse } from '../interfaces/ellipse.interface';
-import { Line } from '../interfaces/line.interface';
+import { Rectangle } from '../interfaces/shape.interface';
+import { Ellipse } from '../interfaces/shape.interface';
+import { Line } from '../interfaces/shape.interface';
 
 @Injectable({
   providedIn: 'root',

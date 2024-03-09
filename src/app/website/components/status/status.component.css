@@ -1,31 +1,25 @@
 .status-bar {
-  display: flex;
+  height: 5vh;
 
-  position: fixed;
+  display: flex;
+  align-items: center;
+  /* position: fixed;
   bottom: 0;
   left: 0;
-  right: 0;
+  right: 0; */
 
-  padding: 0.2em;
-  width: 100%;
+  /* padding: 0.2em; */
 
-  backdrop-filter: blur(1em);
-  background-color: rgba(226, 226, 226, 0.8);
+  /* backdrop-filter: blur(1em);
+  background-color: rgba(226, 226, 226, 0.8); */
 
   border: 1px solid black;
 
   > span {
+    /* height: inherit;
+    display: inherit;
+    align-items: inherit; */
     font-size: 12px;
-  }
-  > span.selected-shape {
-    flex: 1;
-  }
-
-  > span.position {
-    flex: 1;
-  }
-
-  > span.size {
     flex: 1;
   }
 }

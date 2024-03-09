@@ -3,13 +3,16 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+
   /* border: 1px solid red; */
 }
 
-html {
+/* html {
   scrollbar-width: none;
-}
+} */
 
 body {
   user-select: none;
+  /* zoom: 100%; */
+  /* transform: scale(1); */
 }
