@@ -1,7 +1,15 @@
-<div class="figures" id="figuresContainer">
-  <ul>
-    <li *ngFor="let item of srcImages" (click)="selectShape(item.toolName)">
-      <img src="{{ item.imageURL }}" alt="" />
-    </li>
-  </ul>
+<div class="shapes-container">
+  <span>Shapes</span>
+  <div class="figures" id="figuresContainer">
+    <ul>
+      <li *ngFor="let item of srcImages" (click)="selectShape(item.toolName)">
+        <img src="{{ item.imageURL }}" alt="" />
+      </li>
+    </ul>
+  </div>
 </div>
+
+<!-- <div class="shapes-container">
+  <span>Shapes</span>
+  <app-figures></app-figures>
+</div> -->

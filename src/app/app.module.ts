@@ -10,6 +10,8 @@ import { ToolbarComponent } from './website/components/toolbar/toolbar.component
 import { OptionsComponent } from './website/components/options/options.component';
 import { ActionsComponent } from './website/components/actions/actions.component';
 import { PencilsComponent } from './website/components/pencils/pencils.component';
+import { ErasersComponent } from './website/components/erasers/erasers.component';
+import { SelectComponent } from './website/components/select/select.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +24,8 @@ import { PencilsComponent } from './website/components/pencils/pencils.component
     OptionsComponent,
     ActionsComponent,
     PencilsComponent,
+    ErasersComponent,
+    SelectComponent,
   ],
   imports: [BrowserModule, FormsModule],
   bootstrap: [AppComponent],

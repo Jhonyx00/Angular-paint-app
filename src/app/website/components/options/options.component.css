@@ -8,3 +8,16 @@
   display: flex;
   list-style: none;
 }
+
+.options-container {
+  border-bottom: 2px solid rgb(198, 198, 198);
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.options-container span {
+  font-size: 12px;
+}

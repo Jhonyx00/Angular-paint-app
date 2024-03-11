@@ -2,7 +2,6 @@ import { Cord } from './cord.interface';
 
 export interface Shape {
   shapeType: string;
-
   color: string;
 }
 

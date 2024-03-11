@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { PropertiesService } from '../../services/properties.service';
-import { Ellipse } from '../../interfaces/shape.interface';
+import { Ellipse, Shape } from '../../interfaces/shape.interface';
 import { Rectangle } from '../../interfaces/shape.interface';
 import { Line } from '../../interfaces/shape.interface';
 import { CanvasStateService } from '../../services/canvas-state.service';
@@ -58,6 +58,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //SHAPE ARRAY
   private shapeList: (Rectangle | Ellipse | Line)[] = [];
+  private points: Cord[] = [];
+
+  //SELECTED SHAPE BY CLICKING
+
   //SHAPES
   // Objects that represents the shapes in order to be drawn on the canvas before a new drawing
   // is being painted
@@ -142,7 +146,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         case 'Ellipse':
           this.drawEllipse(event);
           break;
-        case '':
+        case 'Eraser 1':
+          this.erase(event);
+          break;
+
+        case 'Select':
+          this.selectShape(event);
           break;
         default:
           break;
@@ -173,6 +182,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.setShapeList(this.shapeList);
   }
 
+  mouseClick(event: MouseEvent) {
+    switch (this.toolName) {
+      case 'Select':
+        this.selectShape(event);
+        break;
+    }
+  }
+
   mouseEnter() {
     this.propertiesService.outsideCanvas(false);
   }
@@ -181,6 +198,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.outsideCanvas(true);
   }
 
+  private moveShape(shape: Ellipse | Rectangle | Line, event: MouseEvent) {}
   private paintAllShapes() {
     this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
       this.shapeList = currentShapeList;
@@ -230,7 +248,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
   //DRAWING FUNCTIONS
   //0
-  private points: Cord[] = [];
 
   private drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
@@ -331,6 +348,32 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     };
   }
 
+  private erase(event: MouseEvent) {
+    this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
+    //console.log(event.offsetX, event.offsetY);
+  }
+
+  private selectShape(event: MouseEvent) {
+    const posX = event.offsetX;
+    const posY = event.offsetY;
+    // console.log(`x: ${posX}, y:${posY}`);
+
+    this.shapeList.find((shape) => {
+      //no es con offset en la suma
+      if (
+        posX >= (shape as Rectangle).x &&
+        posX <= (shape as Rectangle).w + (shape as Rectangle).x &&
+        posY >= (shape as Rectangle).y &&
+        posY <= (shape as Rectangle).h + (shape as Rectangle).y
+      ) {
+        const selectedShape = shape;
+        console.log(selectedShape);
+
+        //log
+      }
+    });
+    // console.log(`X: ${event.offsetX}, y: ${event.offsetY}`);
+  }
   //HACER AQUI LAS FUNCIONES PARA CREAR LOS OBJETOS QUE VAN EN shapeList
 
   //OPTIONS FROM FILE COMPONENT

@@ -1,0 +1,10 @@
+<div class="erasers-container">
+  <span>Select</span>
+  <div class="figures" id="figuresContainer">
+    <ul>
+      <li *ngFor="let item of srcImages" (click)="selectEraser(item.toolName)">
+        <img src="{{ item.imageURL }}" alt="" />
+      </li>
+    </ul>
+  </div>
+</div>

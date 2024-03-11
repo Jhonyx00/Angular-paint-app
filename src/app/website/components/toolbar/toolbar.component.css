@@ -2,6 +2,12 @@
   display: flex;
   justify-content: flex-start;
   flex-direction: column;
+
+  max-height: 95vh;
+  overflow-y: scroll;
+
+  /* scrollbar-width: 10px;
+  scrollbar-color: red; */
 }
 .toolbar-container span {
   font-size: 12px;

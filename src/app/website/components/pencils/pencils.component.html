@@ -1,7 +1,22 @@
-<div class="figures" id="figuresContainer">
+<!-- <div class="figures" id="figuresContainer">
   <ul>
     <li *ngFor="let pencil of pencils" (click)="selectShape(pencil.toolName)">
       <img src="{{ pencil.imageURL }}" alt="" />
     </li>
   </ul>
 </div>
+   -->
+<div class="pencils-container">
+  <span>Pencils</span>
+  <div class="figures" id="figuresContainer">
+    <ul>
+      <li *ngFor="let pencil of pencils" (click)="selectShape(pencil.toolName)">
+        <img src="{{ pencil.imageURL }}" alt="" />
+      </li>
+    </ul>
+  </div>
+</div>
+<!-- <div class="pencils-container">
+  <span>Pencils</span>
+  <app-pencils></app-pencils>
+</div> -->

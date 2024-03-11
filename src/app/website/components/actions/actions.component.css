@@ -18,19 +18,15 @@
   }
 }
 
-/* .undo,
-.redo {
-  background-color: rgba(60, 66, 193, 0.6);
-} */
-
-.true {
-  background-color: red;
+.actions-container {
+  border-bottom: 2px solid rgb(198, 198, 198);
+  padding: 0.5em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
-.false {
-  background-color: rgb(0, 4, 244);
+.actions-container span {
+  font-size: 12px;
 }
-
-/* .button-actions button:focus {
-  border: 5px solid blue;
-} */
