@@ -17,3 +17,20 @@
     padding: 2px;
   }
 }
+
+/* .undo,
+.redo {
+  background-color: rgba(60, 66, 193, 0.6);
+} */
+
+.true {
+  background-color: red;
+}
+
+.false {
+  background-color: rgb(0, 4, 244);
+}
+
+/* .button-actions button:focus {
+  border: 5px solid blue;
+} */

@@ -30,7 +30,7 @@ ul {
     cursor: pointer;
   }
   > li:hover img {
-    background-color: rgb(88, 96, 253);
+    background-color: rgb(0, 106, 255);
   }
 }
 

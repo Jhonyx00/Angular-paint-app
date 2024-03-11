@@ -1,6 +1,11 @@
 #color-chooser {
   cursor: pointer;
-  width: 3em;
-  height: 3em;
+  width: 2.6em;
+  height: 2.6em;
   border: 1px solid black;
+
+  border: 1px solid black;
+
+  /* outline: none; */
+  appearance: none;
 }

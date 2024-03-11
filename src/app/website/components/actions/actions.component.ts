@@ -19,13 +19,17 @@ export class ActionsComponent implements OnInit {
   public isUndoDisabled = false;
   public isRedoDisabled = false;
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.initShapeList();
+  }
 
-  undo() {
+  private initShapeList() {
     this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
       this.shapeList = currentShapeList;
     });
+  }
 
+  undo() {
     //ckeck if it is possible to undo action
     if (this.shapeList.length > 0) {
       this.isUndoDisabled = false;

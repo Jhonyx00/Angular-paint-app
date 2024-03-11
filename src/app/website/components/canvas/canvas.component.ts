@@ -24,15 +24,23 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     private canvasStateService: CanvasStateService
   ) {}
   ngOnInit(): void {
+    this.initCanvasDimensions();
+    this.updateCanvasValue();
+  }
+
+  private initCanvasDimensions() {
     this.propertiesService.canvasSize({
       width: this.width,
       height: this.height,
     });
+  }
 
+  private updateCanvasValue() {
     this.canvasStateService.updateCanvasValue.subscribe(() => {
       this.paintAllShapes();
     });
   }
+
   width: number = 800;
   height: number = 500;
 
@@ -43,22 +51,23 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
 
+  private lineWidth = 3;
   //position
   private x: number = 0;
   private y: number = 0;
 
   //SHAPE ARRAY
-  public shapeList: (Rectangle | Ellipse | Line)[] = [];
+  private shapeList: (Rectangle | Ellipse | Line)[] = [];
   //SHAPES
   // Objects that represents the shapes in order to be drawn on the canvas before a new drawing
   // is being painted
-  public lineDimensions: Line = {
+  private lineDimensions: Line = {
     color: '#000000',
     shapeType: '',
     points: [{ x: 0, y: 0 }],
   };
 
-  public rectangleDimensions: Rectangle = {
+  private rectangleDimensions: Rectangle = {
     x: 0,
     y: 0,
     w: 0,
@@ -67,7 +76,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     shapeType: '',
   };
 
-  public ellipseDimensions: Ellipse = {
+  private ellipseDimensions: Ellipse = {
     x: 0,
     y: 0,
     radiusX: 0,
@@ -145,12 +154,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   mouseUp() {
     this.isDrawing = false;
-
     switch (this.toolName) {
       case 'Line':
         this.shapeList.push(this.lineDimensions);
-        this.points = []; //this cause the lone to be invisible
-        //////////////////////////////////////////////////////////////////////////////////////
+        this.points = []; //reset points
         break;
       case 'Rectangle':
         this.shapeList.push(this.rectangleDimensions);
@@ -167,16 +174,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseEnter() {
-    //SET properties
     this.propertiesService.outsideCanvas(false);
   }
 
   mouseLeave() {
-    //SET properties
     this.propertiesService.outsideCanvas(true);
   }
 
-  paintAllShapes() {
+  private paintAllShapes() {
     this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
       this.shapeList = currentShapeList;
     });
@@ -189,12 +194,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           const line = shape as Line;
           this.ctx.strokeStyle = line.color;
           this.ctx.beginPath();
-
           for (let x = 0; x < line.points.length; x++) {
             this.ctx.lineTo(line.points[x].x, line.points[x].y);
           }
           this.ctx.stroke();
-
           break;
 
         case 'Rectangle':
@@ -202,6 +205,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.ctx.fillStyle = rectangle.color;
           this.ctx.fillRect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
           break;
+
         case 'Ellipse':
           const ellipse = shape as Ellipse;
           this.ctx.beginPath();
@@ -218,6 +222,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           );
           this.ctx.fill();
           break;
+        ///other cases
         default:
           break;
       }
@@ -225,11 +230,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
   //DRAWING FUNCTIONS
   //0
-  public points: Cord[] = [];
+  private points: Cord[] = [];
 
-  public drawLine(event: MouseEvent) {
+  private drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
 
+    this.ctx.lineWidth = 10;
+
+    this.ctx.lineCap = 'round';
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
@@ -250,7 +258,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //1
-  public drawRectangle(event: MouseEvent) {
+  private drawRectangle(event: MouseEvent) {
     this.ctx.fillStyle = this.color;
     const w = event.offsetX - this.x;
     const h = event.offsetY - this.y;
@@ -268,7 +276,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //2
-  public drawEllipse(event: MouseEvent) {
+  private drawEllipse(event: MouseEvent) {
     this.ctx.fillStyle = this.color;
     const relativeX = event.offsetX - this.x;
     const relativeY = event.offsetY - this.y;
@@ -329,7 +337,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //MOVE THIS FUNCTION TO OPTIONS COMPONENT//////////////////////////////////////////////////////////////////
 
-  public saveWork() {
+  private saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();
     let imageName = prompt('Enter image name');
     const downloadLink = document.createElement('a');
@@ -339,3 +347,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     window.URL.revokeObjectURL(downloadLink.href);
   }
 }
+
+//////////////////////////
+/// modificar que tambien pinte los puntos de inicio y de fin de cada trazo
+///////

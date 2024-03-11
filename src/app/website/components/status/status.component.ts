@@ -18,15 +18,25 @@ export class StatusComponent implements OnInit {
   isOutside: boolean = false;
 
   ngOnInit(): void {
+    this.updateCursorPosition();
+    this.updateCursorState();
+    this.displayCanvasDimensions();
+  }
+
+  private updateCursorPosition() {
     this.propertiesService.posXY.subscribe((currentPosition) => {
       this.x = currentPosition.x;
       this.y = currentPosition.y;
     });
+  }
 
+  private updateCursorState() {
     this.propertiesService.isOutside.subscribe((isOutside) => {
       this.isOutside = isOutside;
     });
+  }
 
+  private displayCanvasDimensions() {
     this.propertiesService.canvasSizeValue.subscribe((currentSize) => {
       this.width = currentSize.width;
       this.height = currentSize.height;
