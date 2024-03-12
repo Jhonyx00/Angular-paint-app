@@ -1,13 +1,32 @@
 .status-bar {
-  height: 5vh;
-
-  display: flex;
+  justify-content: space-between;
   align-items: center;
+  display: flex;
+  height: 100%;
 
-  border: 1px solid black;
+  border: 1px solid gray;
+}
 
-  > span {
-    font-size: 12px;
-    flex: 1;
+.status-bar span {
+  font-size: 12px;
+  border-right: 1px solid gray;
+  text-align: center;
+  padding: 0.6em;
+}
+
+.pixels-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.zoom-container {
+  display: flex;
+  border: 1px solid gray;
+  align-items: center;
+  gap: 0.8em;
+  > button {
+    width: 1em;
+    height: 1em;
   }
 }

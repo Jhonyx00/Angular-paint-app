@@ -125,11 +125,16 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
+  public XY: Cord = { x: 0, y: 0 };
   ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
     //press mouse
     if (this.toolName === 'Move') {
       this.selectShape(event);
+      this.XY = {
+        x: Math.abs((this.selectedShape as Rectangle).x - event.offsetX),
+        y: Math.abs((this.selectedShape as Rectangle).y - event.offsetY),
+      };
     } else {
       this.isDrawing = true;
       this.x = event.offsetX;
@@ -195,7 +200,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         break;
     }
 
-    // console.log('Todas las figuras', this.shapeList);
+    console.log('Todas las figuras', this.shapeList);
     this.propertiesService.setShapeList(this.shapeList);
   }
 
@@ -386,15 +391,24 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
   //MOVE A SHAPE
   private moveShape(event: MouseEvent, shape: Ellipse | Rectangle | Line) {
-    console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
+    // console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
 
-    (shape as Rectangle).x = event.offsetX;
-    (shape as Rectangle).y = event.offsetY;
+    // (shape as Rectangle).x = event.offsetX - (this.width - this.XY.x);
+    // (shape as Rectangle).y = event.offsetY - (this.height - this.XY.y);
 
-    console.log(shape);
+    (shape as Rectangle).x = event.offsetX - this.XY.x;
+    (shape as Rectangle).y = event.offsetY - this.XY.y;
+    //tiene que restarse la posicion xy donde se hizo click dentro de la figura
+
+    //el largo y ancho menos el punto xy presionado
+
+    console.log(this.XY);
     this.paintAllShapes();
   }
 
+  puntoInicial(event: MouseEvent) {
+    console.log(`punto inicial: ${event.offsetX}, y:${event.offsetY}`);
+  }
   ///                     FILE
   private saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();

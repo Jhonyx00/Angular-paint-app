@@ -1,7 +1,16 @@
 <div class="status-bar">
-  <span class="size"> size: {{ width }}, {{ height }}pixels</span>
-  <span class="selected-shape">Selected:</span>
-  <span class="position" *ngIf="!isOutside"
-    >position: {{ x }}, {{ y }}pixels</span
-  >
+  <div class="pixels-container">
+    <span class="size">Size: {{ width }}, {{ height }}pixels</span>
+    <span class="selected-shape">Selected:</span>
+    <span class="position" *ngIf="!isOutside"
+      >position: {{ x }}, {{ y }}pixels</span
+    >
+  </div>
+
+  <div class="zoom-container">
+    <span>100%</span>
+    <button></button>
+    <input type="range" min="10" max="1000" />
+    <button></button>
+  </div>
 </div>

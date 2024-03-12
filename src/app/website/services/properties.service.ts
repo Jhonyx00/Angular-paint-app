@@ -22,9 +22,6 @@ export class PropertiesService {
   private sizeX = new BehaviorSubject<Size>({ width: 0, height: 0 });
   private shapeList = new BehaviorSubject<(Rectangle | Ellipse | Line)[]>([]);
 
-  private cursorStyle = new BehaviorSubject<string>('normal');
-
-  cursor = this.cursorStyle.asObservable();
   color = this.strokeStyle.asObservable();
   posXY = this.XY.asObservable();
   //chek if it is outside canvas
@@ -63,9 +60,5 @@ export class PropertiesService {
 
   setShapeList(shapeList: (Rectangle | Ellipse | Line)[]) {
     this.shapeList.next(shapeList);
-  }
-
-  setCursor(cursor: string) {
-    this.cursorStyle.next(cursor);
   }
 }
