@@ -6,7 +6,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { PropertiesService } from '../../services/properties.service';
-import { Ellipse, Shape } from '../../interfaces/shape.interface';
+import { Ellipse } from '../../interfaces/shape.interface';
 import { Rectangle } from '../../interfaces/shape.interface';
 import { Line } from '../../interfaces/shape.interface';
 import { CanvasStateService } from '../../services/canvas-state.service';
@@ -98,18 +98,24 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ngAfterViewInit(): void {
     //when canvas is absolutely available
     this.ctx = this.canvas.nativeElement.getContext('2d');
+    this.initColor();
+    this.initTool();
+    this.initFileOption();
+  }
 
-    //GET properties canvas needs
+  ///                     AFTER VIEW INIT FUNCTIONS
+  private initColor() {
     this.propertiesService.color.subscribe((currentColor) => {
       this.color = currentColor;
       this.ctx.fillStyle = this.color;
     });
-
+  }
+  private initTool() {
     this.propertiesService.selectedShapeValue.subscribe((currentTool) => {
       this.toolName = currentTool;
     });
-
-    //GET properties canvas needs
+  }
+  private initFileOption() {
     this.propertiesService.selectedOptionValue.subscribe((currentOption) => {
       this.option = currentOption;
 
@@ -120,10 +126,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
-  //Mouse events
+  ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
     //press mouse
-
     if (this.toolName === 'Select') {
       this.selectShape(event);
     } else {
@@ -134,22 +139,18 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseMove(event: MouseEvent) {
-    //this.ctx.fillStyle = this.color;
-    if (
-      this.toolName != 'Line' &&
-      this.toolName != 'Select' &&
-      this.toolName != 'Move'
-    ) {
-      this.paintAllShapes();
-    }
+    // no pintar las figuras si se sibuja una linea,
+    // o si se selecciona una figura (esto es por si se quiere colocar un recuadro que contenga a la figura seleccionada)
 
-    if (this.isSelected) {
+    if (this.toolName != 'Line' && this.toolName != 'Select') {
+      this.paintAllShapes();
+    } else if (this.isSelected) {
       this.moveShape(event, this.selectedShape);
     }
 
+    //si se esta dibujando
     if (this.isDrawing) {
       //SHAPE SELECTION
-
       switch (this.toolName) {
         case 'Line':
           this.drawLine(event);
@@ -160,16 +161,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         case 'Ellipse':
           this.drawEllipse(event);
           break;
-        // case 'Select':
-        //   this.selectShape(event);
-        //   break;
-        // case 'Move':
-        //   if (this.isSelected) {
-        //     this.moveShape(event, this.selectedShape);
-        //   } else {
-        //     console.log('no');
-        //   }
-        //   break;
         default:
           break;
       }
@@ -179,12 +170,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseUp() {
-    this.isSelected = false;
+    this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
+    this.points = []; //reset points
+
     switch (this.toolName) {
       case 'Line':
         this.shapeList.push(this.lineDimensions);
-        this.points = []; //reset points
         break;
       case 'Rectangle':
         this.shapeList.push(this.rectangleDimensions);
@@ -256,7 +248,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       }
     });
   }
-  //DRAWING FUNCTIONS
+  ///                     SHAPES
   //0
 
   private drawLine(event: MouseEvent) {
@@ -358,11 +350,15 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     };
   }
 
+  ///                     ERASE
+
   private erase(event: MouseEvent) {
     this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
     //console.log(event.offsetX, event.offsetY);
   }
 
+  ///                     SELECT
+  //SELECT A SHAPE
   private selectShape(event: MouseEvent) {
     const posX = event.offsetX;
     const posY = event.offsetY;
@@ -378,18 +374,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         this.selectedShape = shape;
         console.log('Selected shape', this.selectedShape);
         this.isSelected = true;
-      } else {
-        this.isSelected = false;
       }
     });
   }
-
+  //MOVE A SHAPE
   private moveShape(event: MouseEvent, shape: any) {
     if (this.isSelected) {
       console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
     }
   }
 
+  ///                     FILE
   private saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();
     let imageName = prompt('Enter image name');
