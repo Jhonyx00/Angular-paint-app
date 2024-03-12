@@ -20,8 +20,8 @@ export class SelectComponent {
     },
     {
       id: 2,
-      toolName: 'Eraser 2',
-      imageURL: '../../../../assets/svg/oval.svg',
+      toolName: 'Move',
+      imageURL: '../../../../assets/svg/star.svg',
     },
   ];
 
