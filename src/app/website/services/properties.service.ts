@@ -12,6 +12,8 @@ import { Line } from '../interfaces/shape.interface';
 export class PropertiesService {
   constructor() {}
 
+  //puedo usar solo un subject que tenga todos los cambios como un objeto de tipo properties
+  //(crear la interface Properties)
   private strokeStyle = new BehaviorSubject<string>('#000000');
   private XY = new BehaviorSubject<Cord>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
@@ -20,6 +22,9 @@ export class PropertiesService {
   private sizeX = new BehaviorSubject<Size>({ width: 0, height: 0 });
   private shapeList = new BehaviorSubject<(Rectangle | Ellipse | Line)[]>([]);
 
+  private cursorStyle = new BehaviorSubject<string>('normal');
+
+  cursor = this.cursorStyle.asObservable();
   color = this.strokeStyle.asObservable();
   posXY = this.XY.asObservable();
   //chek if it is outside canvas
@@ -58,5 +63,9 @@ export class PropertiesService {
 
   setShapeList(shapeList: (Rectangle | Ellipse | Line)[]) {
     this.shapeList.next(shapeList);
+  }
+
+  setCursor(cursor: string) {
+    this.cursorStyle.next(cursor);
   }
 }

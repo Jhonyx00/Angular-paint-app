@@ -1,9 +1,11 @@
-<div class="erasers-container">
+<div class="tool-container">
   <span>Select</span>
-  <div class="figures" id="figuresContainer">
+  <div class="tool">
     <ul>
-      <li *ngFor="let item of srcImages" (click)="selectEraser(item.toolName)">
-        <img src="{{ item.imageURL }}" alt="" />
+      <li *ngFor="let item of srcImages">
+        <button (click)="shapeSelection(item.toolName)">
+          <img src="{{ item.imageURL }}" alt="" />
+        </button>
       </li>
     </ul>
   </div>

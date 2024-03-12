@@ -18,7 +18,7 @@ import { Cord } from '../../interfaces/cord.interface';
 })
 export class CanvasComponent implements AfterViewInit, OnInit {
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
-  selectedShape: Rectangle | Ellipse | Line | undefined;
+  public selectedShape!: Rectangle | Ellipse | Line;
 
   constructor(
     private propertiesService: PropertiesService,
@@ -48,11 +48,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private color: string = '#000000';
   private option = '';
 
-  private toolName = '';
+  public toolName = '';
   private ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
 
-  private lineWidth = 3;
   //position
   private x: number = 0;
   private y: number = 0;
@@ -129,7 +128,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
     //press mouse
-    if (this.toolName === 'Select') {
+    if (this.toolName === 'Move') {
       this.selectShape(event);
     } else {
       this.isDrawing = true;
@@ -142,7 +141,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // no pintar las figuras si se sibuja una linea,
     // o si se selecciona una figura (esto es por si se quiere colocar un recuadro que contenga a la figura seleccionada)
 
-    if (this.toolName != 'Line' && this.toolName != 'Select') {
+    if (
+      this.toolName != 'Line' &&
+      this.toolName != 'Move' &&
+      this.toolName != 'Eraser'
+    ) {
       this.paintAllShapes();
     } else if (this.isSelected) {
       this.moveShape(event, this.selectedShape);
@@ -160,6 +163,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           break;
         case 'Ellipse':
           this.drawEllipse(event);
+          break;
+
+        case 'Eraser':
+          this.erase(event);
           break;
         default:
           break;
@@ -378,10 +385,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
   //MOVE A SHAPE
-  private moveShape(event: MouseEvent, shape: any) {
-    if (this.isSelected) {
-      console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
-    }
+  private moveShape(event: MouseEvent, shape: Ellipse | Rectangle | Line) {
+    console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
+
+    (shape as Rectangle).x = event.offsetX;
+    (shape as Rectangle).y = event.offsetY;
+
+    console.log(shape);
+    this.paintAllShapes();
   }
 
   ///                     FILE

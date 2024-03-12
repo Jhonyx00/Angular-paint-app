@@ -1,12 +1,14 @@
-<div class="actions-container">
+<div class="tool-container">
   <span>Actions</span>
-  <div class="button-actions">
-    <button (click)="undo()" [disabled]="isUndoDisabled">
-      <img src="../../../../assets/svg/undo.svg" alt="" />
-    </button>
-    <button (click)="redo()" [disabled]="isRedoDisabled">
-      <img src="../../../../assets/svg/redo.svg" alt="" />
-    </button>
+
+  <div class="tool">
+    <ul>
+      <li *ngFor="let item of srcImages">
+        <button (click)="selectAction(item.toolName)">
+          <img src="{{ item.imageURL }}" alt="" />
+        </button>
+      </li>
+    </ul>
   </div>
 </div>
 <!-- <div class="actions-container">

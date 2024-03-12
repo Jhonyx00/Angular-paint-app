@@ -1,13 +1,12 @@
-<div class="options-container">
+<div class="tool-container">
   <span>File</span>
-  <ul class="option-list">
-    <li *ngFor="let option of opsions" (click)="selectOption(option.toolName)">
-      <img src="{{ option.imageURL }}" alt="" class="shape-icon" />
-    </li>
-  </ul>
+  <div class="tool">
+    <ul>
+      <li *ngFor="let option of options">
+        <button (click)="selectOption(option.toolName)">
+          <img src="{{ option.imageURL }}" alt="" />
+        </button>
+      </li>
+    </ul>
+  </div>
 </div>
-
-<!-- <div class="options-container">
-    <span>File</span>
-    <app-options></app-options>
-  </div> -->

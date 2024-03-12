@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PropertiesService } from '../../services/properties.service';
 import { CanvasStateService } from '../../services/canvas-state.service';
+import { SelectedTool } from '../../interfaces/selected-tool.interface';
 
 @Component({
   selector: 'app-actions',
@@ -23,10 +24,38 @@ export class ActionsComponent implements OnInit {
     this.initShapeList();
   }
 
+  public srcImages: SelectedTool[] = [
+    {
+      id: 1,
+      toolName: 'Undo',
+      imageURL: '../../../../assets/svg/undo.svg',
+    },
+    {
+      id: 2,
+      toolName: 'Redo',
+      imageURL: '../../../../assets/svg/redo.svg',
+    },
+  ];
+
   private initShapeList() {
     this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
       this.shapeList = currentShapeList;
     });
+  }
+
+  selectAction(item: string) {
+    switch (item) {
+      case 'Undo':
+        this.undo();
+        break;
+
+      case 'Redo':
+        this.redo();
+        break;
+
+      default:
+        break;
+    }
   }
 
   undo() {

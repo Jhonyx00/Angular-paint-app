@@ -10,7 +10,7 @@ import { SelectedTool } from '../../interfaces/selected-tool.interface';
 export class OptionsComponent {
   constructor(private propertiesService: PropertiesService) {}
   public selectedOption = '';
-  public opsions: SelectedTool[] = [
+  public options: SelectedTool[] = [
     { id: 1, toolName: 'Save', imageURL: '../../../../assets/svg/save.svg' },
     { id: 2, toolName: 'Open', imageURL: '../../../../assets/svg/open.svg' },
     { id: 3, toolName: 'File', imageURL: '../../../../assets/svg/file.svg' },

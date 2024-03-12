@@ -1,11 +1,14 @@
-<div class="color-container">
+<div class="tool-container">
   <span>Color</span>
-  <input
-    type="color"
-    name="strokeStyleColor"
-    id="color-chooser"
-    (change)="setColor($event)"
-  />
+
+  <div class="tool" id="figuresContainer">
+    <input
+      type="color"
+      name="color"
+      id="color-chooser"
+      (change)="setColor($event)"
+    />
+  </div>
 </div>
 <!-- <div class="color-container">
     <span>Color</span>

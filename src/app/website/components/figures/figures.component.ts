@@ -33,9 +33,6 @@ export class FiguresComponent implements OnInit {
       imageURL: '../../../../assets/svg/triangle.svg',
     },
     { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
-    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
-    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
-    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
   ];
 
   selectShape(figureName: string) {

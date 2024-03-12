@@ -15,7 +15,7 @@ export class SelectComponent {
   public srcImages: SelectedTool[] = [
     {
       id: 1,
-      toolName: 'Select',
+      toolName: 'Move',
       imageURL: '../../../../assets/svg/rectangle.svg',
     },
     {
@@ -25,7 +25,7 @@ export class SelectComponent {
     },
   ];
 
-  selectEraser(figureName: string) {
+  shapeSelection(figureName: string) {
     this.figureName = figureName;
     console.log('tool: ', figureName);
     this.propertiesService.setSelectedShape(this.figureName);

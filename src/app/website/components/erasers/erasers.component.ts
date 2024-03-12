@@ -15,12 +15,12 @@ export class ErasersComponent {
   public srcImages: SelectedTool[] = [
     {
       id: 1,
-      toolName: 'Eraser 1',
+      toolName: 'Eraser',
       imageURL: '../../../../assets/svg/rectangle.svg',
     },
     {
       id: 2,
-      toolName: 'Eraser 2',
+      toolName: 'Eraser',
       imageURL: '../../../../assets/svg/oval.svg',
     },
   ];
