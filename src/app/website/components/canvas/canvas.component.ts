@@ -18,6 +18,11 @@ import { ToolsService } from '../toolbar/services/tools.service';
   styleUrls: ['./canvas.component.css'],
 })
 export class CanvasComponent implements AfterViewInit, OnInit {
+  touchDown(event: TouchEvent) {
+    console.log(
+      `tocado en x:${event.touches[0].clientX}, y:${event.touches[0].clientY}`
+    );
+  }
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
   public selectedShape!: Rectangle | Ellipse | Line;
 
