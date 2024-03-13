@@ -3,7 +3,10 @@
   <div class="tool">
     <ul>
       <li *ngFor="let option of options">
-        <button (click)="selectOption(option.toolName)">
+        <button
+          (click)="selectOption(option.toolName)"
+          [ngClass]="selectedItem === option.toolName ? 'selected-button' : ''"
+        >
           <img src="{{ option.imageURL }}" alt="" />
         </button>
       </li>

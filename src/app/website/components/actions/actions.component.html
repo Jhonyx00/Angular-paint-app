@@ -3,15 +3,14 @@
 
   <div class="tool">
     <ul>
-      <li *ngFor="let item of srcImages">
-        <button (click)="selectAction(item.toolName)">
-          <img src="{{ item.imageURL }}" alt="" />
+      <li *ngFor="let action of srcImages">
+        <button
+          (click)="selectAction(action.toolName)"
+          [ngClass]="selectedItem === action.toolName ? 'selected-button' : ''"
+        >
+          <img src="{{ action.imageURL }}" alt="" />
         </button>
       </li>
     </ul>
   </div>
 </div>
-<!-- <div class="actions-container">
-    <span>Actions</span>
-    <app-actions></app-actions>
-  </div> -->

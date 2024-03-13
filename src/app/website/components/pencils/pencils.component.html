@@ -3,7 +3,10 @@
   <div class="tool" id="figuresContainer">
     <ul>
       <li *ngFor="let pencil of pencils">
-        <button (click)="selectShape(pencil.toolName)">
+        <button
+          (click)="selectShape(pencil.toolName)"
+          [ngClass]="selectedItem === pencil.toolName ? 'selected-button' : ''"
+        >
           <img src="{{ pencil.imageURL }}" alt="" />
         </button>
       </li>

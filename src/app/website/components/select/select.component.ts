@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../interfaces/selected-tool.interface';
-import { PropertiesService } from '../../services/properties.service';
+import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-select',
@@ -8,9 +8,9 @@ import { PropertiesService } from '../../services/properties.service';
   styleUrls: ['./select.component.css'],
 })
 export class SelectComponent {
-  constructor(private propertiesService: PropertiesService) {}
+  constructor(private toolsService: ToolsService) {}
 
-  public figureName = '';
+  public selectedItem = '';
 
   public srcImages: SelectedTool[] = [
     {
@@ -20,14 +20,14 @@ export class SelectComponent {
     },
     {
       id: 2,
-      toolName: 'Move',
+      toolName: 'Move 2',
       imageURL: '../../../../assets/svg/star.svg',
     },
   ];
 
-  shapeSelection(figureName: string) {
-    this.figureName = figureName;
-    console.log('tool: ', figureName);
-    this.propertiesService.setSelectedShape(this.figureName);
+  shapeSelection(selectedItem: string) {
+    this.selectedItem = selectedItem;
+    console.log('tool: ', selectedItem);
+    this.toolsService.setSelectedButton(this.selectedItem);
   }
 }

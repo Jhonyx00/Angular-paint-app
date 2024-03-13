@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
-import { SelectedTool } from '../../interfaces/selected-tool.interface';
-import { PropertiesService } from '../../services/properties.service';
+import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-figures',
-  templateUrl: './figures.component.html',
-  styleUrls: ['./figures.component.css'],
+  templateUrl: './shapes.component.html',
+  styleUrls: ['./shapes.component.css'],
 })
 export class FiguresComponent implements OnInit {
-  constructor(private propertiesService: PropertiesService) {}
+  constructor(private toolsService: ToolsService) {}
   ngOnInit(): void {
     // const selectedFigure: number = this.selectShape();
   }
 
-  public figureName = '';
+  public selectedItem = '';
 
   public srcImages: SelectedTool[] = [
     {
@@ -35,10 +35,10 @@ export class FiguresComponent implements OnInit {
     { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
   ];
 
-  selectShape(figureName: string) {
-    this.figureName = figureName;
-    console.log('figure: ', figureName);
+  selectShape(selectedItem: string) {
+    this.selectedItem = selectedItem;
+    console.log('figure: ', selectedItem);
 
-    this.propertiesService.setSelectedShape(this.figureName);
+    this.toolsService.setSelectedButton(this.selectedItem);
   }
 }

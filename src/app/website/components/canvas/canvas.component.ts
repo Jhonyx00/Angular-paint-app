@@ -5,12 +5,13 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { PropertiesService } from '../../services/properties.service';
-import { Ellipse } from '../../interfaces/shape.interface';
-import { Rectangle } from '../../interfaces/shape.interface';
-import { Line } from '../../interfaces/shape.interface';
-import { CanvasStateService } from '../../services/canvas-state.service';
-import { Cord } from '../../interfaces/cord.interface';
+import { PropertiesService } from '../../shared/services/properties.service';
+import { Ellipse } from '../../shared/interfaces/shape.interface';
+import { Rectangle } from '../../shared/interfaces/shape.interface';
+import { Line } from '../../shared/interfaces/shape.interface';
+import { CanvasStateService } from '../../shared/services/canvas-state.service';
+import { Cord } from '../../shared/interfaces/cord.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -22,7 +23,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   constructor(
     private propertiesService: PropertiesService,
-    private canvasStateService: CanvasStateService
+    private canvasStateService: CanvasStateService,
+    private toolsService: ToolsService
   ) {}
   ngOnInit(): void {
     this.initCanvasDimensions();
@@ -46,7 +48,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   height: number = 500;
 
   private color: string = '#000000';
-  private option = '';
+  // private option = '';
 
   public toolName = '';
   private ctx!: CanvasRenderingContext2D;
@@ -71,6 +73,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     color: '#000000',
     shapeType: '',
     points: [{ x: 0, y: 0 }],
+    x: 0,
+    y: 0,
+    w: 0,
+    h: 0,
   };
 
   private rectangleDimensions: Rectangle = {
@@ -85,6 +91,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private ellipseDimensions: Ellipse = {
     x: 0,
     y: 0,
+    w: 0,
+    h: 0,
     radiusX: 0,
     radiusY: 0,
     rotation: 0,
@@ -99,28 +107,27 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.initColor();
     this.initTool();
-    this.initFileOption();
+    // this.initFileOption();
   }
 
   ///                     AFTER VIEW INIT FUNCTIONS
   private initColor() {
-    this.propertiesService.color.subscribe((currentColor) => {
+    this.toolsService.color.subscribe((currentColor) => {
       this.color = currentColor;
       this.ctx.fillStyle = this.color;
     });
   }
+  // private initTool() {
+  //   this.toolsService.selectedShapeValue.subscribe((currentTool) => {
+  //   });
+  // }
   private initTool() {
-    this.propertiesService.selectedShapeValue.subscribe((currentTool) => {
+    this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
       this.toolName = currentTool;
-    });
-  }
-  private initFileOption() {
-    this.propertiesService.selectedOptionValue.subscribe((currentOption) => {
-      this.option = currentOption;
 
-      if (this.option === 'Save') {
+      if (this.toolName === 'Save') {
         this.saveWork();
-        console.log(this.option);
+        console.log(this.toolName);
       }
     });
   }
@@ -131,10 +138,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //press mouse
     if (this.toolName === 'Move') {
       this.selectShape(event);
-      this.XY = {
-        x: Math.abs((this.selectedShape as Rectangle).x - event.offsetX),
-        y: Math.abs((this.selectedShape as Rectangle).y - event.offsetY),
-      };
     } else {
       this.isDrawing = true;
       this.x = event.offsetX;
@@ -285,6 +288,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       shapeType: 'Line',
       color: this.color,
       points: this.points,
+      x: 0,
+      y: 0,
+      w: 0,
+      h: 0,
     };
   }
 
@@ -353,6 +360,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       shapeType: 'Ellipse',
       x: newX,
       y: newY,
+      w: Math.abs(event.offsetX - this.x),
+      h: Math.abs(event.offsetY - this.y),
       radiusX: Math.abs(event.offsetX - this.x) / 2,
       radiusY: Math.abs(event.offsetY - this.y) / 2,
       rotation: 0,
@@ -377,38 +386,37 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
     this.shapeList.find((shape) => {
       if (
-        posX >= (shape as Rectangle).x &&
-        posX <= (shape as Rectangle).w + (shape as Rectangle).x &&
-        posY >= (shape as Rectangle).y &&
-        posY <= (shape as Rectangle).h + (shape as Rectangle).y
+        posX >= shape.x &&
+        posX <= shape.w + shape.x &&
+        posY >= shape.y &&
+        posY <= shape.h + shape.y
       ) {
+        this.ctx.strokeStyle = 'blue';
+        this.ctx.setLineDash([5, 5]);
+
+        this.ctx.rect(shape.x, shape.y, shape.w, shape.h);
+        this.ctx.stroke();
+
         //rectangle selector
         this.selectedShape = shape;
         console.log('Selected shape', this.selectedShape);
         this.isSelected = true;
+
+        this.XY = {
+          x: Math.abs(this.selectedShape.x - event.offsetX),
+          y: Math.abs(this.selectedShape.y - event.offsetY),
+        };
       }
     });
   }
   //MOVE A SHAPE
   private moveShape(event: MouseEvent, shape: Ellipse | Rectangle | Line) {
-    // console.log(`Moving to x:${event.offsetX},y:${event.offsetY} `);
+    shape.x = event.offsetX - this.XY.x;
+    shape.y = event.offsetY - this.XY.y;
 
-    // (shape as Rectangle).x = event.offsetX - (this.width - this.XY.x);
-    // (shape as Rectangle).y = event.offsetY - (this.height - this.XY.y);
-
-    (shape as Rectangle).x = event.offsetX - this.XY.x;
-    (shape as Rectangle).y = event.offsetY - this.XY.y;
-    //tiene que restarse la posicion xy donde se hizo click dentro de la figura
-
-    //el largo y ancho menos el punto xy presionado
-
-    console.log(this.XY);
     this.paintAllShapes();
   }
 
-  puntoInicial(event: MouseEvent) {
-    console.log(`punto inicial: ${event.offsetX}, y:${event.offsetY}`);
-  }
   ///                     FILE
   private saveWork() {
     const base64ImageData = this.canvas.nativeElement.toDataURL();

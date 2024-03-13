@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { PropertiesService } from '../../services/properties.service';
-import { SelectedTool } from '../../interfaces/selected-tool.interface';
+import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-pencils',
@@ -8,8 +8,8 @@ import { SelectedTool } from '../../interfaces/selected-tool.interface';
   styleUrls: ['./pencils.component.css'],
 })
 export class PencilsComponent {
-  constructor(private propertiesService: PropertiesService) {}
-  public selectedPencil = '';
+  constructor(private toolsService: ToolsService) {}
+  public selectedItem = '';
 
   public pencils: SelectedTool[] = [
     {
@@ -25,9 +25,9 @@ export class PencilsComponent {
   ];
 
   selectShape(pencilName: string) {
-    this.selectedPencil = pencilName;
+    this.selectedItem = pencilName;
     console.log('pencil: ', pencilName);
 
-    this.propertiesService.setSelectedShape(this.selectedPencil);
+    this.toolsService.setSelectedButton(this.selectedItem);
   }
 }

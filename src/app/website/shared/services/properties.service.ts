@@ -14,29 +14,21 @@ export class PropertiesService {
 
   //puedo usar solo un subject que tenga todos los cambios como un objeto de tipo properties
   //(crear la interface Properties)
-  private strokeStyle = new BehaviorSubject<string>('#000000');
+
   private XY = new BehaviorSubject<Cord>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
-  private selectedShape = new BehaviorSubject<string>('Line');
-  private selectedOption = new BehaviorSubject<string>('');
+
   private sizeX = new BehaviorSubject<Size>({ width: 0, height: 0 });
   private shapeList = new BehaviorSubject<(Rectangle | Ellipse | Line)[]>([]);
 
-  color = this.strokeStyle.asObservable();
   posXY = this.XY.asObservable();
   //chek if it is outside canvas
   isOutside = this.isOutsideCanvas.asObservable();
-  //selected shape
-  selectedShapeValue = this.selectedShape.asObservable();
-  selectedOptionValue = this.selectedOption.asObservable();
+
   //canvas size
   canvasSizeValue = this.sizeX.asObservable();
   //Action
   shapeListValue = this.shapeList.asObservable();
-
-  changeColor(data: string) {
-    this.strokeStyle.next(data);
-  }
 
   positionXY(posXY: Cord) {
     this.XY.next(posXY);
@@ -44,14 +36,6 @@ export class PropertiesService {
 
   outsideCanvas(isOutside: boolean) {
     this.isOutsideCanvas.next(isOutside);
-  }
-
-  setSelectedShape(selectedShape: string) {
-    this.selectedShape.next(selectedShape);
-  }
-
-  setSelectedOption(selectedOption: string) {
-    this.selectedOption.next(selectedOption);
   }
 
   canvasSize(size: Size) {

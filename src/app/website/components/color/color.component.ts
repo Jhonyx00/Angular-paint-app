@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { PropertiesService } from '../../services/properties.service';
+import { PropertiesService } from '../../shared/services/properties.service';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-color',
@@ -7,13 +8,14 @@ import { PropertiesService } from '../../services/properties.service';
   styleUrls: ['./color.component.css'],
 })
 export class ColorComponent {
-  constructor(private propertiesService: PropertiesService) {}
+  constructor(private toolsService: ToolsService) {}
 
   setColor(event: Event) {
     const input = event.target as HTMLInputElement;
 
     if (input) {
-      this.propertiesService.changeColor(input.value);
+      this.toolsService.changeColor(input.value);
+      console.log('Color: ', input.value);
     }
   }
 }

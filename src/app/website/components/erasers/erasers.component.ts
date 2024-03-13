@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../interfaces/selected-tool.interface';
-import { PropertiesService } from '../../services/properties.service';
+import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-erasers',
@@ -8,9 +8,9 @@ import { PropertiesService } from '../../services/properties.service';
   styleUrls: ['./erasers.component.css'],
 })
 export class ErasersComponent {
-  constructor(private propertiesService: PropertiesService) {}
+  constructor(private toolsService: ToolsService) {}
 
-  public figureName = '';
+  public selectedItem = '';
 
   public srcImages: SelectedTool[] = [
     {
@@ -20,14 +20,14 @@ export class ErasersComponent {
     },
     {
       id: 2,
-      toolName: 'Eraser',
+      toolName: 'Eraser 2',
       imageURL: '../../../../assets/svg/oval.svg',
     },
   ];
 
-  selectEraser(figureName: string) {
-    this.figureName = figureName;
-    console.log('tool: ', figureName);
-    this.propertiesService.setSelectedShape(this.figureName);
+  selectEraser(eraserName: string) {
+    this.selectedItem = eraserName;
+    console.log('tool: ', eraserName);
+    this.toolsService.setSelectedButton(this.selectedItem);
   }
 }

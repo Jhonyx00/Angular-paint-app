@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { PropertiesService } from '../../services/properties.service';
-import { CanvasStateService } from '../../services/canvas-state.service';
-import { SelectedTool } from '../../interfaces/selected-tool.interface';
+import { PropertiesService } from '../../shared/services/properties.service';
+import { CanvasStateService } from '../../shared/services/canvas-state.service';
+import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
   selector: 'app-actions',
@@ -11,7 +12,8 @@ import { SelectedTool } from '../../interfaces/selected-tool.interface';
 export class ActionsComponent implements OnInit {
   constructor(
     private propertiesService: PropertiesService,
-    private canvasStateService: CanvasStateService
+    private canvasStateService: CanvasStateService,
+    private toolsService: ToolsService
   ) {}
 
   private shapeList = new Array();
@@ -19,6 +21,8 @@ export class ActionsComponent implements OnInit {
 
   public isUndoDisabled = false;
   public isRedoDisabled = false;
+
+  public selectedItem = '';
 
   ngOnInit(): void {
     this.initShapeList();
@@ -44,6 +48,10 @@ export class ActionsComponent implements OnInit {
   }
 
   selectAction(item: string) {
+    this.selectedItem = item;
+    this.toolsService.setSelectedButton(this.selectedItem);
+    console.log('action: ', this.selectedItem);
+
     switch (item) {
       case 'Undo':
         this.undo();

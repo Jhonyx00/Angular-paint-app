@@ -3,15 +3,15 @@
   <div class="tool">
     <ul>
       <li *ngFor="let item of srcImages">
-        <button (click)="selectShape(item.toolName)">
+        <button
+          #button
+          class="button1"
+          (click)="selectShape(item.toolName)"
+          [ngClass]="selectedItem === item.toolName ? 'selected-button' : ''"
+        >
           <img src="{{ item.imageURL }}" alt="" />
         </button>
       </li>
     </ul>
   </div>
 </div>
-
-<!-- <div class="shapes-container">
-  <span>Shapes</span>
-  <app-figures></app-figures>
-</div> -->
