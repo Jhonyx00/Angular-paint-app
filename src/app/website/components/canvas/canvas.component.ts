@@ -1,17 +1,24 @@
 import {
   AfterViewInit,
   Component,
+  ComponentRef,
   ElementRef,
   OnInit,
   ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
-import { PropertiesService } from '../../shared/services/properties.service';
-import { Ellipse } from '../../shared/interfaces/shape.interface';
-import { Rectangle } from '../../shared/interfaces/shape.interface';
-import { Line } from '../../shared/interfaces/shape.interface';
-import { CanvasStateService } from '../../shared/services/canvas-state.service';
-import { Cord } from '../../shared/interfaces/cord.interface';
+import { PropertiesService } from '../../../shared/services/properties.service';
+import { Ellipse } from '../../../shared/interfaces/shape.interface';
+import { Rectangle } from '../../../shared/interfaces/shape.interface';
+import { Line } from '../../../shared/interfaces/shape.interface';
+import { CanvasStateService } from '../../../shared/services/canvas-state.service';
+import { Cord } from '../../../shared/interfaces/cord.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
+import { AuxDivComponent } from '../../../shared/components/aux-div/aux-div.component';
+
+import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
+import { DrawingStatusService } from 'src/app/shared/services/drawing-status.service';
+import { ObjectProperties } from 'src/app/shared/interfaces/object-properties';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -24,12 +31,22 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     );
   }
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
+
+  public div!: any;
+  public objectProps: ObjectProperties = {
+    width: '',
+    height: '',
+    top: '',
+    left: '',
+  };
+  // private divInitialPosition: Cord = { x: 0, y: 0 };
   public selectedShape!: Rectangle | Ellipse | Line;
 
   constructor(
     private propertiesService: PropertiesService,
     private canvasStateService: CanvasStateService,
-    private toolsService: ToolsService
+    private toolsService: ToolsService,
+    private drawingStatusService: DrawingStatusService
   ) {}
   ngOnInit(): void {
     this.initCanvasDimensions();
@@ -45,7 +62,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   private updateCanvasValue() {
     this.canvasStateService.updateCanvasValue.subscribe(() => {
-      this.paintAllShapes();
+      //this.paintAllShapes();
     });
   }
 
@@ -122,6 +139,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.ctx.fillStyle = this.color;
     });
   }
+
   // private initTool() {
   //   this.toolsService.selectedShapeValue.subscribe((currentTool) => {
   //   });
@@ -145,9 +163,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.selectShape(event);
     } else {
       this.isDrawing = true;
+
+      this.drawingStatusService.changeButtonState(true);
       this.x = event.offsetX;
       this.y = event.offsetY;
+      this.createComponent();
+      console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
+
+      // en vez de lo anterior puedo usar el objeto de tipo Cord
     }
+
+    // console.log('Div reconocido', this.div);
   }
 
   mouseMove(event: MouseEvent) {
@@ -159,7 +185,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.toolName != 'Move' &&
       this.toolName != 'Eraser'
     ) {
-      this.paintAllShapes();
+      //this.paintAllShapes();
     } else if (this.isSelected) {
       this.moveShape(event, this.selectedShape);
     }
@@ -172,7 +198,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.drawLine(event);
           break;
         case 'Rectangle':
-          this.drawRectangle(event);
+          // this.drawRectangle(event);
+          this.drawRectangleDiv(event);
           break;
         case 'Ellipse':
           this.drawEllipse(event);
@@ -192,6 +219,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   mouseUp() {
     this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
+    this.drawingStatusService.changeButtonState(false);
+
     this.points = []; //reset points
 
     switch (this.toolName) {
@@ -209,6 +238,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
 
     console.log('Todas las figuras', this.shapeList);
+
+    this.deleteComponent();
     this.propertiesService.setShapeList(this.shapeList);
   }
 
@@ -299,6 +330,73 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       h: this.points[this.points.length - 1].y,
     };
   }
+
+  private drawRectangleDiv(event: MouseEvent) {
+    const w = event.offsetX - this.x;
+    const h = event.offsetY - this.y;
+
+    this.div.style.borderColor = this.color;
+
+    const newX = Math.abs(event.offsetX - this.x);
+    const newY = Math.abs(event.offsetY - this.y);
+    // Quadrant 1
+    if (w > 0 && h < 0) {
+      //console.log('Cuarante 1');
+
+      this.drawingStatusService.cambiarAncho({
+        top: event.offsetY + 'px',
+        left: this.x + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+      });
+    }
+    // Quadrant 2
+    else if (w < 0 && h < 0) {
+      //console.log('Cuarante 2');
+
+      this.drawingStatusService.cambiarAncho({
+        top: event.offsetY + 'px',
+        left: event.offsetX + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+      });
+    }
+    // Quadrant 3
+    else if (w < 0 && h > 0) {
+      //console.log('Cuarante 3');
+
+      this.drawingStatusService.cambiarAncho({
+        top: this.y + 'px',
+        left: event.offsetX + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+      });
+    }
+    //Quadrant 4
+    else {
+      //console.log('Cuarante 4');
+
+      this.drawingStatusService.cambiarAncho({
+        top: this.y + 'px',
+        left: this.x + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+      });
+    }
+  }
+
+  // resizeDiv(event: MouseEvent) {
+  //   console.log('estas dentro');
+
+  //   if (this.isDrawing) {
+  //     this.div.style.width = event.offsetX + 'px';
+  //     this.div.style.height = event.offsetY + 'px';
+  //   }
+  //   // else {
+  //   //   console.log('no');
+  //   //   this.deleteComponent();
+  //   // }
+  // }
 
   //1
   private drawRectangle(event: MouseEvent) {
@@ -437,7 +535,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       shape.y = event.offsetY - this.XY.y;
     }
 
-    this.paintAllShapes();
+    //this.paintAllShapes();
   }
 
   ///                     FILE
@@ -449,5 +547,21 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     downloadLink.download = imageName || 'image1';
     downloadLink.click();
     window.URL.revokeObjectURL(downloadLink.href);
+  }
+
+  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
+  public dynamicHost!: ViewContainerRef;
+  private componentRef!: ComponentRef<AuxDivComponent>;
+
+  public createComponent(): void {
+    this.componentRef = this.dynamicHost.createComponent(AuxDivComponent);
+    this.div = this.componentRef.location.nativeElement as HTMLElement;
+    //console.log('from dynamic', this.div);
+  }
+
+  public deleteComponent(): void {
+    if (this.componentRef) {
+      this.componentRef.destroy();
+    }
   }
 }

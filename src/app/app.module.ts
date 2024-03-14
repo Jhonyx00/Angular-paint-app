@@ -12,6 +12,9 @@ import { ActionsComponent } from './website/components/actions/actions.component
 import { PencilsComponent } from './website/components/pencils/pencils.component';
 import { ErasersComponent } from './website/components/erasers/erasers.component';
 import { SelectComponent } from './website/components/select/select.component';
+import { AuxDivComponent } from './shared/components/aux-div/aux-div.component';
+import { DynamicHostDirective } from './shared/directives/dynamic-host.directive';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -26,9 +29,12 @@ import { SelectComponent } from './website/components/select/select.component';
     PencilsComponent,
     ErasersComponent,
     SelectComponent,
+    // AuxDivComponent,
+    // DynamicHostDirective,
   ],
-  imports: [BrowserModule, FormsModule],
+  imports: [BrowserModule, FormsModule, SharedModule],
   bootstrap: [AppComponent],
+  // exports: [AuxDivComponent, DynamicHostDirective],
   // providers: [CanvasComponent],
 })
 export class AppModule {}

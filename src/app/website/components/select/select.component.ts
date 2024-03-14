@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({

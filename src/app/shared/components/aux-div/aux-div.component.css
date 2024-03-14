@@ -1,0 +1,10 @@
+#drawing-div {
+  /* background-color: skyblue; */
+  position: absolute;
+
+  border: 3px solid skyblue;
+  /* z-index: -2; */
+}
+#drawing-div:hover {
+  cursor: crosshair;
+}

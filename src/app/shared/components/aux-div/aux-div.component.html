@@ -1,0 +1,8 @@
+<div
+  id="drawing-div"
+  [ngStyle]="{ width: width, height: height, top: top, left: left }"
+  (mousemove)="resizeDiv($event)"
+  (mouseup)="deleteComponent()"
+></div>
+
+<!-- <div id="drawing-div" (mousemove)="resizeDiv($event)"></div> -->

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PropertiesService } from '../../shared/services/properties.service';
+import { PropertiesService } from '../../../shared/services/properties.service';
 
 @Component({
   selector: 'app-status',

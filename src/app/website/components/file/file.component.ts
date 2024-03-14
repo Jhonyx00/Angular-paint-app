@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { PropertiesService } from '../../shared/services/properties.service';
-import { SelectedTool } from '../../shared/interfaces/selected-tool.interface';
+import { PropertiesService } from '../../../shared/services/properties.service';
+import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
