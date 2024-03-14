@@ -293,10 +293,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       shapeType: 'Line',
       color: this.color,
       points: this.points,
-      x: 0,
-      y: 0,
-      w: 0,
-      h: 0,
+      x: this.points[0].x,
+      y: this.points[0].y,
+      w: this.points[this.points.length - 1].x,
+      h: this.points[this.points.length - 1].y,
     };
   }
 
@@ -416,8 +416,26 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
   //MOVE A SHAPE
   private moveShape(event: MouseEvent, shape: Ellipse | Rectangle | Line) {
-    shape.x = event.offsetX - this.XY.x;
-    shape.y = event.offsetY - this.XY.y;
+    //SET CONDITIONS FOR EACH SHAPE
+    if (shape.shapeType === 'Line') {
+      const line = shape as Line;
+
+      console.log('Shape', line);
+
+      // line.points[0].x = event.offsetX - this.XY.x;
+      // line.points[0].y = event.offsetY - this.XY.y;
+
+      line.points[10].x = event.offsetX;
+      line.points[10].y = event.offsetY;
+
+      // for (let x = 0; x < line.points.length; x++) {
+      //   line.points[x].x = event.offsetX - this.XY.x;
+      //   line.points[x].y = event.offsetY - this.XY.y;
+      // }
+    } else {
+      shape.x = event.offsetX - this.XY.x;
+      shape.y = event.offsetY - this.XY.y;
+    }
 
     this.paintAllShapes();
   }
