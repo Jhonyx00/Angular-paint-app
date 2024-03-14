@@ -129,7 +129,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.initColor();
     this.initTool();
+    this.initShape();
     // this.initFileOption();
+  }
+  private initShape() {
+    this.drawingStatusService.anchoActual.subscribe((currentShape) => {
+      this.objectProps = currentShape;
+      console.log(this.objectProps);
+    });
   }
 
   ///                     AFTER VIEW INIT FUNCTIONS
@@ -217,6 +224,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseUp() {
+    console.log('mouse soltado/////');
+
     this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
@@ -228,7 +237,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         this.shapeList.push(this.lineDimensions);
         break;
       case 'Rectangle':
-        this.shapeList.push(this.rectangleDimensions);
+        this.drawRectangle(this.objectProps);
+        //this.shapeList.push(this.rectangleDimensions);
         break;
       case 'Ellipse':
         this.shapeList.push(this.ellipseDimensions);
@@ -399,21 +409,34 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   // }
 
   //1
-  private drawRectangle(event: MouseEvent) {
+  private drawRectangle(shapeObject: ObjectProperties) {
     this.ctx.fillStyle = this.color;
-    const w = event.offsetX - this.x;
-    const h = event.offsetY - this.y;
-    this.ctx.fillRect(this.x, this.y, w, h);
+    // const w = event.offsetX - this.x;
+    // const h = event.offsetY - this.y;
+
+    // this.drawingStatusService.anchoActual.subscribe((currentShape) => {
+    //   console.log('rectangulito', currentShape);
+    // });
+
+    console.log('Shape object', shapeObject);
+
+    this.ctx.fillRect(
+      parseFloat(shapeObject.left),
+      parseFloat(shapeObject.top),
+      parseFloat(shapeObject.width),
+      parseFloat(shapeObject.height)
+    );
+
     //SI SE HACE LO DE LA LINEA 129 PODEMOS REMOVER ESTE CODIGO PARA DIBUJAR SOLO UN RECTANGULO
     //Rectangle object
-    this.rectangleDimensions = {
-      shapeType: 'Rectangle',
-      x: this.x,
-      y: this.y,
-      w: w,
-      h: h,
-      color: this.color,
-    };
+    // this.rectangleDimensions = {
+    //   shapeType: 'Rectangle',
+    //   x: this.x,
+    //   y: this.y,
+    //   w: w,
+    //   h: h,
+    //   color: this.color,
+    // };
   }
 
   //2
@@ -549,6 +572,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     window.URL.revokeObjectURL(downloadLink.href);
   }
 
+  //    DINAMIC COMPONENT
   @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
   public dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;

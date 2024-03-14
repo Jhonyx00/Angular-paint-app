@@ -1,9 +1,7 @@
 #drawing-div {
-  /* background-color: skyblue; */
   position: absolute;
 
-  border: 3px solid skyblue;
-  /* z-index: -2; */
+  /* border: 3px solid skyblue; */
 }
 #drawing-div:hover {
   cursor: crosshair;
