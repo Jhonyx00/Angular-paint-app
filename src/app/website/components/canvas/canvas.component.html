@@ -1,21 +1,15 @@
 <div class="canvas-container">
   <ng-template DynamicDiv></ng-template>
 
-  <canvas
-    #canvas
-    [width]="width"
-    [height]="height"
+  <canvas #canvas [width]="width" [height]="height"> </canvas>
+
+  <div
+    class="canvas-shield"
     (mousemove)="mouseMove($event)"
     (mousedown)="mouseDown($event)"
     (mouseup)="mouseUp()"
     (mouseleave)="mouseLeave()"
     (mouseenter)="mouseEnter()"
     [style.cursor]="toolName == 'Move' ? 'move' : 'crosshair'"
-    (touchstart)="touchDown($event)"
-  >
-  </canvas>
-
-  <!-- <app-aux-div [ngStyle]="{ color: 'red' }"></app-aux-div> -->
-
-  <!-- <div id="drawing-div" (mousemove)="resizeDiv($event)"></div> -->
+  ></div>
 </div>

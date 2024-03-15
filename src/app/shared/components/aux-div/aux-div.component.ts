@@ -51,16 +51,14 @@ export class AuxDivComponent implements OnInit {
   public left = '';
 
   deleteComponent() {
-    console.log('soltaste el componente');
-
+    //console.log('soltaste el componente');
     this.canvasComponent.deleteComponent();
   }
-  resizeDiv(event: MouseEvent) {
-    if (this.isDrawing) {
-      console.log('Redimensionando');
-
-      this.width = event.offsetX + 'px';
-      this.height = event.offsetY + 'px';
-    }
-  }
+  // resizeDiv(event: MouseEvent) {
+  //   if (this.isDrawing) {
+  //     //console.log('Redimensionando');
+  //     // this.width = event.offsetX + 'px';
+  //     // this.height = event.offsetY + 'px';
+  //   }
+  // }
 }

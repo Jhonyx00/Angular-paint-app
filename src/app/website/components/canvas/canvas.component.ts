@@ -135,7 +135,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private initShape() {
     this.drawingStatusService.anchoActual.subscribe((currentShape) => {
       this.objectProps = currentShape;
-      console.log(this.objectProps);
+      //console.log(this.objectProps);
     });
   }
 
@@ -166,19 +166,23 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
     //press mouse
-    if (this.toolName === 'Move') {
-      this.selectShape(event);
-    } else {
-      this.isDrawing = true;
+    // if (this.toolName === 'Move') {
+    //   this.selectShape(event);
+    // } else {
+    this.isDrawing = true;
 
-      this.drawingStatusService.changeButtonState(true);
-      this.x = event.offsetX;
-      this.y = event.offsetY;
+    this.drawingStatusService.changeButtonState(true);
+    this.x = event.offsetX;
+    this.y = event.offsetY;
+
+    if (this.toolName != 'Line') {
       this.createComponent();
-      console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
-
-      // en vez de lo anterior puedo usar el objeto de tipo Cord
     }
+
+    console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
+
+    // en vez de lo anterior puedo usar el objeto de tipo Cord
+    // }
 
     // console.log('Div reconocido', this.div);
   }
@@ -187,15 +191,15 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // no pintar las figuras si se sibuja una linea,
     // o si se selecciona una figura (esto es por si se quiere colocar un recuadro que contenga a la figura seleccionada)
 
-    if (
-      this.toolName != 'Line' &&
-      this.toolName != 'Move' &&
-      this.toolName != 'Eraser'
-    ) {
-      //this.paintAllShapes();
-    } else if (this.isSelected) {
-      this.moveShape(event, this.selectedShape);
-    }
+    // if (
+    //   this.toolName != 'Line' &&
+    //   this.toolName != 'Move' &&
+    //   this.toolName != 'Eraser'
+    // ) {
+    //   //this.paintAllShapes();
+    // } else if (this.isSelected) {
+    //   this.moveShape(event, this.selectedShape);
+    // }
 
     //si se esta dibujando
     if (this.isDrawing) {
@@ -219,7 +223,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           break;
       }
     }
-    //SET properties to be accesibble from other components
+    //SET properties to be accesibble from status component
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
   }
 
@@ -261,54 +265,53 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.outsideCanvas(true);
   }
 
-  private paintAllShapes() {
-    this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
-      this.shapeList = currentShapeList;
-    });
+  // private paintAllShapes() {
+  //   this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
+  //     this.shapeList = currentShapeList;
+  //   });
 
-    this.ctx.clearRect(0, 0, this.width, this.height);
+  //   this.ctx.clearRect(0, 0, this.width, this.height);
 
-    this.shapeList.forEach((shape) => {
-      switch (shape.shapeType) {
-        case 'Line':
-          const line = shape as Line;
-          this.ctx.strokeStyle = line.color;
-          this.ctx.beginPath();
-          for (let x = 0; x < line.points.length; x++) {
-            this.ctx.lineTo(line.points[x].x, line.points[x].y);
-          }
-          this.ctx.stroke();
-          break;
+  //   this.shapeList.forEach((shape) => {
+  //     switch (shape.shapeType) {
+  //       case 'Line':
+  //         const line = shape as Line;
+  //         this.ctx.strokeStyle = line.color;
+  //         this.ctx.beginPath();
+  //         for (let x = 0; x < line.points.length; x++) {
+  //           this.ctx.lineTo(line.points[x].x, line.points[x].y);
+  //         }
+  //         this.ctx.stroke();
+  //         break;
 
-        case 'Rectangle':
-          const rectangle = shape as Rectangle;
-          this.ctx.fillStyle = rectangle.color;
-          this.ctx.fillRect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
-          break;
+  //       case 'Rectangle':
+  //         const rectangle = shape as Rectangle;
+  //         this.ctx.fillStyle = rectangle.color;
+  //         this.ctx.fillRect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
+  //         break;
 
-        case 'Ellipse':
-          const ellipse = shape as Ellipse;
-          this.ctx.beginPath();
-          // this.ctx.fillStyle = shape.color;
-          this.ctx.fillStyle = ellipse.color;
-          this.ctx.ellipse(
-            ellipse.x,
-            ellipse.y,
-            ellipse.radiusX,
-            ellipse.radiusY,
-            ellipse.rotation,
-            ellipse.startAngle,
-            ellipse.endAngle
-          );
-          this.ctx.fill();
-          // this.ctx.stroke(); no fill
-          break;
-        ///other cases
-        default:
-          break;
-      }
-    });
-  }
+  //       case 'Ellipse':
+  //         const ellipse = shape as Ellipse;
+  //         this.ctx.beginPath();
+  //         // this.ctx.fillStyle = shape.color;
+  //         this.ctx.fillStyle = ellipse.color;
+  //         this.ctx.ellipse(
+  //           ellipse.x,
+  //           ellipse.y,
+  //           ellipse.radiusX,
+  //           ellipse.radiusY,
+  //           ellipse.rotation,
+  //           ellipse.startAngle,
+  //           ellipse.endAngle
+  //         );
+  //         this.ctx.fill();
+  //         break;
+  //       ///other cases
+  //       default:
+  //         break;
+  //     }
+  //   });
+  // }
   ///                     SHAPES
   //0
 
@@ -349,10 +352,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
     const newX = Math.abs(event.offsetX - this.x);
     const newY = Math.abs(event.offsetY - this.y);
+
     // Quadrant 1
     if (w > 0 && h < 0) {
       //console.log('Cuarante 1');
-
       this.drawingStatusService.cambiarAncho({
         top: event.offsetY + 'px',
         left: this.x + 'px',
@@ -363,7 +366,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // Quadrant 2
     else if (w < 0 && h < 0) {
       //console.log('Cuarante 2');
-
       this.drawingStatusService.cambiarAncho({
         top: event.offsetY + 'px',
         left: event.offsetX + 'px',
@@ -374,7 +376,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // Quadrant 3
     else if (w < 0 && h > 0) {
       //console.log('Cuarante 3');
-
       this.drawingStatusService.cambiarAncho({
         top: this.y + 'px',
         left: event.offsetX + 'px',
@@ -385,7 +386,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //Quadrant 4
     else {
       //console.log('Cuarante 4');
-
       this.drawingStatusService.cambiarAncho({
         top: this.y + 'px',
         left: this.x + 'px',
@@ -411,14 +411,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   //1
   private drawRectangle(shapeObject: ObjectProperties) {
     this.ctx.fillStyle = this.color;
-    // const w = event.offsetX - this.x;
-    // const h = event.offsetY - this.y;
-
-    // this.drawingStatusService.anchoActual.subscribe((currentShape) => {
-    //   console.log('rectangulito', currentShape);
-    // });
-
-    console.log('Shape object', shapeObject);
 
     this.ctx.fillRect(
       parseFloat(shapeObject.left),
@@ -426,17 +418,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       parseFloat(shapeObject.width),
       parseFloat(shapeObject.height)
     );
-
-    //SI SE HACE LO DE LA LINEA 129 PODEMOS REMOVER ESTE CODIGO PARA DIBUJAR SOLO UN RECTANGULO
-    //Rectangle object
-    // this.rectangleDimensions = {
-    //   shapeType: 'Rectangle',
-    //   x: this.x,
-    //   y: this.y,
-    //   w: w,
-    //   h: h,
-    //   color: this.color,
-    // };
   }
 
   //2
@@ -580,7 +561,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public createComponent(): void {
     this.componentRef = this.dynamicHost.createComponent(AuxDivComponent);
     this.div = this.componentRef.location.nativeElement as HTMLElement;
-    //console.log('from dynamic', this.div);
   }
 
   public deleteComponent(): void {
