@@ -5,6 +5,7 @@
 
   max-height: 95vh;
   overflow-y: scroll;
+  scrollbar-width: none;
 }
 .toolbar-container span {
   font-size: 12px;

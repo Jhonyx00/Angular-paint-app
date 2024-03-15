@@ -45,4 +45,12 @@ export class PropertiesService {
   setShapeList(shapeList: (Rectangle | Ellipse | Line)[]) {
     this.shapeList.next(shapeList);
   }
+
+  private imagesList = new BehaviorSubject<string[]>([]);
+
+  imagesListObservable = this.imagesList.asObservable();
+
+  setImagesList(imageArray: string[]) {
+    this.imagesList.next(imageArray);
+  }
 }

@@ -39,6 +39,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     top: '',
     left: '',
   };
+
+  public imagesArray: string[] = [];
   // private divInitialPosition: Cord = { x: 0, y: 0 };
   public selectedShape!: Rectangle | Ellipse | Line;
 
@@ -226,7 +228,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseUp() {
-    console.log('mouse soltado/////');
+    // console.log('mouse soltado/////');
     this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
@@ -247,10 +249,15 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         break;
     }
 
-    console.log('Todas las figuras', this.shapeList);
+    // console.log('Todas las figuras', this.shapeList);
 
     this.deleteComponent();
     this.propertiesService.setShapeList(this.shapeList);
+
+    // insert base64 images to array
+    this.imagesArray.push(this.canvas.nativeElement.toDataURL());
+    this.propertiesService.setImagesList(this.imagesArray);
+    console.log('Todas las imagenes', this.imagesArray);
   }
 
   mouseEnter() {

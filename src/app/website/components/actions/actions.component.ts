@@ -12,15 +12,11 @@ import { ToolsService } from '../toolbar/services/tools.service';
 export class ActionsComponent implements OnInit {
   constructor(
     private propertiesService: PropertiesService,
-    private canvasStateService: CanvasStateService,
     private toolsService: ToolsService
   ) {}
 
-  private shapeList = new Array();
-  private shapeList2 = new Array();
-
-  public isUndoDisabled = false;
-  public isRedoDisabled = false;
+  private imagesList = new Array();
+  private imagesList2 = new Array();
 
   public selectedItem = '';
 
@@ -42,8 +38,8 @@ export class ActionsComponent implements OnInit {
   ];
 
   private initShapeList() {
-    this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
-      this.shapeList = currentShapeList;
+    this.propertiesService.imagesListObservable.subscribe((currentList) => {
+      this.imagesList = currentList;
     });
   }
 
@@ -68,20 +64,22 @@ export class ActionsComponent implements OnInit {
 
   undo() {
     //ckeck if it is possible to undo action
-    if (this.shapeList.length > 0) {
-      this.isUndoDisabled = false;
-      this.shapeList2.push(this.shapeList.pop());
+    if (this.imagesList.length > 0) {
+      this.imagesList2.push(this.imagesList.pop());
       //canvas state
-      this.canvasStateService.updateCanvas();
+      // this.canvasStateService.updateCanvas();
     }
+
+    console.log('lista de undo', this.imagesList);
   }
 
   redo() {
-    if (this.shapeList2.length > 0) {
-      this.isRedoDisabled = false;
-      this.shapeList.push(this.shapeList2.pop());
+    if (this.imagesList2.length > 0) {
+      this.imagesList.push(this.imagesList2.pop());
       //canvas state
-      this.canvasStateService.updateCanvas();
+      // this.canvasStateService.updateCanvas();
     }
+
+    console.log('lista de redo', this.imagesList);
   }
 }
