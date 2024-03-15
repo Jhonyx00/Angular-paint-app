@@ -130,7 +130,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ///                     MOUSE EVENTS
-  mouseDown(event: MouseEvent): void {
+  public mouseDown(event: MouseEvent): void {
     this.isDrawing = true;
 
     this.drawingStatusService.changeButtonState(true);
@@ -147,7 +147,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
   }
 
-  mouseMove(event: MouseEvent): void {
+  public mouseMove(event: MouseEvent): void {
     //si se esta dibujando
     if (this.isDrawing) {
       //SHAPE SELECTION
@@ -156,7 +156,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           this.drawLine(event);
           break;
         case 'Rectangle':
-          // this.drawRectangle(event);
           this.drawRectangleDiv(event);
           break;
         case 'Ellipse':
@@ -174,7 +173,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
   }
 
-  mouseUp(): void {
+  public mouseUp(): void {
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
 
@@ -197,18 +196,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //this.canvasStateService.setImagesList(this.imagesArray);
   }
 
-  mouseEnter(): void {
+  public mouseEnter(): void {
     this.propertiesService.outsideCanvas(false);
   }
 
-  mouseLeave(): void {
+  public mouseLeave(): void {
     this.propertiesService.outsideCanvas(true);
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
   private setCurrentCanvasImage(): void {
     this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
-    console.log('IMAGEN A MOSTRAR', this.currentCanvasImage.src);
     this.currentCanvasImage.onload = () => {
       this.ctx.clearRect(
         0,
@@ -221,14 +219,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ///                     SHAPES
-  //0
 
   private drawLine(event: MouseEvent): void {
     this.ctx.strokeStyle = this.color;
 
+    //these two must be public and its value can change with toolbar buttons
     this.ctx.lineWidth = 3;
-
     this.ctx.lineCap = 'round';
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.x, this.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
@@ -285,7 +283,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
   }
 
-  //1
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
   private drawRectangle(shapeObject: DynamicComponentProperties): void {
     this.ctx.fillStyle = this.color;
@@ -298,7 +295,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     );
   }
 
-  //2
   private drawEllipse(event: MouseEvent) {
     this.ctx.fillStyle = this.color;
     const relativeX = event.offsetX - this.x;
