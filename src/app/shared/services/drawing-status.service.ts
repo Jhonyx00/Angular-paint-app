@@ -19,16 +19,16 @@ export class DrawingStatusService {
 
   ///// colocar ancho dinámico
 
-  private ancho = new BehaviorSubject<ObjectProperties>({
+  private dimension = new BehaviorSubject<ObjectProperties>({
     top: '',
     left: '',
     width: '',
     height: '',
   });
 
-  anchoActual = this.ancho.asObservable();
+  currentDimension = this.dimension.asObservable();
 
-  cambiarAncho(ancho: ObjectProperties) {
-    this.ancho.next(ancho);
+  setDimensions(newDimension: ObjectProperties) {
+    this.dimension.next(newDimension);
   }
 }

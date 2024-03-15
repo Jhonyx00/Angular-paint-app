@@ -21,7 +21,7 @@ export class AuxDivComponent implements OnInit {
   }
 
   private initShapeDimensions() {
-    this.drawingStateService.anchoActual.subscribe((current) => {
+    this.drawingStateService.currentDimension.subscribe((current) => {
       this.width = current.width;
       this.height = current.height;
       this.top = current.top;

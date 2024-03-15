@@ -133,7 +133,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // this.initFileOption();
   }
   private initShape() {
-    this.drawingStatusService.anchoActual.subscribe((currentShape) => {
+    this.drawingStatusService.currentDimension.subscribe((currentShape) => {
       this.objectProps = currentShape;
       //console.log(this.objectProps);
     });
@@ -175,16 +175,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.x = event.offsetX;
     this.y = event.offsetY;
 
-    if (this.toolName != 'Line') {
+    if (this.toolName != 'Line' && this.toolName != 'Eraser') {
+      //colocar las condiciones que no sean figuras
+
+      //puesto que solo las figuras ocupan el componente dinamico
       this.createComponent();
     }
 
     console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
-
-    // en vez de lo anterior puedo usar el objeto de tipo Cord
-    // }
-
-    // console.log('Div reconocido', this.div);
   }
 
   mouseMove(event: MouseEvent) {
@@ -229,11 +227,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   mouseUp() {
     console.log('mouse soltado/////');
-
     this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
-
     this.points = []; //reset points
 
     switch (this.toolName) {
@@ -356,7 +352,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // Quadrant 1
     if (w > 0 && h < 0) {
       //console.log('Cuarante 1');
-      this.drawingStatusService.cambiarAncho({
+      this.drawingStatusService.setDimensions({
         top: event.offsetY + 'px',
         left: this.x + 'px',
         width: newX + 'px',
@@ -366,7 +362,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // Quadrant 2
     else if (w < 0 && h < 0) {
       //console.log('Cuarante 2');
-      this.drawingStatusService.cambiarAncho({
+      this.drawingStatusService.setDimensions({
         top: event.offsetY + 'px',
         left: event.offsetX + 'px',
         width: newX + 'px',
@@ -376,7 +372,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // Quadrant 3
     else if (w < 0 && h > 0) {
       //console.log('Cuarante 3');
-      this.drawingStatusService.cambiarAncho({
+      this.drawingStatusService.setDimensions({
         top: this.y + 'px',
         left: event.offsetX + 'px',
         width: newX + 'px',
@@ -386,7 +382,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //Quadrant 4
     else {
       //console.log('Cuarante 4');
-      this.drawingStatusService.cambiarAncho({
+      this.drawingStatusService.setDimensions({
         top: this.y + 'px',
         left: this.x + 'px',
         width: newX + 'px',
@@ -394,19 +390,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       });
     }
   }
-
-  // resizeDiv(event: MouseEvent) {
-  //   console.log('estas dentro');
-
-  //   if (this.isDrawing) {
-  //     this.div.style.width = event.offsetX + 'px';
-  //     this.div.style.height = event.offsetY + 'px';
-  //   }
-  //   // else {
-  //   //   console.log('no');
-  //   //   this.deleteComponent();
-  //   // }
-  // }
 
   //1
   private drawRectangle(shapeObject: ObjectProperties) {
