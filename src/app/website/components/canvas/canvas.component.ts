@@ -21,12 +21,6 @@ import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.in
   styleUrls: ['./canvas.component.css'],
 })
 export class CanvasComponent implements AfterViewInit, OnInit {
-  touchDown(event: TouchEvent) {
-    console.log(
-      `tocado en x:${event.touches[0].clientX}, y:${event.touches[0].clientY}`
-    );
-  }
-
   constructor(
     private propertiesService: PropertiesService,
     private canvasStateService: CanvasStateService,
@@ -35,12 +29,17 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ) {}
 
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
+  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
 
   ///////// VARS
+  //DYNAMIC COMPONENT
+  private dynamicHost!: ViewContainerRef;
+  private componentRef!: ComponentRef<AuxDivComponent>;
 
-  private div!: any;
+  private div: any;
 
   private imagesArray: string[] = [];
+
   private objectProps: DynamicComponentProperties = {
     width: '',
     height: '',
@@ -70,7 +69,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     // this.initCurrentDrawing();
     //set images when redo or undo button clicked
   }
-  private initCanvasDimensions() {
+  private initCanvasDimensions(): void {
     this.canvas.nativeElement.width = this.canvasDimensions.CanvasWidth;
     this.canvas.nativeElement.height = this.canvasDimensions.CanvasHeight;
     this.propertiesService.canvasSize(this.canvasDimensions);
@@ -89,14 +88,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ///                     AFTER VIEW INIT FUNCTIONS
-  private initColor() {
+  private initColor(): void {
     this.toolsService.color.subscribe((currentColor) => {
       this.color = currentColor;
       this.ctx.fillStyle = this.color;
     });
   }
 
-  private initTool() {
+  private initTool(): void {
     this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
       this.toolName = currentTool;
 
@@ -107,13 +106,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
-  private initAuxDynamicComponent() {
+  private initAuxDynamicComponent(): void {
     this.drawingStatusService.currentDimension.subscribe((currentShape) => {
       this.objectProps = currentShape;
     });
   }
 
-  private updateCanvasValue() {
+  private updateCanvasValue(): void {
     this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesArray = currentList;
 
@@ -131,7 +130,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ///                     MOUSE EVENTS
-  mouseDown(event: MouseEvent) {
+  mouseDown(event: MouseEvent): void {
     this.isDrawing = true;
 
     this.drawingStatusService.changeButtonState(true);
@@ -148,7 +147,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
   }
 
-  mouseMove(event: MouseEvent) {
+  mouseMove(event: MouseEvent): void {
     //si se esta dibujando
     if (this.isDrawing) {
       //SHAPE SELECTION
@@ -175,7 +174,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
   }
 
-  mouseUp() {
+  mouseUp(): void {
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
 
@@ -198,16 +197,16 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //this.canvasStateService.setImagesList(this.imagesArray);
   }
 
-  mouseEnter() {
+  mouseEnter(): void {
     this.propertiesService.outsideCanvas(false);
   }
 
-  mouseLeave() {
+  mouseLeave(): void {
     this.propertiesService.outsideCanvas(true);
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
-  private setCurrentCanvasImage() {
+  private setCurrentCanvasImage(): void {
     this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
     console.log('IMAGEN A MOSTRAR', this.currentCanvasImage.src);
     this.currentCanvasImage.onload = () => {
@@ -224,7 +223,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ///                     SHAPES
   //0
 
-  private drawLine(event: MouseEvent) {
+  private drawLine(event: MouseEvent): void {
     this.ctx.strokeStyle = this.color;
 
     this.ctx.lineWidth = 3;
@@ -238,59 +237,57 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.y = event.offsetY;
   }
 
-  private drawRectangleDiv(event: MouseEvent) {
+  private drawRectangleDiv(event: MouseEvent): void {
     const w = event.offsetX - this.x;
     const h = event.offsetY - this.y;
-
-    this.div.style.borderColor = this.color;
 
     const newX = Math.abs(event.offsetX - this.x);
     const newY = Math.abs(event.offsetY - this.y);
 
     // Quadrant 1
     if (w > 0 && h < 0) {
-      //console.log('Cuarante 1');
-      this.drawingStatusService.setDimensions({
+      this.objectProps = {
         top: event.offsetY + 'px',
         left: this.x + 'px',
         width: newX + 'px',
         height: newY + 'px',
-      });
+      };
     }
     // Quadrant 2
     else if (w < 0 && h < 0) {
-      //console.log('Cuarante 2');
-      this.drawingStatusService.setDimensions({
+      this.objectProps = {
         top: event.offsetY + 'px',
         left: event.offsetX + 'px',
         width: newX + 'px',
         height: newY + 'px',
-      });
+      };
     }
     // Quadrant 3
     else if (w < 0 && h > 0) {
       //console.log('Cuarante 3');
-      this.drawingStatusService.setDimensions({
+      this.objectProps = {
         top: this.y + 'px',
         left: event.offsetX + 'px',
         width: newX + 'px',
         height: newY + 'px',
-      });
+      };
     }
     //Quadrant 4
     else {
-      //console.log('Cuarante 4');
-      this.drawingStatusService.setDimensions({
+      this.objectProps = {
         top: this.y + 'px',
         left: this.x + 'px',
         width: newX + 'px',
         height: newY + 'px',
-      });
+      };
     }
+
+    this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
   }
 
   //1
-  private drawRectangle(shapeObject: DynamicComponentProperties) {
+  //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
+  private drawRectangle(shapeObject: DynamicComponentProperties): void {
     this.ctx.fillStyle = this.color;
 
     this.ctx.fillRect(
@@ -346,13 +343,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   ///                     ERASE
 
-  private erase(event: MouseEvent) {
+  private erase(event: MouseEvent): void {
     this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
     //console.log(event.offsetX, event.offsetY);
   }
 
   ///                     FILE
-  private saveWork() {
+  private saveWork(): void {
     const base64ImageData = this.canvas.nativeElement.toDataURL();
     let imageName = prompt('Enter image name');
     const downloadLink = document.createElement('a');
@@ -362,17 +359,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     window.URL.revokeObjectURL(downloadLink.href);
   }
 
-  //    DINAMIC COMPONENT
-  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
-  public dynamicHost!: ViewContainerRef;
-  private componentRef!: ComponentRef<AuxDivComponent>;
+  //    DINAMIC COMPONENT FUNCTIONS
 
-  public createComponent(): void {
+  private createComponent(): void {
     this.componentRef = this.dynamicHost.createComponent(AuxDivComponent);
     this.div = this.componentRef.location.nativeElement as HTMLElement;
   }
 
-  public deleteComponent(): void {
+  private deleteComponent(): void {
     if (this.componentRef) {
       this.componentRef.destroy();
     }

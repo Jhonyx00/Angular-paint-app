@@ -26,7 +26,7 @@ export class DrawingStatusService {
 
   currentDimension = this.dimension.asObservable();
 
-  setDimensions(newDimension: DynamicComponentProperties) {
+  setDynamicComponentDimensions(newDimension: DynamicComponentProperties) {
     this.dimension.next(newDimension);
   }
 }

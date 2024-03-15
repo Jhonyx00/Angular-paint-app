@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,12 +13,4 @@ export class CanvasStateService {
   setImagesList(imageArray: string[]) {
     this.imagesList.next(imageArray);
   }
-
-  ////
-
-  private updateCanvass = new Subject<void>();
-  updateCanvasValue = this.updateCanvass.asObservable();
-  updateCanvas() {
-    this.updateCanvass.next();
-  } ///////////////////////////////////
 }
