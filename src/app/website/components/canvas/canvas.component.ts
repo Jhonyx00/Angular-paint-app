@@ -50,11 +50,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     private toolsService: ToolsService,
     private drawingStatusService: DrawingStatusService
   ) {}
+
+  ////ON INIT
   ngOnInit(): void {
     this.initCanvasDimensions();
-    this.updateCanvasValue();
+    // this.initCurrentDrawing();
+    //set images when redo or undo button clicked
   }
-
   private initCanvasDimensions() {
     this.propertiesService.canvasSize({
       width: this.width,
@@ -62,15 +64,59 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     });
   }
 
-  private updateCanvasValue() {
-    this.canvasStateService.updateCanvasValue.subscribe(() => {
-      //this.paintAllShapes();
+  ////AFTER INIT
+  ngAfterViewInit(): void {
+    //when canvas is absolutely available
+    this.ctx = this.canvas.nativeElement.getContext('2d');
+    this.initColor();
+    this.initTool();
+    this.initAuxDynamicComponent();
+
+    //new
+    this.updateCanvasValue();
+  }
+
+  ///                     AFTER VIEW INIT FUNCTIONS
+  private initColor() {
+    this.toolsService.color.subscribe((currentColor) => {
+      this.color = currentColor;
+      this.ctx.fillStyle = this.color;
     });
+  }
+
+  private initTool() {
+    this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
+      this.toolName = currentTool;
+
+      if (this.toolName === 'Save') {
+        this.saveWork();
+        console.log(this.toolName);
+      }
+    });
+  }
+
+  private initAuxDynamicComponent() {
+    this.drawingStatusService.currentDimension.subscribe((currentShape) => {
+      this.objectProps = currentShape;
+    });
+  }
+
+  private updateCanvasValue() {
+    this.canvasStateService.imagesListObservable.subscribe((currentList) => {
+      this.imagesArray = currentList;
+
+      //console.log('lista actual de imagenes: ', this.imagesArray);
+
+      this.setCurrentImage(this.imagesArray);
+    });
+    // this.canvasStateService.updateCanvasValue.subscribe(() => {
+    //   this.setCurrentImage();
+    // });
   }
 
   width: number = 800;
   height: number = 500;
-
+  private currentCanvasImage = new Image();
   private color: string = '#000000';
   // private option = '';
 
@@ -126,44 +172,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     shapeType: '',
   };
 
-  ngAfterViewInit(): void {
-    //when canvas is absolutely available
-    this.ctx = this.canvas.nativeElement.getContext('2d');
-    this.initColor();
-    this.initTool();
-    this.initShape();
-    // this.initFileOption();
-  }
-  private initShape() {
-    this.drawingStatusService.currentDimension.subscribe((currentShape) => {
-      this.objectProps = currentShape;
-      //console.log(this.objectProps);
-    });
-  }
-
-  ///                     AFTER VIEW INIT FUNCTIONS
-  private initColor() {
-    this.toolsService.color.subscribe((currentColor) => {
-      this.color = currentColor;
-      this.ctx.fillStyle = this.color;
-    });
-  }
-
-  // private initTool() {
-  //   this.toolsService.selectedShapeValue.subscribe((currentTool) => {
-  //   });
-  // }
-  private initTool() {
-    this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
-      this.toolName = currentTool;
-
-      if (this.toolName === 'Save') {
-        this.saveWork();
-        console.log(this.toolName);
-      }
-    });
-  }
-
   public XY: Cord = { x: 0, y: 0 };
   ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
@@ -184,7 +192,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       this.createComponent();
     }
 
-    console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
+    //console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
   }
 
   mouseMove(event: MouseEvent) {
@@ -228,7 +236,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseUp() {
-    // console.log('mouse soltado/////');
+    //console.log('images', this.imagesArray);
+
     this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
@@ -248,16 +257,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       default:
         break;
     }
-
-    // console.log('Todas las figuras', this.shapeList);
-
     this.deleteComponent();
-    this.propertiesService.setShapeList(this.shapeList);
-
-    // insert base64 images to array
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
-    this.propertiesService.setImagesList(this.imagesArray);
-    console.log('Todas las imagenes', this.imagesArray);
+    //this.canvasStateService.setImagesList(this.imagesArray);
   }
 
   mouseEnter() {
@@ -268,60 +270,30 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.propertiesService.outsideCanvas(true);
   }
 
-  // private paintAllShapes() {
-  //   this.propertiesService.shapeListValue.subscribe((currentShapeList) => {
-  //     this.shapeList = currentShapeList;
-  //   });
+  //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
+  private setCurrentImage(images: string[]) {
+    if (images.length > 0) {
+      this.currentCanvasImage.src =
+        this.imagesArray[this.imagesArray.length - 1];
 
-  //   this.ctx.clearRect(0, 0, this.width, this.height);
+      this.currentCanvasImage.onload = () => {
+        console.log('IMAGEN A MOSTRAR', this.currentCanvasImage.src);
+        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.drawImage(this.currentCanvasImage, 0, 0);
+      };
+    } else {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+      console.log('imagen indefinida');
+    }
+  }
 
-  //   this.shapeList.forEach((shape) => {
-  //     switch (shape.shapeType) {
-  //       case 'Line':
-  //         const line = shape as Line;
-  //         this.ctx.strokeStyle = line.color;
-  //         this.ctx.beginPath();
-  //         for (let x = 0; x < line.points.length; x++) {
-  //           this.ctx.lineTo(line.points[x].x, line.points[x].y);
-  //         }
-  //         this.ctx.stroke();
-  //         break;
-
-  //       case 'Rectangle':
-  //         const rectangle = shape as Rectangle;
-  //         this.ctx.fillStyle = rectangle.color;
-  //         this.ctx.fillRect(rectangle.x, rectangle.y, rectangle.w, rectangle.h);
-  //         break;
-
-  //       case 'Ellipse':
-  //         const ellipse = shape as Ellipse;
-  //         this.ctx.beginPath();
-  //         // this.ctx.fillStyle = shape.color;
-  //         this.ctx.fillStyle = ellipse.color;
-  //         this.ctx.ellipse(
-  //           ellipse.x,
-  //           ellipse.y,
-  //           ellipse.radiusX,
-  //           ellipse.radiusY,
-  //           ellipse.rotation,
-  //           ellipse.startAngle,
-  //           ellipse.endAngle
-  //         );
-  //         this.ctx.fill();
-  //         break;
-  //       ///other cases
-  //       default:
-  //         break;
-  //     }
-  //   });
-  // }
   ///                     SHAPES
   //0
 
   private drawLine(event: MouseEvent) {
     this.ctx.strokeStyle = this.color;
 
-    this.ctx.lineWidth = 5;
+    this.ctx.lineWidth = 3;
 
     this.ctx.lineCap = 'round';
     this.ctx.beginPath();
@@ -330,21 +302,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.ctx.stroke();
     this.x = event.offsetX;
     this.y = event.offsetY;
-
-    this.points.push({
-      x: this.x,
-      y: this.y,
-    });
-
-    this.lineDimensions = {
-      shapeType: 'Line',
-      color: this.color,
-      points: this.points,
-      x: this.points[0].x,
-      y: this.points[0].y,
-      w: this.points[this.points.length - 1].x,
-      h: this.points[this.points.length - 1].y,
-    };
   }
 
   private drawRectangleDiv(event: MouseEvent) {
@@ -451,21 +408,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       endAngle
     );
     this.ctx.fill();
-
-    //Oval object
-    this.ellipseDimensions = {
-      shapeType: 'Ellipse',
-      x: newX,
-      y: newY,
-      w: Math.abs(event.offsetX - this.x),
-      h: Math.abs(event.offsetY - this.y),
-      radiusX: Math.abs(event.offsetX - this.x) / 2,
-      radiusY: Math.abs(event.offsetY - this.y) / 2,
-      rotation: 0,
-      startAngle: 0,
-      endAngle: endAngle,
-      color: this.color,
-    };
   }
 
   ///                     ERASE

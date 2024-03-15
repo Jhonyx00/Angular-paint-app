@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PropertiesService } from '../../../shared/services/properties.service';
 import { CanvasStateService } from '../../../shared/services/canvas-state.service';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import {
+  SelectedAction,
+  SelectedTool,
+} from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -11,8 +14,8 @@ import { ToolsService } from '../toolbar/services/tools.service';
 })
 export class ActionsComponent implements OnInit {
   constructor(
-    private propertiesService: PropertiesService,
-    private toolsService: ToolsService
+    private toolsService: ToolsService,
+    private canvasStateService: CanvasStateService
   ) {}
 
   private imagesList = new Array();
@@ -20,25 +23,28 @@ export class ActionsComponent implements OnInit {
 
   public selectedItem = '';
 
+  private isRedoDisabled = false;
+  private isUndoDisabled = false;
+
   ngOnInit(): void {
     this.initShapeList();
   }
 
-  public srcImages: SelectedTool[] = [
+  public srcImages: SelectedAction[] = [
     {
-      id: 1,
+      isDisabled: this.isUndoDisabled,
       toolName: 'Undo',
       imageURL: '../../../../assets/svg/undo.svg',
     },
     {
-      id: 2,
+      isDisabled: this.isRedoDisabled,
       toolName: 'Redo',
       imageURL: '../../../../assets/svg/redo.svg',
     },
   ];
 
   private initShapeList() {
-    this.propertiesService.imagesListObservable.subscribe((currentList) => {
+    this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesList = currentList;
     });
   }
@@ -63,23 +69,24 @@ export class ActionsComponent implements OnInit {
   }
 
   undo() {
-    //ckeck if it is possible to undo action
-    if (this.imagesList.length > 0) {
-      this.imagesList2.push(this.imagesList.pop());
-      //canvas state
-      // this.canvasStateService.updateCanvas();
-    }
-
-    console.log('lista de undo', this.imagesList);
+    // if normal array contains images, then it is porible to undo an action
+    this.imagesList.length > 0
+      ? (this.imagesList2.push(this.imagesList.pop()),
+        (this.isUndoDisabled = false),
+        console.log('lista de undo', this.imagesList),
+        this.canvasStateService.setImagesList(this.imagesList))
+      : (this.isUndoDisabled = true);
   }
 
   redo() {
-    if (this.imagesList2.length > 0) {
-      this.imagesList.push(this.imagesList2.pop());
-      //canvas state
-      // this.canvasStateService.updateCanvas();
-    }
-
-    console.log('lista de redo', this.imagesList);
+    // if aux array contains images, then it is porible to redo an action
+    this.imagesList2.length > 0
+      ? (this.imagesList.push(this.imagesList2.pop()),
+        (this.isRedoDisabled = false),
+        console.log('lista de redo', this.imagesList),
+        this.canvasStateService.setImagesList(this.imagesList))
+      : (this.isRedoDisabled = true);
   }
+
+  //this.canvasStateService.setImagesList(this.imagesList)
 }

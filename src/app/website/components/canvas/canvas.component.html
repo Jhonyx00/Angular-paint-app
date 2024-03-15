@@ -1,7 +1,7 @@
 <div class="canvas-container">
   <ng-template DynamicDiv></ng-template>
 
-  <canvas #canvas [width]="width" [height]="height"></canvas>
+  <canvas #canvas [width]="width" [height]="height" id="canvas"></canvas>
 
   <div
     class="canvas-shield"
@@ -13,3 +13,5 @@
     [style.cursor]="toolName == 'Move' ? 'move' : 'crosshair'"
   ></div>
 </div>
+
+<img src="" alt="" id="imagencilla" />

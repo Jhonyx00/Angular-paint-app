@@ -17,8 +17,6 @@ export class DrawingStatusService {
     this.isDrawing.next(isDrawing);
   }
 
-  ///// colocar ancho dinámico
-
   private dimension = new BehaviorSubject<ObjectProperties>({
     top: '',
     left: '',
