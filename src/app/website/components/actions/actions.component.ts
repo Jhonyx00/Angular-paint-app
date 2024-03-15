@@ -19,9 +19,9 @@ export class ActionsComponent implements OnInit {
   ) {}
 
   private imagesList = new Array();
-  private imagesList2 = new Array();
+  private imagesListAux = new Array();
 
-  public selectedItem = '';
+  private selectedItem = '';
 
   private isRedoDisabled = false;
   private isUndoDisabled = false;
@@ -43,13 +43,13 @@ export class ActionsComponent implements OnInit {
     },
   ];
 
-  private initCanvasImageList() {
+  private initCanvasImageList(): void {
     this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesList = currentList;
     });
   }
 
-  selectAction(item: string) {
+  public selectAction(item: string): void {
     this.selectedItem = item;
     this.toolsService.setSelectedButton(this.selectedItem);
     console.log('action: ', this.selectedItem);
@@ -68,25 +68,27 @@ export class ActionsComponent implements OnInit {
     }
   }
 
-  undo() {
+  private undo(): void {
     // if normal array contains images, then it is porible to undo an action
-    this.imagesList.length > 0
-      ? (this.imagesList2.push(this.imagesList.pop()),
-        (this.isUndoDisabled = false),
-        console.log('lista de undo', this.imagesList),
-        this.canvasStateService.setImagesList(this.imagesList))
-      : (this.isUndoDisabled = true);
+    if (this.imagesList.length > 0) {
+      this.imagesListAux.push(this.imagesList.pop());
+      this.isUndoDisabled = false;
+      console.log('lista de undo', this.imagesList);
+      this.canvasStateService.setImagesList(this.imagesList);
+    } else {
+      this.isUndoDisabled = true;
+    }
   }
 
-  redo() {
+  private redo(): void {
     // if aux array contains images, then it is porible to redo an action
-    this.imagesList2.length > 0
-      ? (this.imagesList.push(this.imagesList2.pop()),
-        (this.isRedoDisabled = false),
-        console.log('lista de redo', this.imagesList),
-        this.canvasStateService.setImagesList(this.imagesList))
-      : (this.isRedoDisabled = true);
+    if (this.imagesListAux.length > 0) {
+      this.imagesList.push(this.imagesListAux.pop());
+      this.isRedoDisabled = false;
+      console.log('lista de redo', this.imagesList);
+      this.canvasStateService.setImagesList(this.imagesList);
+    } else {
+      this.isRedoDisabled = true;
+    }
   }
-
-  //this.canvasStateService.setImagesList(this.imagesList)
 }
