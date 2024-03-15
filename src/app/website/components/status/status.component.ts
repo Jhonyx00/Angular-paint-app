@@ -9,11 +9,11 @@ import { PropertiesService } from '../../../shared/services/properties.service';
 export class StatusComponent implements OnInit {
   constructor(private propertiesService: PropertiesService) {}
 
-  x: number = 0;
-  y: number = 0;
+  public x: number = 0;
+  public y: number = 0;
 
-  width: number = 0;
-  height: number = 0;
+  CanvasWidth: number = 0;
+  CanvasHeight: number = 0;
 
   isOutside: boolean = false;
 
@@ -38,8 +38,8 @@ export class StatusComponent implements OnInit {
 
   private displayCanvasDimensions() {
     this.propertiesService.canvasSizeValue.subscribe((currentSize) => {
-      this.width = currentSize.width;
-      this.height = currentSize.height;
+      this.CanvasWidth = currentSize.CanvasWidth;
+      this.CanvasHeight = currentSize.CanvasHeight;
     });
   }
 }

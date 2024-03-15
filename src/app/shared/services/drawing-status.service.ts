@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Cord } from '../interfaces/cord.interface';
-import { ObjectProperties } from '../interfaces/object-properties';
+import { DynamicComponentProperties } from '../interfaces/object-properties';
 
 @Injectable({
   providedIn: 'root',
@@ -17,7 +17,7 @@ export class DrawingStatusService {
     this.isDrawing.next(isDrawing);
   }
 
-  private dimension = new BehaviorSubject<ObjectProperties>({
+  private dimension = new BehaviorSubject<DynamicComponentProperties>({
     top: '',
     left: '',
     width: '',
@@ -26,7 +26,7 @@ export class DrawingStatusService {
 
   currentDimension = this.dimension.asObservable();
 
-  setDimensions(newDimension: ObjectProperties) {
+  setDimensions(newDimension: DynamicComponentProperties) {
     this.dimension.next(newDimension);
   }
 }

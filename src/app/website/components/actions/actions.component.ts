@@ -27,7 +27,7 @@ export class ActionsComponent implements OnInit {
   private isUndoDisabled = false;
 
   ngOnInit(): void {
-    this.initShapeList();
+    this.initCanvasImageList();
   }
 
   public srcImages: SelectedAction[] = [
@@ -43,7 +43,7 @@ export class ActionsComponent implements OnInit {
     },
   ];
 
-  private initShapeList() {
+  private initCanvasImageList() {
     this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesList = currentList;
     });

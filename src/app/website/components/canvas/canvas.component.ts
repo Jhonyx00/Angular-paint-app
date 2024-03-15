@@ -8,17 +8,13 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { PropertiesService } from '../../../shared/services/properties.service';
-import { Ellipse } from '../../../shared/interfaces/shape.interface';
-import { Rectangle } from '../../../shared/interfaces/shape.interface';
-import { Line } from '../../../shared/interfaces/shape.interface';
 import { CanvasStateService } from '../../../shared/services/canvas-state.service';
-import { Cord } from '../../../shared/interfaces/cord.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 import { AuxDivComponent } from '../../../shared/components/aux-div/aux-div.component';
-
 import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
 import { DrawingStatusService } from 'src/app/shared/services/drawing-status.service';
-import { ObjectProperties } from 'src/app/shared/interfaces/object-properties';
+import { DynamicComponentProperties } from 'src/app/shared/interfaces/object-properties';
+import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -30,19 +26,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       `tocado en x:${event.touches[0].clientX}, y:${event.touches[0].clientY}`
     );
   }
-  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
-
-  public div!: any;
-  public objectProps: ObjectProperties = {
-    width: '',
-    height: '',
-    top: '',
-    left: '',
-  };
-
-  public imagesArray: string[] = [];
-  // private divInitialPosition: Cord = { x: 0, y: 0 };
-  public selectedShape!: Rectangle | Ellipse | Line;
 
   constructor(
     private propertiesService: PropertiesService,
@@ -51,6 +34,36 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     private drawingStatusService: DrawingStatusService
   ) {}
 
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
+
+  ///////// VARS
+
+  private div!: any;
+
+  private imagesArray: string[] = [];
+  private objectProps: DynamicComponentProperties = {
+    width: '',
+    height: '',
+    top: '',
+    left: '',
+  };
+
+  private canvasDimensions: CanvasDimensions = {
+    CanvasWidth: 800,
+    CanvasHeight: 500,
+  };
+
+  private currentCanvasImage = new Image();
+  private color: string = '#000000';
+
+  private toolName = '';
+  private ctx!: CanvasRenderingContext2D;
+  private isDrawing: boolean = false;
+
+  // Mouse down position
+  private x: number = 0;
+  private y: number = 0;
+
   ////ON INIT
   ngOnInit(): void {
     this.initCanvasDimensions();
@@ -58,10 +71,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //set images when redo or undo button clicked
   }
   private initCanvasDimensions() {
-    this.propertiesService.canvasSize({
-      width: this.width,
-      height: this.height,
-    });
+    this.canvas.nativeElement.width = this.canvasDimensions.CanvasWidth;
+    this.canvas.nativeElement.height = this.canvasDimensions.CanvasHeight;
+    this.propertiesService.canvasSize(this.canvasDimensions);
   }
 
   ////AFTER INIT
@@ -105,110 +117,38 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesArray = currentList;
 
-      //console.log('lista actual de imagenes: ', this.imagesArray);
-
-      this.setCurrentImage(this.imagesArray);
+      if (this.imagesArray.length > 0) {
+        this.setCurrentCanvasImage();
+      } else {
+        this.ctx.clearRect(
+          0,
+          0,
+          this.canvasDimensions.CanvasWidth,
+          this.canvasDimensions.CanvasHeight
+        );
+      }
     });
-    // this.canvasStateService.updateCanvasValue.subscribe(() => {
-    //   this.setCurrentImage();
-    // });
   }
 
-  width: number = 800;
-  height: number = 500;
-  private currentCanvasImage = new Image();
-  private color: string = '#000000';
-  // private option = '';
-
-  public toolName = '';
-  private ctx!: CanvasRenderingContext2D;
-  private isDrawing: boolean = false;
-
-  //position
-  private x: number = 0;
-  private y: number = 0;
-
-  private isSelected = false;
-
-  //SHAPE ARRAY
-  private shapeList: (Rectangle | Ellipse | Line)[] = [];
-  private points: Cord[] = [];
-
-  //SELECTED SHAPE BY CLICKING
-
-  //SHAPES
-  // Objects that represents the shapes in order to be drawn on the canvas before a new drawing
-  // is being painted
-  private lineDimensions: Line = {
-    color: '#000000',
-    shapeType: '',
-    points: [{ x: 0, y: 0 }],
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0,
-  };
-
-  private rectangleDimensions: Rectangle = {
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0,
-    color: '#000000',
-    shapeType: '',
-  };
-
-  private ellipseDimensions: Ellipse = {
-    x: 0,
-    y: 0,
-    w: 0,
-    h: 0,
-    radiusX: 0,
-    radiusY: 0,
-    rotation: 0,
-    startAngle: 0,
-    endAngle: 0,
-    color: '#000000',
-    shapeType: '',
-  };
-
-  public XY: Cord = { x: 0, y: 0 };
   ///                     MOUSE EVENTS
   mouseDown(event: MouseEvent) {
-    //press mouse
-    // if (this.toolName === 'Move') {
-    //   this.selectShape(event);
-    // } else {
     this.isDrawing = true;
 
     this.drawingStatusService.changeButtonState(true);
     this.x = event.offsetX;
     this.y = event.offsetY;
 
-    if (this.toolName != 'Line' && this.toolName != 'Eraser') {
-      //colocar las condiciones que no sean figuras
-
+    if (
+      this.toolName != 'Line' &&
+      this.toolName != 'Eraser' &&
+      this.toolName != 'Select'
+    ) {
       //puesto que solo las figuras ocupan el componente dinamico
       this.createComponent();
     }
-
-    //console.log(`Punto inicial x: ${this.x}, y: ${this.y}`);
   }
 
   mouseMove(event: MouseEvent) {
-    // no pintar las figuras si se sibuja una linea,
-    // o si se selecciona una figura (esto es por si se quiere colocar un recuadro que contenga a la figura seleccionada)
-
-    // if (
-    //   this.toolName != 'Line' &&
-    //   this.toolName != 'Move' &&
-    //   this.toolName != 'Eraser'
-    // ) {
-    //   //this.paintAllShapes();
-    // } else if (this.isSelected) {
-    //   this.moveShape(event, this.selectedShape);
-    // }
-
     //si se esta dibujando
     if (this.isDrawing) {
       //SHAPE SELECTION
@@ -236,23 +176,19 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   mouseUp() {
-    //console.log('images', this.imagesArray);
-
-    this.isSelected = false; //se deja de seleccionar una figura
     this.isDrawing = false;
     this.drawingStatusService.changeButtonState(false);
-    this.points = []; //reset points
 
     switch (this.toolName) {
       case 'Line':
-        this.shapeList.push(this.lineDimensions);
+        //this.shapeList.push(this.lineDimensions);
         break;
       case 'Rectangle':
         this.drawRectangle(this.objectProps);
         //this.shapeList.push(this.rectangleDimensions);
         break;
       case 'Ellipse':
-        this.shapeList.push(this.ellipseDimensions);
+        //this.shapeList.push(this.ellipseDimensions);
         break;
       default:
         break;
@@ -271,20 +207,18 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
-  private setCurrentImage(images: string[]) {
-    if (images.length > 0) {
-      this.currentCanvasImage.src =
-        this.imagesArray[this.imagesArray.length - 1];
-
-      this.currentCanvasImage.onload = () => {
-        console.log('IMAGEN A MOSTRAR', this.currentCanvasImage.src);
-        this.ctx.clearRect(0, 0, this.width, this.height);
-        this.ctx.drawImage(this.currentCanvasImage, 0, 0);
-      };
-    } else {
-      this.ctx.clearRect(0, 0, this.width, this.height);
-      console.log('imagen indefinida');
-    }
+  private setCurrentCanvasImage() {
+    this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
+    console.log('IMAGEN A MOSTRAR', this.currentCanvasImage.src);
+    this.currentCanvasImage.onload = () => {
+      this.ctx.clearRect(
+        0,
+        0,
+        this.canvasDimensions.CanvasWidth,
+        this.canvasDimensions.CanvasHeight
+      );
+      this.ctx.drawImage(this.currentCanvasImage, 0, 0);
+    };
   }
 
   ///                     SHAPES
@@ -356,7 +290,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   //1
-  private drawRectangle(shapeObject: ObjectProperties) {
+  private drawRectangle(shapeObject: DynamicComponentProperties) {
     this.ctx.fillStyle = this.color;
 
     this.ctx.fillRect(
@@ -415,63 +349,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private erase(event: MouseEvent) {
     this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
     //console.log(event.offsetX, event.offsetY);
-  }
-
-  ///                     SELECT
-  //SELECT A SHAPE
-  private selectShape(event: MouseEvent) {
-    const posX = event.offsetX;
-    const posY = event.offsetY;
-
-    this.shapeList.find((shape) => {
-      if (
-        posX >= shape.x &&
-        posX <= shape.w + shape.x &&
-        posY >= shape.y &&
-        posY <= shape.h + shape.y
-      ) {
-        this.ctx.strokeStyle = 'blue';
-        this.ctx.setLineDash([5, 5]);
-
-        this.ctx.rect(shape.x, shape.y, shape.w, shape.h);
-        this.ctx.stroke();
-
-        //rectangle selector
-        this.selectedShape = shape;
-        console.log('Selected shape', this.selectedShape);
-        this.isSelected = true;
-
-        this.XY = {
-          x: Math.abs(this.selectedShape.x - event.offsetX),
-          y: Math.abs(this.selectedShape.y - event.offsetY),
-        };
-      }
-    });
-  }
-  //MOVE A SHAPE
-  private moveShape(event: MouseEvent, shape: Ellipse | Rectangle | Line) {
-    //SET CONDITIONS FOR EACH SHAPE
-    if (shape.shapeType === 'Line') {
-      const line = shape as Line;
-
-      console.log('Shape', line);
-
-      // line.points[0].x = event.offsetX - this.XY.x;
-      // line.points[0].y = event.offsetY - this.XY.y;
-
-      line.points[10].x = event.offsetX;
-      line.points[10].y = event.offsetY;
-
-      // for (let x = 0; x < line.points.length; x++) {
-      //   line.points[x].x = event.offsetX - this.XY.x;
-      //   line.points[x].y = event.offsetY - this.XY.y;
-      // }
-    } else {
-      shape.x = event.offsetX - this.XY.x;
-      shape.y = event.offsetY - this.XY.y;
-    }
-
-    //this.paintAllShapes();
   }
 
   ///                     FILE
