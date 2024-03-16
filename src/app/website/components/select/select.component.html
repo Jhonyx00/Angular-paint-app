@@ -1,12 +1,11 @@
 <div class="tool-container">
   <span>Select</span>
   <div class="tool">
-    <ul>
-      <li *ngFor="let item of srcImages">
-        <button (click)="shapeSelection(item.toolName)">
-          <img src="{{ item.imageURL }}" alt="" />
-        </button>
-      </li>
-    </ul>
+    <button
+      *ngFor="let item of selectionItems"
+      (click)="shapeSelection(item.toolName)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
   </div>
 </div>

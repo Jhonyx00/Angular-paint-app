@@ -1,10 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PropertiesService } from '../../../shared/services/properties.service';
 import { CanvasStateService } from '../../../shared/services/canvas-state.service';
-import {
-  SelectedAction,
-  SelectedTool,
-} from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -23,23 +19,20 @@ export class ActionsComponent implements OnInit {
 
   private selectedItem = '';
 
-  private isRedoDisabled = false;
-  private isUndoDisabled = false;
-
   ngOnInit(): void {
     this.initCanvasImageList();
   }
 
-  public srcImages: SelectedAction[] = [
+  public actions: Tool[] = [
     {
-      isDisabled: this.isUndoDisabled,
       toolName: 'Undo',
-      imageURL: '../../../../assets/svg/undo.svg',
+      iconUrl: '../../../../assets/svg/undo.svg',
+      id: 1,
     },
     {
-      isDisabled: this.isRedoDisabled,
       toolName: 'Redo',
-      imageURL: '../../../../assets/svg/redo.svg',
+      iconUrl: '../../../../assets/svg/redo.svg',
+      id: 2,
     },
   ];
 
@@ -72,11 +65,10 @@ export class ActionsComponent implements OnInit {
     // if normal array contains images, then it is porible to undo an action
     if (this.imagesList.length > 0) {
       this.imagesListAux.push(this.imagesList.pop());
-      this.isUndoDisabled = false;
+
       console.log('lista de undo', this.imagesList);
       this.canvasStateService.setImagesList(this.imagesList);
     } else {
-      this.isUndoDisabled = true;
     }
   }
 
@@ -84,11 +76,10 @@ export class ActionsComponent implements OnInit {
     // if aux array contains images, then it is porible to redo an action
     if (this.imagesListAux.length > 0) {
       this.imagesList.push(this.imagesListAux.pop());
-      this.isRedoDisabled = false;
+
       console.log('lista de redo', this.imagesList);
       this.canvasStateService.setImagesList(this.imagesList);
     } else {
-      this.isRedoDisabled = true;
     }
   }
 }

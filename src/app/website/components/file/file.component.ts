@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PropertiesService } from '../../../shared/services/properties.service';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -11,21 +11,21 @@ import { ToolsService } from '../toolbar/services/tools.service';
 export class OptionsComponent {
   constructor(private toolsService: ToolsService) {}
   public selectedItem = '';
-  public options: SelectedTool[] = [
+  public fileItems: Tool[] = [
     {
-      id: 1,
       toolName: 'Save',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 1,
     },
     {
-      id: 2,
       toolName: 'Open',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 2,
     },
     {
-      id: 3,
       toolName: 'File',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/undo.svg',
+      id: 3,
     },
   ];
 

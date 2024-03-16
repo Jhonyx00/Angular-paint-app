@@ -1,12 +1,11 @@
 <div class="tool-container">
   <span>Erasers</span>
   <div class="tool">
-    <ul>
-      <li *ngFor="let eraser of srcImages">
-        <button (click)="selectEraser(eraser.toolName)">
-          <img src="{{ eraser.imageURL }}" alt="" />
-        </button>
-      </li>
-    </ul>
+    <button
+      *ngFor="let item of eraserItems"
+      (click)="selectEraser(item.toolName)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
   </div>
 </div>

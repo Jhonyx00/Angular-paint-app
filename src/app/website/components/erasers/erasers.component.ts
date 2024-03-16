@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -12,16 +12,16 @@ export class ErasersComponent {
 
   public selectedItem = '';
 
-  public srcImages: SelectedTool[] = [
+  public eraserItems: Tool[] = [
     {
-      id: 1,
       toolName: 'Eraser',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 1,
     },
     {
-      id: 2,
       toolName: 'Eraser 2',
-      imageURL: '../../../../assets/svg/oval.svg',
+      iconUrl: '../../../../assets/svg/oval.svg',
+      id: 2,
     },
   ];
 

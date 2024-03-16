@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { PropertiesService } from '../../../shared/services/properties.service';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({

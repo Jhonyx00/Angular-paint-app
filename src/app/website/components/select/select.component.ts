@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -12,16 +12,16 @@ export class SelectComponent {
 
   public selectedItem = '';
 
-  public srcImages: SelectedTool[] = [
+  public selectionItems: Tool[] = [
     {
-      id: 1,
       toolName: 'Move',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 1,
     },
     {
-      id: 2,
       toolName: 'Move 2',
-      imageURL: '../../../../assets/svg/star.svg',
+      iconUrl: '../../../../assets/svg/star.svg',
+      id: 2,
     },
   ];
 

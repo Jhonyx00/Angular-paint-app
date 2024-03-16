@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -11,16 +11,16 @@ export class PencilsComponent {
   constructor(private toolsService: ToolsService) {}
   public selectedItem = '';
 
-  public pencils: SelectedTool[] = [
+  public pencilItems: Tool[] = [
     {
-      id: 1,
       toolName: 'Line',
-      imageURL: '../../../../assets/svg/pencil.svg',
+      iconUrl: '../../../../assets/svg/pencil.svg',
+      id: 1,
     },
     {
-      id: 2,
       toolName: 'Pencil',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 2,
     },
   ];
 

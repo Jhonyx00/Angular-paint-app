@@ -1,12 +1,11 @@
 <div class="tool-container">
   <span>File</span>
   <div class="tool">
-    <ul>
-      <li *ngFor="let option of options">
-        <button (click)="selectOption(option.toolName)">
-          <img src="{{ option.imageURL }}" alt="" />
-        </button>
-      </li>
-    </ul>
+    <button
+      *ngFor="let item of fileItems"
+      (click)="selectOption(item.toolName)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
   </div>
 </div>

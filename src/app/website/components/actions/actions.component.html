@@ -2,15 +2,11 @@
   <span>Actions</span>
 
   <div class="tool">
-    <ul>
-      <li *ngFor="let action of srcImages">
-        <button
-          (click)="selectAction(action.toolName)"
-          [disabled]="action.isDisabled"
-        >
-          <img src="{{ action.imageURL }}" alt="" />
-        </button>
-      </li>
-    </ul>
+    <button
+      *ngFor="let action of actions"
+      (click)="selectAction(action.toolName)"
+    >
+      <img src="{{ action.iconUrl }}" alt="" />
+    </button>
   </div>
 </div>

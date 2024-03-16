@@ -215,6 +215,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         this.canvasDimensions.CanvasHeight
       );
       this.ctx.drawImage(this.currentCanvasImage, 0, 0);
+      //pasos
+      //1. seleccionar una parte del canvas
+      //2. al soltar el mouse se usa la funcion toDataUrl de la parte seleccionada
+      //3. despues de soltar se puede mover esa parte, y se va a insertar en el canvas
+      //4. al mover mientras se sostiene el trozo de imagen va a cambiar el drawImage en la pos x y pos y
+
+      //al selecccionar se selecciona un cacho del dibujo
+      //luego se mueve, osea el valor dinamico es en drawImage, la pos x y y, luego cuando sea mouseout puede volver a seleccionar algo
     };
   }
 

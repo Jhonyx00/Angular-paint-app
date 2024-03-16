@@ -1,11 +1,5 @@
-export interface SelectedTool {
+export interface Tool {
   id: number;
   toolName: string;
-  imageURL: string;
-}
-
-export interface SelectedAction {
-  isDisabled: boolean;
-  toolName: string;
-  imageURL: string;
+  iconUrl: string;
 }

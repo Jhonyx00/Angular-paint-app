@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { SelectedTool } from '../../../shared/interfaces/selected-tool.interface';
+import { Tool } from '../../../shared/interfaces/selected-tool.interface';
 import { ToolsService } from '../toolbar/services/tools.service';
 
 @Component({
@@ -13,32 +13,52 @@ export class FiguresComponent implements OnInit {
     // const selectedFigure: number = this.selectShape();
   }
 
-  public selectedItem = '';
+  public selectedItemName: string = '';
+  public selectedItemId: number = 0;
 
-  public srcImages: SelectedTool[] = [
+  public shapeItems: Tool[] = [
     {
-      id: 1,
       toolName: 'Rectangle',
-      imageURL: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 1,
     },
-    { id: 2, toolName: 'Ellipse', imageURL: '../../../../assets/svg/oval.svg' },
     {
-      id: 3,
+      toolName: 'Ellipse',
+      iconUrl: '../../../../assets/svg/oval.svg',
+      id: 2,
+    },
+    {
       toolName: 'Hexagon',
-      imageURL: '../../../../assets/svg/hexagon.svg',
+      iconUrl: '../../../../assets/svg/hexagon.svg',
+      id: 3,
     },
     {
-      id: 4,
       toolName: 'Triangle',
-      imageURL: '../../../../assets/svg/triangle.svg',
+      iconUrl: '../../../../assets/svg/triangle.svg',
+      id: 4,
     },
-    { id: 5, toolName: 'Star', imageURL: '../../../../assets/svg/star.svg' },
+    {
+      toolName: 'Star',
+      iconUrl: '../../../../assets/svg/star.svg',
+      id: 5,
+    },
   ];
 
-  selectShape(selectedItem: string) {
-    this.selectedItem = selectedItem;
-    console.log('figure: ', selectedItem);
+  selectShape(selectedItemName: string, id: number) {
+    this.selectedItemName = selectedItemName;
+    this.selectedItemId = id;
+    // console.log('focused', event.target as HTMLElement);
 
-    this.toolsService.setSelectedButton(this.selectedItem);
+    console.log('figure: ', selectedItemName, id);
+
+    // const newArray = this.shapeItems.filter((item) => {
+    //   return item.isSelected === true;
+    // });
+
+    // console.log('nuevo arreglo', newArray);
+
+    this.toolsService.setSelectedButton(this.selectedItemName);
   }
 }
+
+///usar nth-child() y en el parametro le pasamos el numero del item que seleccionamos

@@ -1,12 +1,11 @@
 <div class="tool-container">
   <span>Pencils</span>
   <div class="tool" id="figuresContainer">
-    <ul>
-      <li *ngFor="let pencil of pencils">
-        <button (click)="selectShape(pencil.toolName)">
-          <img src="{{ pencil.imageURL }}" alt="" />
-        </button>
-      </li>
-    </ul>
+    <button
+      *ngFor="let item of pencilItems"
+      (click)="selectShape(item.toolName)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
   </div>
 </div>
