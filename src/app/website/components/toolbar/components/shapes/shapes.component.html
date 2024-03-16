@@ -1,0 +1,38 @@
+<!-- <div class="tool-container">
+  <span>Shapes</span>
+  <div class="tool">
+    <button
+      *ngFor="let item of data"
+      [ngClass]="item.id === selectedItemId ? 'selected-tool' : ''"
+      (click)="selectShape(item.toolName, item.id)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
+  </div>
+</div> -->
+
+<div class="tool-container">
+  <span>Shapes</span>
+  <div class="tool">
+    <button
+      class="boton"
+      *ngFor="let item of shapeItems"
+      (click)="enviarShape(item.toolName, item.id)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
+  </div>
+</div>
+
+<!-- <div class="tool-container">
+  <span>Shapes</span>
+  <div class="tool">
+    <button
+      *ngFor="let item of shapeItems"
+      [ngClass]="item.id === selectedItemId ? 'selected-tool' : ''"
+      (click)="enviarShape(item.toolName, item.id)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
+  </div>
+</div> -->

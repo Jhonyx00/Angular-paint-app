@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
-import { Tool } from '../../../shared/interfaces/selected-tool.interface';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { Component, EventEmitter, Output } from '@angular/core';
+import { Tool } from '../../../../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-select',
@@ -25,9 +25,9 @@ export class SelectComponent {
     },
   ];
 
-  shapeSelection(selectedItem: string) {
-    this.selectedItem = selectedItem;
-    console.log('tool: ', selectedItem);
-    this.toolsService.setSelectedButton(this.selectedItem);
+  @Output()
+  eventoEnviarDatos = new EventEmitter<{ valor: string; id: number }>();
+  enviarShape(valor: string, id: number) {
+    this.eventoEnviarDatos.emit({ valor, id });
   }
 }

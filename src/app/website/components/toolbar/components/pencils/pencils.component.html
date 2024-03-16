@@ -2,8 +2,9 @@
   <span>Pencils</span>
   <div class="tool" id="figuresContainer">
     <button
+      class="boton"
       *ngFor="let item of pencilItems"
-      (click)="selectShape(item.toolName)"
+      (click)="enviarShape(item.toolName, item.id)"
     >
       <img src="{{ item.iconUrl }}" alt="" />
     </button>

@@ -8,55 +8,12 @@
 body {
   user-select: none;
   zoom: 100%;
-  -webkit-user-zoom: fixed;
-  /* transform: scale(1); */
 }
 
-/*            general component styles            */
-
-.tool-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  flex-direction: column;
-  border: 1px solid lightgray;
-  padding: 0.4em;
-}
-
-.tool {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
-.tool-container span {
-  font-size: 12px;
-  padding-bottom: 0.4em;
-}
-
-button {
-  background-color: transparent;
-  border: none;
-  border-radius: inherit;
-  width: 1.8em;
-  height: 1.8em;
-  border-radius: 0.4em;
-
-  > img {
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    padding: 0.2em;
-  }
-}
-
-button:hover:not(button:focus) {
+/* button:hover:not(button:focus) {
   cursor: pointer;
   background-color: rgb(225, 225, 225);
-  /* box-shadow: 0px 0px 0px 2px rgb(170, 170, 170) inset; */
-}
+} */
 
 /* SELECT A BUTTON FROM TOOLBAR */
 
@@ -64,39 +21,6 @@ button:hover:not(button:focus) {
   box-shadow: 0px 0px 0px 2px rgb(3, 84, 176) inset;
 }
 
-/* @media (min-width: 576px) {
-  .status-bar {
-    background-color: red;
-  }
+.no {
+  box-shadow: 0px 0px 0px 2px rgb(3, 84, 176) inset;
 }
-
-@media (min-width: 768px) {
-  .status-bar {
-    background-color: rgb(29, 8, 253);
-  }
-}
-
-@media (min-width: 992px) {
-  .status-bar {
-    background-color: rgb(31, 240, 12);
-
-    > span {
-      font-size: 1px;
-    }
-  }
-  .status-bar span {
-    font-size: 5px;
-  }
-}
-
-@media (min-width: 1200px) {
-  .status-bar {
-    background-color: rgb(255, 0, 179);
-  }
-}
-
-@media (min-width: 1400px) {
-  .status-bar {
-    background-color: rgb(0, 217, 255);
-  }
-} */

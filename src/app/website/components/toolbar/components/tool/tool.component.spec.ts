@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ToolbarComponent } from './toolbar.component';
+import { ToolComponent } from './tool.component';
 
-describe('ToolbarComponent', () => {
-  let component: ToolbarComponent;
-  let fixture: ComponentFixture<ToolbarComponent>;
+describe('ToolComponent', () => {
+  let component: ToolComponent;
+  let fixture: ComponentFixture<ToolComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ToolbarComponent]
+      declarations: [ToolComponent]
     });
-    fixture = TestBed.createComponent(ToolbarComponent);
+    fixture = TestBed.createComponent(ToolComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

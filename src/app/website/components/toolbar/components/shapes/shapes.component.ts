@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Tool } from '../../../shared/interfaces/selected-tool.interface';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Tool } from '../../../../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-figures',
@@ -13,8 +13,8 @@ export class FiguresComponent implements OnInit {
     // const selectedFigure: number = this.selectShape();
   }
 
-  public selectedItemName: string = '';
-  public selectedItemId: number = 0;
+  // @Input() data: Tool[] = []; //recibe del padre
+  //envia al padre
 
   public shapeItems: Tool[] = [
     {
@@ -44,21 +44,9 @@ export class FiguresComponent implements OnInit {
     },
   ];
 
-  selectShape(selectedItemName: string, id: number) {
-    this.selectedItemName = selectedItemName;
-    this.selectedItemId = id;
-    // console.log('focused', event.target as HTMLElement);
-
-    console.log('figure: ', selectedItemName, id);
-
-    // const newArray = this.shapeItems.filter((item) => {
-    //   return item.isSelected === true;
-    // });
-
-    // console.log('nuevo arreglo', newArray);
-
-    this.toolsService.setSelectedButton(this.selectedItemName);
+  @Output()
+  eventoEnviarDatos = new EventEmitter<{ valor: string; id: number }>();
+  enviarShape(valor: string, id: number) {
+    this.eventoEnviarDatos.emit({ valor, id });
   }
 }
-
-///usar nth-child() y en el parametro le pasamos el numero del item que seleccionamos

@@ -1,9 +1,10 @@
 <div class="tool-container">
-  <span>Select</span>
+  <span>Erasers</span>
   <div class="tool">
     <button
-      *ngFor="let item of selectionItems"
-      (click)="shapeSelection(item.toolName)"
+      class="boton"
+      *ngFor="let item of eraserItems"
+      (click)="enviarShape(item.toolName, item.id)"
     >
       <img src="{{ item.iconUrl }}" alt="" />
     </button>

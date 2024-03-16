@@ -1,0 +1,12 @@
+<div class="tool-container">
+  <span>{{ toolGroupName }}</span>
+  <div class="tool">
+    <button
+      class="boton"
+      *ngFor="let item of toolItems"
+      (click)="enviarShape(item.toolName, item.id)"
+    >
+      <img src="{{ item.iconUrl }}" alt="" />
+    </button>
+  </div>
+</div>

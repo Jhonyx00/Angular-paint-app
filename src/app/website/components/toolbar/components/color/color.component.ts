@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-color',

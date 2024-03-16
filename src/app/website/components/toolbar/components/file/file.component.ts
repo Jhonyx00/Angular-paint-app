@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { PropertiesService } from '../../../shared/services/properties.service';
-import { Tool } from '../../../shared/interfaces/selected-tool.interface';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { PropertiesService } from '../../../../../shared/services/properties.service';
+import { Tool } from '../../../../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-options',

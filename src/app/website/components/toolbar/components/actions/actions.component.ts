@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { CanvasStateService } from '../../../shared/services/canvas-state.service';
-import { Tool } from '../../../shared/interfaces/selected-tool.interface';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { CanvasStateService } from '../../../../../shared/services/canvas-state.service';
+import { Tool } from '../../../../../shared/interfaces/selected-tool.interface';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-actions',
