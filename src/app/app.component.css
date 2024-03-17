@@ -9,10 +9,7 @@
   display: flex;
   justify-content: flex-start;
 }
-.toolbar-container {
-  border: 2px solid lightgray;
-  flex: 0.5;
-}
+
 .canvas-container {
   overflow-y: scroll;
   overflow-x: scroll;

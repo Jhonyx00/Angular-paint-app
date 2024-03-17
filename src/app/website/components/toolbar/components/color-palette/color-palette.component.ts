@@ -32,4 +32,4 @@ export class ColorComponent {
   }
 }
 
-//necesito notificar desde aqui el cambio de color al componente dinamico
+//no necesitaba notificar naada
