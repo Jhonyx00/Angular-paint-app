@@ -14,7 +14,6 @@ export class AuxDivComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     this.initColor();
-    this.initDrawingState();
     this.initShapeDimensions();
   }
 
@@ -27,19 +26,12 @@ export class AuxDivComponent implements OnInit {
     });
   }
 
-  private initDrawingState() {
-    this.drawingStateService.currentDrawingState.subscribe((currentState) => {
-      this.isDrawing = currentState;
-    });
-  }
-
   private initColor() {
     this.toolsService.color.subscribe((currentColor) => {
       this.color = currentColor;
     });
   }
   public color = '';
-  public isDrawing = false;
   public width = '';
   public height = '';
   public top = '';

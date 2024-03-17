@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
 import { Tool } from 'src/app/shared/interfaces/selected-tool.interface';
 import { CanvasStateService } from 'src/app/shared/services/canvas-state.service';
+import { ToolComponent } from '../tool/tool.component';
 
 @Component({
   selector: 'app-toolbar',
@@ -17,34 +18,15 @@ export class ToolbarComponent {
   private selectedItemName: string = '';
   private selectedItemId: number = 0;
 
-  setSelectedTool(valores: { valor: string; id: number }) {
-    this.selectedItemName = valores.valor;
-    this.selectedItemId = valores.id;
-    console.log('Tool: ', this.selectedItemName, this.selectedItemId);
-    this.toolsService.setSelectedButton(this.selectedItemName);
-
-    switch (valores.valor) {
-      case 'Undo':
-        this.undo();
-        break;
-
-      case 'Redo':
-        this.redo();
-        break;
-
-      default:
-        break;
-    }
-  }
-
   public shapes = 'Shapes';
   public selection = 'Selection';
   public pencils = 'Pencils';
   public erasers = 'Erasers';
-
   public files = 'File';
-
   public actions = 'Actions';
+
+  private imagesList = new Array();
+  private imagesListAux = new Array();
 
   ////arreglos
   public shapeItems: Tool[] = [
@@ -146,15 +128,6 @@ export class ToolbarComponent {
   ];
   //
 
-  //Actions
-
-  //// Actions
-
-  private imagesList = new Array();
-  private imagesListAux = new Array();
-
-  // private selectedItem = '';
-
   ngOnInit(): void {
     this.initCanvasImageList();
   }
@@ -163,6 +136,30 @@ export class ToolbarComponent {
     this.canvasStateService.imagesListObservable.subscribe((currentList) => {
       this.imagesList = currentList;
     });
+  }
+
+  setSelectedTool(valores: { valor: string; id: number }) {
+    this.selectedItemName = valores.valor;
+    this.selectedItemId = valores.id;
+    console.log('Tool: ', this.selectedItemName, this.selectedItemId);
+
+    switch (this.selectedItemName) {
+      case 'Undo':
+        this.undo();
+        break;
+
+      case 'Redo':
+        this.redo();
+        break;
+
+      default:
+        this.initSelectedTool();
+        break;
+    }
+  }
+
+  initSelectedTool() {
+    this.toolsService.setSelectedButton(this.selectedItemName);
   }
 
   private undo(): void {

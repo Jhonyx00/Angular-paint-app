@@ -11,17 +11,54 @@
 }
 .toolbar-container {
   border: 2px solid lightgray;
-  /* background-color: rgba(255, 255, 255, 0.8); */
-  flex: 1;
+  flex: 0.5;
 }
 .canvas-container {
   overflow-y: scroll;
   overflow-x: scroll;
-  flex: 10;
+  scrollbar-width: none;
+  flex: 11;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.status-container {
-  height: 5vh;
+/* 
+@media (min-width: 0px) {
+  .canvas-container {
+    background-color: red;
+  }
+
+  .toolbar-canvas-container {
+    flex-direction: column;
+  }
 }
+
+@media (min-width: 576px) {
+  .canvas-container {
+    background-color: rgb(0, 17, 255);
+  }
+  .toolbar-canvas-container {
+    flex-direction: row;
+  }
+  .toolbar-container {
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 768px) {
+  .canvas-container {
+    background-color: rgb(234, 0, 255);
+  }
+}
+
+@media (min-width: 992px) {
+  .canvas-container {
+    background-color: rgb(9, 255, 0);
+  }
+}
+
+@media (min-width: 1200px) {
+  .canvas-container {
+    background-color: rgb(9, 255, 0);
+  }
+} */

@@ -3,8 +3,8 @@
   align-items: center;
   display: flex;
   height: 100%;
-
-  border: 1px solid gray;
+  height: 5vh;
+  border: 2px solid lightgray;
 }
 
 .status-bar span {

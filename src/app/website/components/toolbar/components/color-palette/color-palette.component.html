@@ -1,0 +1,21 @@
+<div class="tool-container">
+  <span>Color</span>
+
+  <ul class="palette">
+    <li
+      class="palette-item"
+      *ngFor="let color of colors"
+      [style.background]="color"
+      (click)="setPaletteColor(color)"
+    ></li>
+  </ul>
+
+  <div class="color-input">
+    <input
+      type="color"
+      name="color"
+      id="color-chooser"
+      (change)="setColor($event)"
+    />
+  </div>
+</div>

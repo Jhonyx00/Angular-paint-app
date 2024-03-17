@@ -1,27 +1,3 @@
-/* each toolbar component */
-.tool-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  flex-direction: column;
-
-  padding: 0.4em;
-  border-bottom: 2px solid lightgray;
-}
-
-.tool {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  justify-content: space-evenly;
-}
-
-.tool-container span {
-  font-size: 12px;
-  padding-bottom: 0.4em;
-}
-
 button {
   background-color: transparent;
   border: none;

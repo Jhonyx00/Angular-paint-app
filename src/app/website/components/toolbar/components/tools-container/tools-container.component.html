@@ -1,13 +1,3 @@
-<!-- <div class="toolbar-container">
-  <app-options></app-options>
-  <app-actions></app-actions>
-  <app-color></app-color>
-  <app-figures [data]="shapeItems"></app-figures>
-  <app-pencils></app-pencils>
-  <app-erasers></app-erasers>
-  <app-select></app-select>
-</div> -->
-
 <div class="toolbar-container">
   <app-tool
     [toolItems]="fileItems"
@@ -19,7 +9,7 @@
     [toolGroupName]="actions"
     (eventoEnviarDatos)="setSelectedTool($event)"
   ></app-tool>
-  <app-color></app-color>
+
   <app-tool
     [toolItems]="shapeItems"
     [toolGroupName]="shapes"
@@ -40,34 +30,6 @@
     [toolGroupName]="selection"
     (eventoEnviarDatos)="setSelectedTool($event)"
   ></app-tool>
-  <!-- <app-figures (eventoEnviarDatos)="setSelectedTool($event)"></app-figures>
-  <app-pencils (eventoEnviarDatos)="setSelectedTool($event)"></app-pencils>
-  <app-erasers (eventoEnviarDatos)="setSelectedTool($event)"></app-erasers>
-  <app-select (eventoEnviarDatos)="setSelectedTool($event)"></app-select> -->
-</div>
 
-<!-- Todo depende de cual arreglo se envie -->
-<!-- <app-tool
-  [toolItems]="pencilItems"
-  (eventoEnviarDatos)="setSelectedTool($event)"
-></app-tool> -->
-
-<!-- <div class="toolbar-container">
-  <app-options></app-options>
-  <app-actions></app-actions>
   <app-color></app-color>
-
-  <div class="tool-container" *ngFor="let item of toolbarItems; index as i">
-    <span>{{ item.name }}</span>
-    <div class="tool">
-      <button
-        [ngClass]="item.tools[i].id === selectedItemId ? 'selected-tool' : ''"
-        (click)="selectShape(item.tools[i].toolName, item.tools[i].id)"
-      >
-        <img src="{{ item.tools[i].iconUrl }}" alt="" />
-      </button>
-    </div>
-
-    
-  </div>
-</div> -->
+</div>

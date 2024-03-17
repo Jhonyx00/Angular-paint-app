@@ -1,7 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Tool } from 'src/app/shared/interfaces/selected-tool.interface';
-import { CanvasStateService } from 'src/app/shared/services/canvas-state.service';
-import { ToolsService } from '../../services/tools.service';
 
 @Component({
   selector: 'app-tool',
