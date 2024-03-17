@@ -14,9 +14,9 @@ export class ToolsService {
     this.selectedButton.next(selectedShape);
   }
   //  color
-  private strokeStyle = new BehaviorSubject<string>('#000000');
-  color = this.strokeStyle.asObservable();
+  private selectedColor = new BehaviorSubject<string>('#000000');
+  color = this.selectedColor.asObservable();
   public changeColor(data: string): void {
-    this.strokeStyle.next(data);
+    this.selectedColor.next(data);
   }
 }

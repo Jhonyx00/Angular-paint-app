@@ -3,4 +3,7 @@ export interface DynamicComponentProperties {
   left: string;
   width: string;
   height: string;
+  background: string;
+
+  ///recordar incluir todas las propiedades que se requieran acrualizar para evitar bugs
 }

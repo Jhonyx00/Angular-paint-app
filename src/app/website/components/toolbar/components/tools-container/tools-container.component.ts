@@ -141,7 +141,7 @@ export class ToolbarComponent {
   setSelectedTool(valores: { valor: string; id: number }) {
     this.selectedItemName = valores.valor;
     this.selectedItemId = valores.id;
-    console.log('Tool: ', this.selectedItemName, this.selectedItemId);
+    console.log('Tool: ', this.selectedItemName);
 
     switch (this.selectedItemName) {
       case 'Undo':

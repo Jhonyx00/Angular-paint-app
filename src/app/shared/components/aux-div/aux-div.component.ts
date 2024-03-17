@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DrawingStatusService } from '../../services/drawing-status.service';
 import { ToolsService } from 'src/app/website/components/toolbar/services/tools.service';
+import { DynamicComponentProperties } from '../../interfaces/object-properties';
 
 @Component({
   selector: 'app-aux-div',
@@ -8,32 +9,27 @@ import { ToolsService } from 'src/app/website/components/toolbar/services/tools.
   styleUrls: ['./aux-div.component.css'],
 })
 export class AuxDivComponent implements OnInit {
-  constructor(
-    private drawingStateService: DrawingStatusService,
-    private toolsService: ToolsService
-  ) {}
+  constructor(private drawingStateService: DrawingStatusService) {}
+
   ngOnInit(): void {
-    this.initColor();
     this.initShapeDimensions();
   }
 
   private initShapeDimensions() {
     this.drawingStateService.currentDimension.subscribe((current) => {
-      this.width = current.width;
-      this.height = current.height;
-      this.top = current.top;
-      this.left = current.left;
+      this.objectProps.width = current.width;
+      this.objectProps.height = current.height;
+      this.objectProps.top = current.top;
+      this.objectProps.left = current.left;
+      this.objectProps.background = current.background;
     });
   }
 
-  private initColor() {
-    this.toolsService.color.subscribe((currentColor) => {
-      this.color = currentColor;
-    });
-  }
-  public color = '';
-  public width = '';
-  public height = '';
-  public top = '';
-  public left = '';
+  public objectProps: DynamicComponentProperties = {
+    width: '',
+    height: '',
+    top: '',
+    left: '',
+    background: '',
+  };
 }

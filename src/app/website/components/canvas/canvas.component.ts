@@ -36,7 +36,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;
 
-  private div: any;
+  private div!: HTMLElement;
 
   private imagesArray: string[] = [];
 
@@ -45,6 +45,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     height: '',
     top: '',
     left: '',
+    background: '',
   };
 
   private canvasDimensions: CanvasDimensions = {
@@ -53,7 +54,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   };
 
   private currentCanvasImage = new Image();
-  private color: string = '#000000';
+  private color: string = '';
 
   private toolName = '';
   private ctx!: CanvasRenderingContext2D;
@@ -66,6 +67,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ////ON INIT
   ngOnInit(): void {
     this.initCanvasDimensions();
+    this.initAuxDynamicComponent();
     // this.initCurrentDrawing();
     //set images when redo or undo button clicked
   }
@@ -81,7 +83,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.ctx = this.canvas.nativeElement.getContext('2d');
     this.initColor();
     this.initTool();
-    this.initAuxDynamicComponent();
 
     //new
     this.updateCanvasValue();
@@ -91,6 +92,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private initColor(): void {
     this.toolsService.color.subscribe((currentColor) => {
       this.color = currentColor;
+      this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.color;
     });
   }
@@ -229,8 +231,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   ///                     SHAPES
 
   private drawLine(event: MouseEvent): void {
-    this.ctx.strokeStyle = this.color;
-
     //these two must be public and its value can change with toolbar buttons
     this.ctx.lineWidth = 3;
     this.ctx.lineCap = 'round';
@@ -257,6 +257,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         left: this.x + 'px',
         width: newX + 'px',
         height: newY + 'px',
+        background: this.color,
       };
     }
     // Quadrant 2
@@ -266,6 +267,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         left: event.offsetX + 'px',
         width: newX + 'px',
         height: newY + 'px',
+        background: this.color,
       };
     }
     // Quadrant 3
@@ -276,6 +278,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         left: event.offsetX + 'px',
         width: newX + 'px',
         height: newY + 'px',
+        background: this.color,
       };
     }
     //Quadrant 4
@@ -285,6 +288,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         left: this.x + 'px',
         width: newX + 'px',
         height: newY + 'px',
+        background: this.color,
       };
     }
 
@@ -293,8 +297,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
   private drawRectangle(shapeObject: DynamicComponentProperties): void {
-    this.ctx.fillStyle = this.color;
-
     this.ctx.fillRect(
       parseFloat(shapeObject.left),
       parseFloat(shapeObject.top),

@@ -11,20 +11,25 @@ export class ColorComponent {
 
   public colors = new Array<string>(9);
   public input!: HTMLInputElement;
+
   setColor(event: Event) {
     this.input = event.target as HTMLInputElement;
 
     if (this.input) {
       this.toolsService.changeColor(this.input.value);
-      console.log('Color: ', this.input.value);
       this.colors.unshift(this.input.value);
       this.colors.pop();
-      console.log('Color palette: ', this.colors);
     }
   }
 
   setPaletteColor(color: string) {
-    this.input.value = color;
-    this.toolsService.changeColor(color);
+    if (color != undefined) {
+      this.input.value = color;
+      this.toolsService.changeColor(color);
+    } else {
+      console.log('no se puede perrillo');
+    }
   }
 }
+
+//necesito notificar desde aqui el cambio de color al componente dinamico

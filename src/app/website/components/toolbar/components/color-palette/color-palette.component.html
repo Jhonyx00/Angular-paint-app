@@ -1,4 +1,4 @@
-<div class="tool-container">
+<!-- <div class="tool-container">
   <span>Color</span>
 
   <ul class="palette">
@@ -14,7 +14,38 @@
     <input
       type="color"
       name="color"
-      id="color-chooser"
+      class="color-chooser"
+      (change)="setColor($event)"
+    />
+  </div>
+</div> -->
+
+<div class="tool-container">
+  <span>Color</span>
+
+  <ul class="palette">
+    <!-- <li
+      class="palette-item"
+      *ngFor="let color of colors"
+      [style.background]="color"
+      (click)="setColor($event)"
+    ></li> -->
+
+    <button
+      *ngFor="let color of colors"
+      [style.background]="color"
+      type="color"
+      name="color"
+      class="palette-item"
+      (click)="setPaletteColor(color)"
+    ></button>
+  </ul>
+
+  <div class="color-input">
+    <input
+      type="color"
+      name="color"
+      class="color-chooser"
       (change)="setColor($event)"
     />
   </div>

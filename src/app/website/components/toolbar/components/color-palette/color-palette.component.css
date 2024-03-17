@@ -1,4 +1,4 @@
-#color-chooser {
+.color-chooser {
   cursor: pointer;
   width: 2.6em;
   height: 2.6em;
@@ -28,6 +28,14 @@
   border: 1px solid gray;
   border-radius: 0.2em;
 }
+
+/* input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+} */
 
 .palette-item:hover {
   cursor: pointer;
