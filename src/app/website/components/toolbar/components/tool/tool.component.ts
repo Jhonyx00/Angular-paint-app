@@ -9,6 +9,7 @@ import { Tool } from 'src/app/shared/interfaces/selected-tool.interface';
 export class ToolComponent {
   @Input() toolItems: Tool[] = [];
   @Input() toolGroupName: string = '';
+  @Input() selectedItemId: number = 0;
   @Output()
   eventoEnviarDatos = new EventEmitter<{ valor: string; id: number }>();
   enviarShape(valor: string, id: number) {
