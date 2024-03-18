@@ -15,8 +15,7 @@ export class ToolbarComponent {
     private canvasStateService: CanvasStateService
   ) {}
 
-  private selectedItemName: string = '';
-  public selectedItemId: number = 0;
+  public selectedItemName: string = '';
 
   public shapes = 'Shapes';
   public selection = 'Selection';
@@ -28,32 +27,27 @@ export class ToolbarComponent {
   private imagesList = new Array();
   private imagesListAux = new Array();
 
-  ////arreglos
+  ////Tool arrays
   public shapeItems: Tool[] = [
     {
       toolName: 'Rectangle',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 1,
     },
     {
       toolName: 'Ellipse',
       iconUrl: '../../../../assets/svg/oval.svg',
-      id: 2,
     },
     {
       toolName: 'Hexagon',
       iconUrl: '../../../../assets/svg/hexagon.svg',
-      id: 3,
     },
     {
       toolName: 'Triangle',
       iconUrl: '../../../../assets/svg/triangle.svg',
-      id: 4,
     },
     {
       toolName: 'Star',
       iconUrl: '../../../../assets/svg/star.svg',
-      id: 5,
     },
   ];
 
@@ -61,12 +55,10 @@ export class ToolbarComponent {
     {
       toolName: 'Select',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 6,
     },
     {
       toolName: 'Move 2',
       iconUrl: '../../../../assets/svg/star.svg',
-      id: 7,
     },
   ];
 
@@ -74,12 +66,10 @@ export class ToolbarComponent {
     {
       toolName: 'Line',
       iconUrl: '../../../../assets/svg/pencil.svg',
-      id: 8,
     },
     {
       toolName: 'Pencil',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 9,
     },
   ];
 
@@ -87,12 +77,10 @@ export class ToolbarComponent {
     {
       toolName: 'Eraser',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 10,
     },
     {
       toolName: 'Eraser 2',
       iconUrl: '../../../../assets/svg/oval.svg',
-      id: 11,
     },
   ];
 
@@ -100,17 +88,14 @@ export class ToolbarComponent {
     {
       toolName: 'Save',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 12,
     },
     {
       toolName: 'Open',
       iconUrl: '../../../../assets/svg/rectangle.svg',
-      id: 13,
     },
     {
       toolName: 'File',
       iconUrl: '../../../../assets/svg/undo.svg',
-      id: 14,
     },
   ];
 
@@ -118,12 +103,10 @@ export class ToolbarComponent {
     {
       toolName: 'Undo',
       iconUrl: '../../../../assets/svg/undo.svg',
-      id: 15,
     },
     {
       toolName: 'Redo',
       iconUrl: '../../../../assets/svg/redo.svg',
-      id: 16,
     },
   ];
   //
@@ -138,9 +121,9 @@ export class ToolbarComponent {
     });
   }
 
-  setSelectedTool(valores: { valor: string; id: number }) {
-    this.selectedItemName = valores.valor;
-    this.selectedItemId = valores.id;
+  setSelectedTool(valores: string) {
+    this.selectedItemName = valores;
+    // this.selectedItemId = valores.id;
     console.log('Tool: ', this.selectedItemName);
 
     switch (this.selectedItemName) {

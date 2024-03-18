@@ -4,8 +4,8 @@
     <button
       class="boton"
       *ngFor="let item of toolItems"
-      [ngClass]="item.id === selectedItemId ? 'selected-tool' : ''"
-      (click)="enviarShape(item.toolName, item.id)"
+      [ngClass]="item.toolName === selectedItemName ? 'selected-tool' : ''"
+      (click)="sendToolName(item.toolName)"
     >
       <img src="{{ item.iconUrl }}" alt="" />
     </button>

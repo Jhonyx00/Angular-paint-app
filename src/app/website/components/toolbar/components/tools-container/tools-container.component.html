@@ -2,39 +2,39 @@
   <app-tool
     [toolItems]="fileItems"
     [toolGroupName]="files"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
   <app-tool
     [toolItems]="actionItems"
     [toolGroupName]="actions"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
 
   <app-tool
     [toolItems]="shapeItems"
     [toolGroupName]="shapes"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
   <app-tool
     [toolItems]="pencilItems"
     [toolGroupName]="pencils"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
   <app-tool
     [toolItems]="eraserItems"
     [toolGroupName]="erasers"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
   <app-tool
     [toolItems]="selectionItems"
     [toolGroupName]="selection"
-    [selectedItemId]="selectedItemId"
-    (eventoEnviarDatos)="setSelectedTool($event)"
+    [selectedItemName]="selectedItemName"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></app-tool>
 
   <app-color></app-color>
