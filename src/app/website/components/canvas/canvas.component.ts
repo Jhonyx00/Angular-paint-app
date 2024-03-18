@@ -15,6 +15,7 @@ import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.di
 import { DrawingStatusService } from 'src/app/shared/services/drawing-status.service';
 import { DynamicComponentProperties } from 'src/app/shared/interfaces/object-properties';
 import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
+import { every } from 'rxjs';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -35,13 +36,15 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   //DYNAMIC COMPONENT
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;
+  public isInsideDynamicComponent = false;
+  public isSelectDrawn = false;
 
   private div!: HTMLElement;
 
   private imagesArray: string[] = [];
 
   private props = {
-    color: 'transparent',
+    color: 'blue',
     stroke: '',
   };
   private objectProps: DynamicComponentProperties = {
@@ -104,7 +107,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   private initTool(): void {
     this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
       this.toolName = currentTool;
-
+      console.log('Tool: ', this.toolName);
       if (this.toolName === 'Save') {
         this.saveWork();
         console.log(this.toolName);
@@ -143,7 +146,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.x = event.offsetX;
     this.y = event.offsetY;
 
-    if (this.toolName != 'Line' && this.toolName != 'Eraser') {
+    if (
+      this.toolName != 'Line' &&
+      this.toolName != 'Eraser' &&
+      this.toolName != 'Move'
+    ) {
       //puesto que solo las figuras ocupan el componente dinamico
       this.createComponent();
     }
@@ -169,15 +176,55 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
           break;
 
+        case 'Move':
+          this.moveObject(event);
+          break;
+
         case 'Eraser':
           this.erase(event);
           break;
         default:
           break;
       }
+    } else {
+      if (this.isSelectDrawn) {
+        this.isMouseInside(event);
+      }
     }
+
     //SET properties to be accesibble from status component
     this.propertiesService.positionXY({ x: event.offsetX, y: event.offsetY });
+  }
+
+  moveObject(event: MouseEvent) {
+    if (this.isInsideDynamicComponent) {
+      console.log(`Move to x:${event.offsetX}, y:${event.offsetY}`);
+      this.objectProps.top = event.offsetY + 'px';
+      this.objectProps.left = event.offsetX + 'px';
+
+      this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
+    }
+  }
+
+  isMouseInside(event: MouseEvent) {
+    if (
+      event.offsetY > parseFloat(this.objectProps.top) &&
+      event.offsetY <
+        parseFloat(this.objectProps.height) +
+          parseFloat(this.objectProps.top) &&
+      event.offsetX > parseFloat(this.objectProps.left) &&
+      event.offsetX <
+        parseFloat(this.objectProps.width) + parseFloat(this.objectProps.left)
+    ) {
+      this.toolName = 'Move'; //Avoid nested select
+      this.isInsideDynamicComponent = true;
+      console.log('dentro', this.toolName);
+    } else {
+      this.toolName = 'Select'; // a new select can be drawed
+
+      this.isInsideDynamicComponent = false;
+      console.log('fuera', this.toolName);
+    }
   }
 
   public mouseUp(): void {
@@ -197,12 +244,19 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         //this.shapeList.push(this.ellipseDimensions);
         break;
 
+      case 'Move':
+        //this.toolName = 'Select';
+
+        break;
+
       case 'Select':
         this.cut(this.objectProps);
+        this.isSelectDrawn = true; //significa que se dibujo un rectangulo de "select"
         break;
       default:
         break;
     }
+
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
     //this.canvasStateService.setImagesList(this.imagesArray);
   }
@@ -226,14 +280,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         this.canvasDimensions.CanvasHeight
       );
       this.ctx.drawImage(this.currentCanvasImage, 0, 0);
-      //pasos
-      //1. seleccionar una parte del canvas
-      //2. al soltar el mouse se usa la funcion toDataUrl de la parte seleccionada
-      //3. despues de soltar se puede mover esa parte, y se va a insertar en el canvas
-      //4. al mover mientras se sostiene el trozo de imagen va a cambiar el drawImage en la pos x y pos y
-
-      //al selecccionar se selecciona un cacho del dibujo
-      //luego se mueve, osea el valor dinamico es en drawImage, la pos x y y, luego cuando sea mouseout puede volver a seleccionar algo
     };
   }
 
@@ -357,7 +403,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   ///                     ERASE
-
   private erase(event: MouseEvent): void {
     this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
     //console.log(event.offsetX, event.offsetY);
@@ -444,9 +489,12 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
   }
 
+  public showDinamicComponent() {
+    console.log('Comp dinamico', this.objectProps);
+  }
   public cut(area: DynamicComponentProperties) {
     //colocar cursor move
-    console.log('Area:', area);
+    //console.log('Area:', area);
 
     //console.log(parseFloat(area.width));
 
@@ -456,50 +504,53 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       parseFloat(area.width),
       parseFloat(area.height)
     );
-    this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la imagen con el cacho arrancado de la seleccion
 
-    ////carga la imagen al canvas
-    this.currentCanvasImage.src = this.imagesArray[0];
-    this.currentCanvasImage.onload = () => {
-      this.ctx.clearRect(
-        0,
-        0,
-        this.canvasDimensions.CanvasWidth,
-        this.canvasDimensions.CanvasHeight
-      );
-      this.ctx.drawImage(this.currentCanvasImage, 0, 0);
-    };
+    //this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la seleccion
 
-    this.ctx.clearRect(
-      0,
-      0,
-      this.canvasDimensions.CanvasWidth,
-      parseFloat(area.top)
-    );
+    //console.log(this.imagesArray);
 
-    this.ctx.clearRect(
-      0,
-      0,
-      parseFloat(area.left),
-      this.canvasDimensions.CanvasHeight
-    );
+    //this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la imagen con el cacho arrancado de la seleccion
 
-    this.ctx.clearRect(
-      parseFloat(area.left),
-      parseFloat(area.height) + parseFloat(area.top),
-      this.canvasDimensions.CanvasWidth,
-      this.canvasDimensions.CanvasHeight
-    );
+    // ////carga la imagen al canvas
+    // this.currentCanvasImage.src = this.imagesArray[0];
+    // this.currentCanvasImage.onload = () => {
+    //   this.ctx.clearRect(
+    //     0,
+    //     0,
+    //     this.canvasDimensions.CanvasWidth,
+    //     this.canvasDimensions.CanvasHeight
+    //   );
+    //   this.ctx.drawImage(this.currentCanvasImage, 0, 0);
+    // };
 
-    this.ctx.clearRect(
-      parseFloat(area.left) + parseFloat(area.width),
-      parseFloat(area.top),
-      this.canvasDimensions.CanvasWidth,
-      this.canvasDimensions.CanvasHeight
-    );
+    // this.ctx.clearRect(
+    //   0,
+    //   0,
+    //   this.canvasDimensions.CanvasWidth,
+    //   parseFloat(area.top)
+    // );
 
-    this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la seleccion
+    // this.ctx.clearRect(
+    //   0,
+    //   0,
+    //   parseFloat(area.left),
+    //   this.canvasDimensions.CanvasHeight
+    // );
 
-    console.log(this.imagesArray);
+    // this.ctx.clearRect(
+    //   parseFloat(area.left),
+    //   parseFloat(area.height) + parseFloat(area.top),
+    //   this.canvasDimensions.CanvasWidth,
+    //   this.canvasDimensions.CanvasHeight
+    // );
+
+    // this.ctx.clearRect(
+    //   parseFloat(area.left) + parseFloat(area.width),
+    //   parseFloat(area.top),
+    //   this.canvasDimensions.CanvasWidth,
+    //   this.canvasDimensions.CanvasHeight
+    // );
+
+    //this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la seleccion
   }
 }
