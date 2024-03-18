@@ -16,6 +16,7 @@ import { DrawingStatusService } from 'src/app/shared/services/drawing-status.ser
 import { DynamicComponentProperties } from 'src/app/shared/interfaces/object-properties';
 import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
 import { every } from 'rxjs';
+import { Cord } from 'src/app/shared/interfaces/cord.interface';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -40,6 +41,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public isSelectDrawn = false;
 
   private div!: HTMLElement;
+  public XY: Cord = { x: 0, y: 0 };
 
   private imagesArray: string[] = [];
 
@@ -154,6 +156,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       //puesto que solo las figuras ocupan el componente dinamico
       this.createComponent();
     }
+
+    if (this.toolName == 'Move') {
+      this.XY = {
+        x: Math.abs(parseFloat(this.objectProps.left) - event.offsetX),
+        y: Math.abs(parseFloat(this.objectProps.top) - event.offsetY),
+      };
+    }
   }
 
   public mouseMove(event: MouseEvent): void {
@@ -199,8 +208,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   moveObject(event: MouseEvent) {
     if (this.isInsideDynamicComponent) {
       console.log(`Move to x:${event.offsetX}, y:${event.offsetY}`);
-      this.objectProps.top = event.offsetY + 'px';
-      this.objectProps.left = event.offsetX + 'px';
+      this.objectProps.top = event.offsetY - this.XY.y + 'px';
+      this.objectProps.left = event.offsetX - this.XY.x + 'px';
 
       this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
     }
