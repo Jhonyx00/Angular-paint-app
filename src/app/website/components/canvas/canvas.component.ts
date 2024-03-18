@@ -40,6 +40,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   private imagesArray: string[] = [];
 
+  private props = {
+    color: 'transparent',
+    stroke: '',
+  };
   private objectProps: DynamicComponentProperties = {
     width: '',
     height: '',
@@ -139,11 +143,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.x = event.offsetX;
     this.y = event.offsetY;
 
-    if (
-      this.toolName != 'Line' &&
-      this.toolName != 'Eraser' &&
-      this.toolName != 'Select'
-    ) {
+    if (this.toolName != 'Line' && this.toolName != 'Eraser') {
       //puesto que solo las figuras ocupan el componente dinamico
       this.createComponent();
     }
@@ -162,6 +162,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
           break;
         case 'Ellipse':
           this.drawEllipse(event);
+          break;
+
+        case 'Select':
+          this.selectArea(event, this.props);
+
           break;
 
         case 'Eraser':
@@ -185,15 +190,19 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         break;
       case 'Rectangle':
         this.drawRectangle(this.objectProps);
+        this.deleteComponent(); //delete component when any shape is drawed
         //this.shapeList.push(this.rectangleDimensions);
         break;
       case 'Ellipse':
         //this.shapeList.push(this.ellipseDimensions);
         break;
+
+      case 'Select':
+        this.cut(this.objectProps);
+        break;
       default:
         break;
     }
-    this.deleteComponent();
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
     //this.canvasStateService.setImagesList(this.imagesArray);
   }
@@ -376,5 +385,121 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     if (this.componentRef) {
       this.componentRef.destroy();
     }
+  }
+  private selectArea(event: MouseEvent, proprs: {}): void {
+    // console.log(proprs);
+
+    this.ctx.setLineDash([5, 5]);
+    this.ctx.fillStyle = 'transparent';
+    this.ctx.strokeStyle = 'black';
+
+    const w = event.offsetX - this.x;
+    const h = event.offsetY - this.y;
+
+    const newX = Math.abs(event.offsetX - this.x);
+    const newY = Math.abs(event.offsetY - this.y);
+
+    // Quadrant 1
+    if (w > 0 && h < 0) {
+      this.objectProps = {
+        top: event.offsetY + 'px',
+        left: this.x + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+        background: this.color,
+      };
+    }
+    // Quadrant 2
+    else if (w < 0 && h < 0) {
+      this.objectProps = {
+        top: event.offsetY + 'px',
+        left: event.offsetX + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+        background: this.color,
+      };
+    }
+    // Quadrant 3
+    else if (w < 0 && h > 0) {
+      //console.log('Cuarante 3');
+      this.objectProps = {
+        top: this.y + 'px',
+        left: event.offsetX + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+        background: this.color,
+      };
+    }
+    //Quadrant 4
+    else {
+      this.objectProps = {
+        top: this.y + 'px',
+        left: this.x + 'px',
+        width: newX + 'px',
+        height: newY + 'px',
+        background: this.props.color,
+      };
+    }
+
+    this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
+  }
+
+  public cut(area: DynamicComponentProperties) {
+    //colocar cursor move
+    console.log('Area:', area);
+
+    //console.log(parseFloat(area.width));
+
+    this.ctx.clearRect(
+      parseFloat(area.left),
+      parseFloat(area.top),
+      parseFloat(area.width),
+      parseFloat(area.height)
+    );
+    this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la imagen con el cacho arrancado de la seleccion
+
+    ////carga la imagen al canvas
+    this.currentCanvasImage.src = this.imagesArray[0];
+    this.currentCanvasImage.onload = () => {
+      this.ctx.clearRect(
+        0,
+        0,
+        this.canvasDimensions.CanvasWidth,
+        this.canvasDimensions.CanvasHeight
+      );
+      this.ctx.drawImage(this.currentCanvasImage, 0, 0);
+    };
+
+    this.ctx.clearRect(
+      0,
+      0,
+      this.canvasDimensions.CanvasWidth,
+      parseFloat(area.top)
+    );
+
+    this.ctx.clearRect(
+      0,
+      0,
+      parseFloat(area.left),
+      this.canvasDimensions.CanvasHeight
+    );
+
+    this.ctx.clearRect(
+      parseFloat(area.left),
+      parseFloat(area.height) + parseFloat(area.top),
+      this.canvasDimensions.CanvasWidth,
+      this.canvasDimensions.CanvasHeight
+    );
+
+    this.ctx.clearRect(
+      parseFloat(area.left) + parseFloat(area.width),
+      parseFloat(area.top),
+      this.canvasDimensions.CanvasWidth,
+      this.canvasDimensions.CanvasHeight
+    );
+
+    this.imagesArray.push(this.canvas.nativeElement.toDataURL()); //guarda la seleccion
+
+    console.log(this.imagesArray);
   }
 }

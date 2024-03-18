@@ -59,7 +59,7 @@ export class ToolbarComponent {
 
   public selectionItems: Tool[] = [
     {
-      toolName: 'Move',
+      toolName: 'Select',
       iconUrl: '../../../../assets/svg/rectangle.svg',
       id: 1,
     },
