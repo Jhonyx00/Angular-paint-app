@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -9,14 +9,23 @@ export class ToolsService {
 
   //  selected button
   private selectedButton = new BehaviorSubject<string>('Line');
-  selectedButtonObservable = this.selectedButton.asObservable();
+
   public setSelectedButton(selectedShape: string): void {
     this.selectedButton.next(selectedShape);
   }
+
+  public getSelectedButton(): Observable<string> {
+    return this.selectedButton.asObservable();
+  }
+
   //  color
   private selectedColor = new BehaviorSubject<string>('#000000');
-  color = this.selectedColor.asObservable();
+
   public changeColor(data: string): void {
     this.selectedColor.next(data);
+  }
+
+  public getSelectedColor(): Observable<string> {
+    return this.selectedColor.asObservable();
   }
 }

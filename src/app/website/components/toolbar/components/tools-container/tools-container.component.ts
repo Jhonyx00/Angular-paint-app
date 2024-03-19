@@ -116,7 +116,7 @@ export class ToolbarComponent {
   }
 
   private initCanvasImageList(): void {
-    this.canvasStateService.imagesListObservable.subscribe((currentList) => {
+    this.canvasStateService.getImageList().subscribe((currentList) => {
       this.imagesList = currentList;
     });
   }

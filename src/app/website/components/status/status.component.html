@@ -1,8 +1,11 @@
 <div class="status-bar" id="s">
   <div class="pixels-container">
-    <span class="size">Size: {{ CanvasWidth }}, {{ CanvasHeight }}pixels</span>
+    <span class="size"
+      >Size: {{ canvasDimensions.width }},
+      {{ canvasDimensions.height }}pixels</span
+    >
     <span class="position" *ngIf="!isOutside"
-      >position: {{ x }}, {{ y }}pixels</span
+      >position: {{ cursosrPosition.x }}, {{ cursosrPosition.y }}pixels</span
     >
   </div>
 

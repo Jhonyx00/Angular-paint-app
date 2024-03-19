@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { PropertiesService } from '../../../shared/services/properties.service';
+import { CursorPosition } from 'src/app/shared/interfaces/cursor-position.interface';
+import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
 
 @Component({
   selector: 'app-status',
@@ -9,11 +11,15 @@ import { PropertiesService } from '../../../shared/services/properties.service';
 export class StatusComponent implements OnInit {
   constructor(private propertiesService: PropertiesService) {}
 
-  public x: number = 0;
-  public y: number = 0;
+  public cursosrPosition: CursorPosition = {
+    x: 0,
+    y: 0,
+  };
 
-  CanvasWidth: number = 0;
-  CanvasHeight: number = 0;
+  public canvasDimensions: CanvasDimensions = {
+    width: 0,
+    height: 0,
+  };
 
   isOutside: boolean = false;
 
@@ -24,22 +30,22 @@ export class StatusComponent implements OnInit {
   }
 
   private updateCursorPosition() {
-    this.propertiesService.posXY.subscribe((currentPosition) => {
-      this.x = currentPosition.x;
-      this.y = currentPosition.y;
+    this.propertiesService.getCursorPosition().subscribe((currentPosition) => {
+      this.cursosrPosition.x = currentPosition.x;
+      this.cursosrPosition.y = currentPosition.y;
     });
   }
 
   private updateCursorState() {
-    this.propertiesService.isOutside.subscribe((isOutside) => {
+    this.propertiesService.getOutsideCanvas().subscribe((isOutside) => {
       this.isOutside = isOutside;
     });
   }
 
   private displayCanvasDimensions() {
-    this.propertiesService.canvasSizeValue.subscribe((currentSize) => {
-      this.CanvasWidth = currentSize.CanvasWidth;
-      this.CanvasHeight = currentSize.CanvasHeight;
+    this.propertiesService.getCanvasDimensions().subscribe((currentSize) => {
+      this.canvasDimensions.width = currentSize.width;
+      this.canvasDimensions.height = currentSize.height;
     });
   }
 }

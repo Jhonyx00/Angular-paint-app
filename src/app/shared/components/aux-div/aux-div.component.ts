@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { DrawingStatusService } from '../../services/drawing-status.service';
+import { DrawingStatusService } from '../../services/dynamic-component.service';
 import { ToolsService } from 'src/app/website/components/toolbar/services/tools.service';
-import { DynamicComponentProperties } from '../../interfaces/object-properties';
+import { DynamicComponentProperties } from '../../interfaces/dynamic-component.interface';
 
 @Component({
   selector: 'app-aux-div',
@@ -16,13 +16,15 @@ export class AuxDivComponent implements OnInit {
   }
 
   private initShapeDimensions() {
-    this.drawingStateService.currentDimension.subscribe((current) => {
-      this.objectProps.width = current.width;
-      this.objectProps.height = current.height;
-      this.objectProps.top = current.top;
-      this.objectProps.left = current.left;
-      this.objectProps.background = current.background;
-    });
+    this.drawingStateService
+      .getDynamicComponentDimensions()
+      .subscribe((current) => {
+        this.objectProps.width = current.width;
+        this.objectProps.height = current.height;
+        this.objectProps.top = current.top;
+        this.objectProps.left = current.left;
+        this.objectProps.background = current.background;
+      });
   }
 
   public objectProps: DynamicComponentProperties = {

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CursorPosition } from '../interfaces/cursor-position.interface';
 import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
+import { StatusbarProperties } from '../interfaces/statusbar-properties.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,31 +10,33 @@ import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 export class PropertiesService {
   constructor() {}
 
-  //puedo usar solo un subject que tenga todos los cambios como un objeto de tipo properties
-  //(crear la interface Properties)
-
-  private XY = new BehaviorSubject<CursorPosition>({ x: 0, y: 0 });
+  private cursorPosition = new BehaviorSubject<CursorPosition>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
-  private sizeX = new BehaviorSubject<CanvasDimensions>({
-    CanvasWidth: 0,
-    CanvasHeight: 0,
+  private canvasDimensions = new BehaviorSubject<CanvasDimensions>({
+    width: 0,
+    height: 0,
   });
 
-  posXY = this.XY.asObservable();
-  //chek if it is outside canvas
-  isOutside = this.isOutsideCanvas.asObservable();
-  //canvas size
-  canvasSizeValue = this.sizeX.asObservable();
-
-  positionXY(posXY: CursorPosition) {
-    this.XY.next(posXY);
+  setCursorPosition(posXY: CursorPosition) {
+    this.cursorPosition.next(posXY);
   }
 
-  outsideCanvas(isOutside: boolean) {
+  setOutsideCanvas(isOutside: boolean) {
     this.isOutsideCanvas.next(isOutside);
   }
 
-  canvasSize(size: CanvasDimensions) {
-    this.sizeX.next(size);
+  setCanvasDimensions(size: CanvasDimensions) {
+    this.canvasDimensions.next(size);
+  }
+
+  public getCursorPosition(): Observable<CursorPosition> {
+    return this.cursorPosition.asObservable();
+  }
+
+  public getOutsideCanvas(): Observable<boolean> {
+    return this.isOutsideCanvas.asObservable();
+  }
+  public getCanvasDimensions(): Observable<CanvasDimensions> {
+    return this.canvasDimensions.asObservable();
   }
 }
