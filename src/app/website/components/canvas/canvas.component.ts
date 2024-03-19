@@ -44,7 +44,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   private img!: HTMLCanvasElement;
 
-  private selectedImage!: ImageData;
+  private selectedImage: ImageData | undefined;
 
   public XY: CursorPosition = {
     x: 0,
@@ -127,9 +127,10 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.toolsService.selectedButtonObservable.subscribe((currentTool) => {
       this.toolName = currentTool; //get toolname
       console.log('Tool: ', this.toolName); //
-
       //check if there is still a last selected area
       this.checkSelectedArea();
+
+      this.selectedImage = undefined;
     });
   }
 
@@ -146,7 +147,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     this.drawingStatusService.changeButtonState(true);
     this.mouseDownPosition.x = event.offsetX;
     this.mouseDownPosition.y = event.offsetY;
-
     // if (this.toolName == 'Rectangle' || this.toolName == 'Select') {
     //   this.createComponent();
 
@@ -165,21 +165,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
         break;
     }
 
-    // if (this.isSelectDrawn) {
-    //   this.deleteComponent();
-    // }
-
-    // if (
-    //   this.toolName != 'Line' &&
-    //   this.toolName != 'Eraser' &&
-    //   this.toolName != 'Move'
-    // ) {
-    //   //puesto que solo las figuras ocupan el componente dinamico
-    //   this.createComponent();
-    // }
-
-    //borrar el componente dinamico en mousedown
-
     if (this.toolName == 'Move') {
       this.XY = {
         x: Math.abs(parseFloat(this.objectProps.left) - event.offsetX),
@@ -187,7 +172,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       };
     }
 
+    ///si es la primera vez que se oprime el select, entonces que no llame esa funcion
+    //ejemplo, si un contador es mayor que 1 que ahora si pinte algo
+    // y el contador se reinicia cada que seleccionad "Select"
     if (this.selectedImage != undefined && this.toolName === 'Select') {
+      //no pinta nada al ser la primera vez que se selecciona el select
       this.paintNewImage();
 
       //mover tool a shared porque se comparten siempre en la misma pagina
@@ -325,11 +314,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   }
 
   private paintNewImage() {
-    this.ctx.putImageData(
-      this.selectedImage,
-      parseFloat(this.objectProps.left),
-      parseFloat(this.objectProps.top)
-    );
+    if (this.selectedImage != undefined) {
+      this.ctx.putImageData(
+        this.selectedImage,
+        parseFloat(this.objectProps.left),
+        parseFloat(this.objectProps.top)
+      );
+    }
   }
 
   private selectImageArea(area: DynamicComponentProperties) {
@@ -340,6 +331,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       parseFloat(area.width),
       parseFloat(area.height)
     );
+    ///
+
+    ///
   }
 
   private clearSelectedArea(area: DynamicComponentProperties) {
@@ -370,12 +364,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //esto solo funciona si cambias de herramienta
     if (this.selectedImage != undefined && this.toolName != 'Move') {
       this.paintNewImage();
-
-      console.log('se debe borrar el componente dinamico');
-
+      // console.log('se debe borrar el componente dinamico');
       this.deleteComponent();
       this.isSelectDrawn = false;
-    } else {
     }
   }
 
