@@ -1,4 +1,4 @@
-import { Cord } from './cord.interface';
+import { Cord } from './cursor-position.interface';
 
 export interface Shape {
   shapeType: string;

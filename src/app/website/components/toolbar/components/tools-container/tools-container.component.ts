@@ -133,6 +133,10 @@ export class ToolbarComponent {
         this.redo();
         break;
 
+      case 'Save':
+        this.saveWork();
+        break;
+
       default:
         this.initSelectedTool();
         break;
@@ -163,5 +167,15 @@ export class ToolbarComponent {
       this.canvasStateService.setImagesList(this.imagesList);
     } else {
     }
+  }
+
+  private saveWork(): void {
+    const base64ImageData = this.imagesList[this.imagesList.length - 1]; //esto es igual a la ultima imagen del arreglo compartido
+    let imageName = prompt('Enter image name');
+    const downloadLink = document.createElement('a');
+    downloadLink.href = base64ImageData;
+    downloadLink.download = imageName || 'image1';
+    downloadLink.click();
+    window.URL.revokeObjectURL(downloadLink.href);
   }
 }

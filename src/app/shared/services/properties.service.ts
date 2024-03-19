@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { Cord } from '../interfaces/cord.interface';
+import { CursorPosition } from '../interfaces/cursor-position.interface';
 import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 
 @Injectable({
@@ -12,7 +12,7 @@ export class PropertiesService {
   //puedo usar solo un subject que tenga todos los cambios como un objeto de tipo properties
   //(crear la interface Properties)
 
-  private XY = new BehaviorSubject<Cord>({ x: 0, y: 0 });
+  private XY = new BehaviorSubject<CursorPosition>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
   private sizeX = new BehaviorSubject<CanvasDimensions>({
     CanvasWidth: 0,
@@ -25,7 +25,7 @@ export class PropertiesService {
   //canvas size
   canvasSizeValue = this.sizeX.asObservable();
 
-  positionXY(posXY: Cord) {
+  positionXY(posXY: CursorPosition) {
     this.XY.next(posXY);
   }
 
