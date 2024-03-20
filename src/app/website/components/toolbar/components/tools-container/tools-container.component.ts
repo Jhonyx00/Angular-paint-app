@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { ToolsService } from '../../services/tools.service';
+import { Component, OnDestroy } from '@angular/core';
+import { ToolsService } from '../../../../services/tools.service';
 import { Tool } from 'src/app/shared/interfaces/selected-tool.interface';
 import { CanvasStateService } from 'src/app/shared/services/canvas-state.service';
 import { ToolComponent } from '../tool/tool.component';
@@ -9,7 +9,7 @@ import { ToolComponent } from '../tool/tool.component';
   templateUrl: './tools-container.component.html',
   styleUrls: ['./tools-container.component.css'],
 })
-export class ToolbarComponent {
+export class ToolbarComponent implements OnDestroy {
   constructor(
     private toolsService: ToolsService,
     private canvasStateService: CanvasStateService
@@ -177,5 +177,9 @@ export class ToolbarComponent {
     downloadLink.download = imageName || 'image1';
     downloadLink.click();
     window.URL.revokeObjectURL(downloadLink.href);
+  }
+
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
   }
 }

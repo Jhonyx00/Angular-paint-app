@@ -3,30 +3,33 @@ import {
   Component,
   ComponentRef,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { PropertiesService } from '../../../shared/services/properties.service';
+import { StatusBarService } from '../../services/statusbar.service';
 import { CanvasStateService } from '../../../shared/services/canvas-state.service';
-import { ToolsService } from '../toolbar/services/tools.service';
+import { ToolsService } from '../../services/tools.service';
 import { AuxDivComponent } from '../../../shared/components/aux-div/aux-div.component';
 import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
-import { DrawingStatusService } from 'src/app/shared/services/dynamic-component.service';
+import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { DynamicComponentProperties } from 'src/app/shared/interfaces/dynamic-component.interface';
 import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
 import { CursorPosition } from 'src/app/shared/interfaces/cursor-position.interface';
+import { ImageDataService } from '../../services/image-data.service';
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.css'],
 })
-export class CanvasComponent implements AfterViewInit, OnInit {
+export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   constructor(
-    private propertiesService: PropertiesService,
+    private statusBarService: StatusBarService,
     private canvasStateService: CanvasStateService,
     private toolsService: ToolsService,
-    private drawingStatusService: DrawingStatusService
+    private dynamicComponentService: DynamicComponentService,
+    private imageDataService: ImageDataService
   ) {}
 
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
@@ -40,7 +43,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   public isInsideDynamicComponent = false;
   public isSelectDrawn = false;
 
-  private div!: HTMLElement;
+  private div!: HTMLCanvasElement;
 
   private img!: HTMLCanvasElement;
 
@@ -53,16 +56,13 @@ export class CanvasComponent implements AfterViewInit, OnInit {
 
   private imagesArray: string[] = [];
 
-  private props = {
-    color: '',
-    stroke: '',
-  };
   private objectProps: DynamicComponentProperties = {
     width: '',
     height: '',
     top: '',
     left: '',
     background: '',
+    border: '',
   };
 
   private canvasDimensions: CanvasDimensions = {
@@ -71,12 +71,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   };
 
   private currentCanvasImage = new Image();
-  private currentDynamicComponentImage = new Image();
   private color: string = '';
 
   private toolName = '';
   private ctx!: CanvasRenderingContext2D;
+
   private isDrawing: boolean = false;
+
+  public dinamicComponentCanvas!: HTMLCanvasElement;
 
   // Mouse down position
   private mouseDownPosition: CursorPosition = {
@@ -132,13 +134,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       if (this.selectedImage != undefined && this.toolName != 'Move') {
         this.checkSelectedArea();
       }
+
       // reset ImageData object to avoid bug on first mousedown when select tool is selected
       this.selectedImage = undefined;
     });
   }
 
   private initAuxDynamicComponent(): void {
-    this.drawingStatusService
+    this.dynamicComponentService
       .getDynamicComponentDimensions()
       .subscribe((currentShape) => {
         this.objectProps = currentShape;
@@ -176,14 +179,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       };
     }
 
-    ///si es la primera vez que se oprime el select, entonces que no llame esa funcion
-    //ejemplo, si un contador es mayor que 1 que ahora si pinte algo
-    // y el contador se reinicia cada que seleccionad "Select"
     if (this.selectedImage != undefined && this.toolName === 'Select') {
-      //no pinta nada al ser la primera vez que se selecciona el select
       this.paintNewImage();
-
-      //mover tool a shared porque se comparten siempre en la misma pagina
     }
   }
 
@@ -223,7 +220,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
 
     //SET properties to be accesibble from status component
-    this.propertiesService.setCursorPosition({
+    this.statusBarService.setCursorPosition({
       x: event.offsetX,
       y: event.offsetY,
     });
@@ -257,16 +254,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
 
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
-
-    //this.canvasStateService.setImagesList(this.imagesArray);
   }
 
   public mouseEnter(): void {
-    this.propertiesService.setOutsideCanvas(false);
+    this.statusBarService.setOutsideCanvas(false);
   }
 
   public mouseLeave(): void {
-    this.propertiesService.setOutsideCanvas(true);
+    this.statusBarService.setOutsideCanvas(true);
   }
 
   private updateCanvasValue(): void {
@@ -291,9 +286,9 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       //console.log(`Move to x:${event.offsetX}, y:${event.offsetY}`);
       this.objectProps.top = event.offsetY - this.XY.y + 'px';
       this.objectProps.left = event.offsetX - this.XY.x + 'px';
-
-      this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
-
+      this.dynamicComponentService.setDynamicComponentDimensions(
+        this.objectProps
+      );
       this.setCurrentCanvasImage();
     }
   }
@@ -310,12 +305,11 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     ) {
       this.toolName = 'Move'; //Avoid nested select
       this.isInsideDynamicComponent = true;
-      console.log('dentro', this.toolName);
+      //console.log('dentro', this.toolName);
     } else {
       this.toolName = 'Select'; // a new select can be drawed
-
       this.isInsideDynamicComponent = false;
-      console.log('fuera', this.toolName);
+      //console.log('fuera', this.toolName);
     }
   }
 
@@ -338,7 +332,8 @@ export class CanvasComponent implements AfterViewInit, OnInit {
       parseFloat(area.height)
     );
     ///
-
+    //colocar la imagen extraida al canvas del componente dinamico
+    this.imageDataService.setImage(this.selectedImage);
     ///
   }
 
@@ -380,7 +375,6 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     //these two must be public and its value can change with toolbar buttons
     this.ctx.lineWidth = 3;
     this.ctx.lineCap = 'round';
-
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
@@ -396,53 +390,58 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     const newX = Math.abs(event.offsetX - this.mouseDownPosition.x);
     const newY = Math.abs(event.offsetY - this.mouseDownPosition.y);
 
+    this.objectProps = {
+      top: '',
+      left: '',
+      width: newX + 'px',
+      height: newY + 'px',
+      background: this.color,
+      border: '',
+    };
     // Quadrant 1
     if (w > 0 && h < 0) {
       this.objectProps = {
+        ...this.objectProps,
         top: event.offsetY + 'px',
         left: this.mouseDownPosition.x + 'px',
-        width: newX + 'px',
-        height: newY + 'px',
-        background: this.color,
       };
     }
     // Quadrant 2
     else if (w < 0 && h < 0) {
       this.objectProps = {
+        ...this.objectProps,
         top: event.offsetY + 'px',
         left: event.offsetX + 'px',
-        width: newX + 'px',
-        height: newY + 'px',
-        background: this.color,
       };
     }
     // Quadrant 3
     else if (w < 0 && h > 0) {
       //console.log('Cuarante 3');
       this.objectProps = {
+        ...this.objectProps,
         top: this.mouseDownPosition.y + 'px',
         left: event.offsetX + 'px',
-        width: newX + 'px',
-        height: newY + 'px',
-        background: this.color,
       };
     }
     //Quadrant 4
     else {
       this.objectProps = {
+        ...this.objectProps,
         top: this.mouseDownPosition.y + 'px',
         left: this.mouseDownPosition.x + 'px',
-        width: newX + 'px',
-        height: newY + 'px',
-        background: this.color,
       };
     }
 
+    //set styles it the tool is "Select"
+
     if (this.toolName == 'Select') {
+      this.objectProps.border = '2px dashed gray';
       this.objectProps.background = 'transparent';
     }
 
-    this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
+    this.dynamicComponentService.setDynamicComponentDimensions(
+      this.objectProps
+    );
   }
 
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
@@ -507,8 +506,14 @@ export class CanvasComponent implements AfterViewInit, OnInit {
   //    DINAMIC COMPONENT FUNCTIONS
   private createComponent(): void {
     this.componentRef = this.dynamicHost.createComponent(AuxDivComponent);
-    this.div = this.componentRef.location.nativeElement as HTMLElement;
-    this.img = this.div.childNodes[0].firstChild as HTMLCanvasElement;
+
+    // this.div = this.componentRef.location.nativeElement;
+    // this.dinamicComponentCanvas = this.div.firstChild as HTMLCanvasElement;
+    // console.log(this.dinamicComponentCanvas);
+
+    //desde aqui colocar la imagen en un behavior subject
+
+    //this.service.setImageData(this.selectedImage)
   }
 
   private deleteComponent(): void {
@@ -517,61 +522,7 @@ export class CanvasComponent implements AfterViewInit, OnInit {
     }
   }
 
-  // private selectArea(event: MouseEvent, proprs: {}): void {
-  //   // console.log(proprs);
-
-  //   this.ctx.setLineDash([5, 5]);
-  //   this.ctx.fillStyle = 'transparent';
-  //   this.ctx.strokeStyle = 'black';
-
-  //   const w = event.offsetX - this.mouseDownPosition.x;
-  //   const h = event.offsetY - this.mouseDownPosition.y;
-
-  //   const newX = Math.abs(event.offsetX - this.mouseDownPosition.x);
-  //   const newY = Math.abs(event.offsetY - this.mouseDownPosition.y);
-
-  //   // Quadrant 1
-  //   if (w > 0 && h < 0) {
-  //     this.objectProps = {
-  //       top: event.offsetY + 'px',
-  //       left: this.mouseDownPosition.x + 'px',
-  //       width: newX + 'px',
-  //       height: newY + 'px',
-  //       background: this.color,
-  //     };
-  //   }
-  //   // Quadrant 2
-  //   else if (w < 0 && h < 0) {
-  //     this.objectProps = {
-  //       top: event.offsetY + 'px',
-  //       left: event.offsetX + 'px',
-  //       width: newX + 'px',
-  //       height: newY + 'px',
-  //       background: this.color,
-  //     };
-  //   }
-  //   // Quadrant 3
-  //   else if (w < 0 && h > 0) {
-  //     //console.log('Cuarante 3');
-  //     this.objectProps = {
-  //       top: this.mouseDownPosition.y + 'px',
-  //       left: event.offsetX + 'px',
-  //       width: newX + 'px',
-  //       height: newY + 'px',
-  //       background: this.color,
-  //     };
-  //   }
-  //   //Quadrant 4
-  //   else {
-  //     this.objectProps = {
-  //       top: this.mouseDownPosition.y + 'px',
-  //       left: this.mouseDownPosition.x + 'px',
-  //       width: newX + 'px',
-  //       height: newY + 'px',
-  //       background: this.props.color,
-  //     };
-  //   }
-
-  //   this.drawingStatusService.setDynamicComponentDimensions(this.objectProps);
-  // }
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
+  }
 }

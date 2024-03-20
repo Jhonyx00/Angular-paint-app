@@ -5,7 +5,7 @@ import { DynamicComponentProperties } from '../interfaces/dynamic-component.inte
 @Injectable({
   providedIn: 'root',
 })
-export class DrawingStatusService {
+export class DynamicComponentService {
   constructor() {}
 
   private dynamicComponentDimension =
@@ -15,6 +15,7 @@ export class DrawingStatusService {
       width: '',
       height: '',
       background: '',
+      border: '',
     });
 
   setDynamicComponentDimensions(newDimension: DynamicComponentProperties) {

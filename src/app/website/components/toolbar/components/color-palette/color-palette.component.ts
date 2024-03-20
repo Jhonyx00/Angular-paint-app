@@ -1,12 +1,12 @@
-import { Component } from '@angular/core';
-import { ToolsService } from '../../services/tools.service';
+import { Component, OnDestroy } from '@angular/core';
+import { ToolsService } from '../../../../services/tools.service';
 
 @Component({
   selector: 'app-color',
   templateUrl: './color-palette.component.html',
   styleUrls: ['./color-palette.component.css'],
 })
-export class ColorComponent {
+export class ColorComponent implements OnDestroy {
   constructor(private toolsService: ToolsService) {}
 
   public colors = new Array<string>(9);
@@ -29,6 +29,10 @@ export class ColorComponent {
     } else {
       console.log('no se puede perrillo');
     }
+  }
+
+  ngOnDestroy(): void {
+    throw new Error('Method not implemented.');
   }
 }
 

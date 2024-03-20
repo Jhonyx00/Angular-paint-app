@@ -1,0 +1,16 @@
+export enum Tools {
+  Rectangle = 'Rectangle',
+  Ellipse = 'Ellipse',
+  Hexagon = 'Hexagon',
+  Triangle = 'Triangle',
+  Star = 'Star',
+  Select = 'Select',
+  Line = 'Line',
+  Pencil = 'Pencil',
+  Eraser = 'Eraser',
+  Save = 'Save',
+  Open = 'Open',
+  File = 'File',
+  Undo = 'Undo',
+  Redo = 'Redo',
+}

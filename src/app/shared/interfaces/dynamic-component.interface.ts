@@ -4,6 +4,7 @@ export interface DynamicComponentProperties {
   width: string;
   height: string;
   background: string;
+  border: string;
 
   ///recordar incluir todas las propiedades que se requieran acrualizar para evitar bugs
 }

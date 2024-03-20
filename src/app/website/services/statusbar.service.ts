@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CursorPosition } from '../interfaces/cursor-position.interface';
-import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
-import { StatusbarProperties } from '../interfaces/statusbar-properties.interface';
+import { CursorPosition } from '../../shared/interfaces/cursor-position.interface';
+import { CanvasDimensions } from '../../shared/interfaces/canvas-dimensions.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class PropertiesService {
+export class StatusBarService {
   constructor() {}
 
   private cursorPosition = new BehaviorSubject<CursorPosition>({ x: 0, y: 0 });
