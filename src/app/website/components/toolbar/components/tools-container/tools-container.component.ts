@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { ToolsService } from '../../../../services/tools.service';
 import { Tool } from 'src/app/shared/interfaces/selected-tool.interface';
-import { CanvasStateService } from 'src/app/shared/services/canvas-state.service';
+import { CanvasStateService } from 'src/app/website/services/canvas-state.service';
 import { ToolComponent } from '../tool/tool.component';
 
 @Component({
@@ -153,7 +153,7 @@ export class ToolbarComponent implements OnDestroy {
       this.imagesListAux.push(this.imagesList.pop());
 
       console.log('lista de undo', this.imagesList);
-      this.canvasStateService.setImagesList(this.imagesList);
+      this.canvasStateService.setImageList(this.imagesList);
     } else {
     }
   }
@@ -164,7 +164,7 @@ export class ToolbarComponent implements OnDestroy {
       this.imagesList.push(this.imagesListAux.pop());
 
       console.log('lista de redo', this.imagesList);
-      this.canvasStateService.setImagesList(this.imagesList);
+      this.canvasStateService.setImageList(this.imagesList);
     } else {
     }
   }

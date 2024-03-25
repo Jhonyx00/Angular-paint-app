@@ -2,19 +2,21 @@ import {
   AfterViewInit,
   Component,
   ElementRef,
+  OnDestroy,
   OnInit,
   ViewChild,
 } from '@angular/core';
 import { DynamicComponentProperties } from '../../interfaces/dynamic-component.interface';
 import { DynamicComponentService } from '../../services/dynamic-component.service';
-import { ImageDataService } from 'src/app/website/services/image-data.service';
+import { ImageDataService } from 'src/app/shared/services/image-data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-aux-div',
   templateUrl: './aux-div.component.html',
   styleUrls: ['./aux-div.component.css'],
 })
-export class AuxDivComponent implements OnInit, AfterViewInit {
+export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private dynamicComponentService: DynamicComponentService,
     private imageDataService: ImageDataService
@@ -23,19 +25,22 @@ export class AuxDivComponent implements OnInit, AfterViewInit {
   @ViewChild('auxCanvas', { static: true }) auxCanvas!: ElementRef;
   private ctxAux!: CanvasRenderingContext2D;
 
+  private image$: Subscription | undefined;
+  private dynamicComponent$: Subscription | undefined;
+
   private imageData: ImageData | undefined;
 
-  public objectProps: DynamicComponentProperties = {
-    width: '',
-    height: '',
-    top: '',
-    left: '',
+  public auxComponentProps: DynamicComponentProperties = {
+    width: 0,
+    height: 0,
+    top: 0,
+    left: 0,
     background: '',
     border: '',
   };
 
   ngOnInit(): void {
-    this.initComponentAuxDimensions();
+    this.initAuxComponentDimensions();
   }
 
   ngAfterViewInit(): void {
@@ -48,33 +53,28 @@ export class AuxDivComponent implements OnInit, AfterViewInit {
   }
 
   initImage() {
-    this.imageDataService.getImage().subscribe((image) => {
-      console.log('la imagen seria: ', image);
-      this.imageData = image;
-      if (this.imageData !== undefined) {
-        this.ctxAux.putImageData(
-          this.imageData,
-          0,
-          0
-          // parseFloat(this.objectProps.width),
-          // parseFloat(this.objectProps.height)
-        );
+    this.image$ = this.imageDataService.getImage().subscribe((image) => {
+      if (image != undefined) {
+        this.auxCanvas.nativeElement.width = image?.width;
+        this.auxCanvas.nativeElement.height = image?.height;
+        this.imageData = image;
+        this.ctxAux.putImageData(image, 0, 0);
+
+        console.log('se ha colocado la IMAGEN');
       }
     });
-
-    console.log(this.auxCanvas.nativeElement.width); ///esta medida
   }
 
-  private initComponentAuxDimensions() {
-    this.dynamicComponentService
-      .getDynamicComponentDimensions()
-      .subscribe((current: DynamicComponentProperties) => {
-        this.objectProps.width = current.width;
-        this.objectProps.height = current.height;
-        this.objectProps.top = current.top;
-        this.objectProps.left = current.left;
-        this.objectProps.background = current.background;
-        this.objectProps.border = current.border;
+  private initAuxComponentDimensions() {
+    this.dynamicComponent$ = this.dynamicComponentService
+      .getAuxComponent()
+      .subscribe((currentAuxComponent: DynamicComponentProperties) => {
+        this.auxComponentProps = currentAuxComponent;
       });
+  }
+
+  ngOnDestroy(): void {
+    this.image$?.unsubscribe();
+    this.dynamicComponent$?.unsubscribe();
   }
 }

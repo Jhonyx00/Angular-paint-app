@@ -28,4 +28,7 @@ export class ToolsService {
   public getSelectedColor(): Observable<string> {
     return this.selectedColor.asObservable();
   }
+
+  //crear un behavior subject que indique si esta dentro o fuera del foco del canvas al hacer click en la pantalla
+  // para controlar el reseteo
 }

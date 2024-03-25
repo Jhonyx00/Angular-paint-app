@@ -9,7 +9,7 @@ export class ImageDataService {
 
   //  image
   private image = new BehaviorSubject<ImageData | undefined>(undefined);
-  public setImage(image: ImageData): void {
+  public setImage(image: ImageData | undefined): void {
     this.image.next(image);
   }
   public getImage(): Observable<ImageData | undefined> {

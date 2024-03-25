@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
+import { CanvasDimensions } from '../../shared/interfaces/canvas-dimensions.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -12,15 +12,15 @@ export class CanvasStateService {
     width: 0,
     height: 0,
   });
-  setImagesList(imageArray: string[]) {
+  public setImageList(imageArray: string[]) {
     this.imageList.next(imageArray);
   }
 
-  getImageList(): Observable<string[]> {
+  public getImageList(): Observable<string[]> {
     return this.imageList.asObservable();
   }
 
-  setCanvasDimensions(size: CanvasDimensions) {
+  public setCanvasDimensions(size: CanvasDimensions) {
     this.canvasDimensions.next(size);
   }
 

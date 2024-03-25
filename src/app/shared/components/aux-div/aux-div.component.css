@@ -1,5 +1,8 @@
 #drawing-div {
   position: absolute;
-  border: none;
   z-index: 2 !important;
+}
+
+.class1 {
+  border: 2px solid blue;
 }

@@ -1,8 +1,8 @@
 export interface DynamicComponentProperties {
-  top: string;
-  left: string;
-  width: string;
-  height: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
   background: string;
   border: string;
 

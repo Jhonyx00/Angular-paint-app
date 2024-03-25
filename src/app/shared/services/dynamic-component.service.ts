@@ -10,10 +10,10 @@ export class DynamicComponentService {
 
   private dynamicComponentDimension =
     new BehaviorSubject<DynamicComponentProperties>({
-      top: '',
-      left: '',
-      width: '',
-      height: '',
+      top: 0,
+      left: 0,
+      width: 0,
+      height: 0,
       background: '',
       border: '',
     });
@@ -22,7 +22,7 @@ export class DynamicComponentService {
     this.dynamicComponentDimension.next(newDimension);
   }
 
-  getDynamicComponentDimensions(): Observable<DynamicComponentProperties> {
+  getAuxComponent(): Observable<DynamicComponentProperties> {
     return this.dynamicComponentDimension.asObservable();
   }
 }

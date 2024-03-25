@@ -1,5 +1,12 @@
-<!-- <div id="drawing-div" [ngStyle]="objectProps">
-  
-</div> -->
-
-<canvas #auxCanvas id="drawing-div" [ngStyle]="objectProps"></canvas>
+<canvas
+  #auxCanvas
+  id="drawing-div"
+  [ngStyle]="{
+    top: auxComponentProps.top + 'px',
+    left: auxComponentProps.left + 'px',
+    width: auxComponentProps.width + 'px',
+    height: auxComponentProps.height + 'px',
+    background: auxComponentProps.background,
+    border: auxComponentProps.border
+  }"
+></canvas>
