@@ -28,8 +28,6 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
 
-  private imageData: ImageData | undefined;
-
   public auxComponentProps: DynamicComponentProperties = {
     width: 0,
     height: 0,
@@ -37,6 +35,7 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
     left: 0,
     background: '',
     outline: '',
+    clipPath: '',
   };
 
   ngOnInit(): void {
@@ -57,7 +56,6 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
       if (image != undefined) {
         this.auxCanvas.nativeElement.width = image?.width;
         this.auxCanvas.nativeElement.height = image?.height;
-        this.imageData = image;
         this.ctxAux.putImageData(image, 0, 0);
       }
     });

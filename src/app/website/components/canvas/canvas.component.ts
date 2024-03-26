@@ -63,6 +63,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     left: 0,
     background: '',
     outline: '',
+    clipPath: '',
   };
 
   private canvasDimensions: CanvasDimensions = {
@@ -133,6 +134,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private setInitialValues(): void {
     this.canvasStateService.getResetValue().subscribe((currentState) => {
+      //console.log('Current state:', currentState);
+
       if (!currentState) {
         //check if there is still a last selected area
         if (this.selectedImage != undefined && this.toolName != Tools.Move) {
@@ -141,12 +144,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         //reset values
         this.resetAuxComponent();
         this.resetObjectProperties();
+
+        //this.dynamicHost.clear(); //i should not use this
       }
     });
   }
 
   private resetAuxComponent() {
-    this.imageDataService.setImage(undefined);
+    this.selectedImage = undefined;
+    this.imageDataService.setImage(this.selectedImage);
   }
 
   private resetObjectProperties() {
@@ -178,6 +184,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     switch (this.toolName) {
       case Tools.Rectangle:
+      case Tools.Ellipse:
+      case Tools.Triangle:
         this.createComponent();
         break;
       case Tools.Select:
@@ -206,10 +214,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
         case Tools.Rectangle:
           this.drawRectangleDiv(event);
+
           break;
         case Tools.Ellipse:
-          // this.drawEllipse(event);
+          this.drawRectangleDiv(event);
+          this.setEllipseStyles();
           break;
+        case Tools.Triangle:
+          this.drawRectangleDiv(event);
+          this.setTriangleStyles();
+
+          break;
+
         case Tools.Select:
           this.drawRectangleDiv(event);
           this.setSelectStyles();
@@ -228,7 +244,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         this.isMouseInside(event);
       }
     }
-
     //SET properties to be accesibble from status component
     this.statusBarService.setCursorPosition({
       x: event.offsetX,
@@ -242,22 +257,27 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //verificar si existen dimensiones de lo que se dibujó
     if (this.objectProps.width > 0 && this.objectProps.height > 0) {
       switch (this.toolName) {
-        case Tools.Line:
-          break;
         case Tools.Rectangle:
           this.drawRectangle(this.objectProps);
           this.deleteComponent(); //delete component when any shape is drawed
-
           break;
+
         case Tools.Ellipse:
+          this.drawEllipse(this.objectProps);
+          this.deleteComponent(); //delete component when any shape is drawed
+          break;
+
+        case Tools.Triangle:
+          this.drawTriangle(this.objectProps);
+          this.deleteComponent();
           break;
 
         case Tools.Select:
           this.selectImageArea(this.objectProps); //get the fragment of canvas
           this.clearSelectedArea(this.objectProps); //remove fragment from selection
           this.setAuxDivImage(); //set image to auxCanvas
-
           break;
+
         default:
           break;
       }
@@ -405,6 +425,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       height: newY,
       background: this.color,
       outline: '',
+      clipPath: '',
     };
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
@@ -424,7 +445,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     // Quadrant 3
     else if (rectangleWidth < 0 && rectangleHeight > 0) {
-      //console.log('Cuarante 3');
       this.objectProps = {
         ...this.objectProps,
         top: this.mouseDownPosition.y,
@@ -450,6 +470,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.objectProps.background = 'transparent';
   }
 
+  private setEllipseStyles() {
+    this.objectProps.clipPath = 'ellipse(50% 50% at 50% 50%)';
+  }
+
+  private setTriangleStyles() {
+    this.objectProps.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+  }
+
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
   private drawRectangle(
     dynamicComponentProperties: DynamicComponentProperties
@@ -462,47 +490,43 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     );
   }
 
-  // private drawEllipse(event: MouseEvent) {
-  //   this.ctx.fillStyle = this.color;
-  //   const relativeX = event.offsetX - this.x;
-  //   const relativeY = event.offsetY - this.y;
-  //   let newX = 0;
-  //   let newY = 0;
-  //   const endAngle = 2 * Math.PI;
+  private drawEllipse(dynamicComponentProperties: DynamicComponentProperties) {
+    this.ctx.fillStyle = this.color;
+    const endAngle = 2 * Math.PI;
+    this.ctx.beginPath();
+    this.ctx.ellipse(
+      dynamicComponentProperties.left + dynamicComponentProperties.width / 2,
+      dynamicComponentProperties.top + dynamicComponentProperties.height / 2,
+      Math.abs(dynamicComponentProperties.width) / 2,
+      Math.abs(dynamicComponentProperties.height) / 2,
+      0,
+      0,
+      endAngle
+    );
+    this.ctx.fill();
+  }
 
-  //   // Quadrant 1
-  //   if (relativeX > 0 && relativeY < 0) {
-  //     newX = this.x + Math.abs(this.x - event.offsetX) / 2;
-  //     newY = this.y - Math.abs(this.y - event.offsetY) / 2;
-  //   }
-  //   // Quadrant 2
-  //   else if (relativeX < 0 && relativeY < 0) {
-  //     newX = this.x - Math.abs(this.x - event.offsetX) / 2;
-  //     newY = this.y - Math.abs(this.y - event.offsetY) / 2;
-  //   }
-  //   // Quadrant 3
-  //   else if (relativeX < 0 && relativeY > 0) {
-  //     newX = this.x - Math.abs(this.x - event.offsetX) / 2;
-  //     newY = this.y + Math.abs(this.y - event.offsetY) / 2;
-  //   }
-  //   //Quadrant 4
-  //   else {
-  //     newX = this.x + Math.abs(this.x - event.offsetX) / 2;
-  //     newY = this.y + Math.abs(this.y - event.offsetY) / 2;
-  //   }
+  private drawTriangle(
+    dynamicComponentProperties: DynamicComponentProperties
+  ): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(
+      dynamicComponentProperties.left + dynamicComponentProperties.width / 2,
+      dynamicComponentProperties.top
+    );
+    this.ctx.lineTo(
+      dynamicComponentProperties.left,
+      +dynamicComponentProperties.top + dynamicComponentProperties.height
+    );
+    this.ctx.lineTo(
+      dynamicComponentProperties.left + dynamicComponentProperties.width,
+      dynamicComponentProperties.top + dynamicComponentProperties.height
+    );
 
-  //   this.ctx.beginPath();
-  //   this.ctx.ellipse(
-  //     newX,
-  //     newY,
-  //     Math.abs(event.offsetX - this.x) / 2,
-  //     Math.abs(event.offsetY - this.y) / 2,
-  //     0,
-  //     0,
-  //     endAngle
-  //   );
-  //   this.ctx.fill();
-  // }
+    this.ctx.closePath();
+
+    this.ctx.fill();
+  }
 
   ///                     ERASE
   private erase(event: MouseEvent): void {
