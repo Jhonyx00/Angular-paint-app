@@ -59,8 +59,6 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
         this.auxCanvas.nativeElement.height = image?.height;
         this.imageData = image;
         this.ctxAux.putImageData(image, 0, 0);
-
-        console.log('se ha colocado la IMAGEN');
       }
     });
   }

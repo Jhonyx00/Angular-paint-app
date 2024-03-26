@@ -15,9 +15,13 @@ import { AuxDivComponent } from '../../../shared/components/aux-div/aux-div.comp
 import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { DynamicComponentProperties } from 'src/app/shared/interfaces/dynamic-component.interface';
-import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
-import { CursorPosition } from 'src/app/shared/interfaces/cursor-position.interface';
+import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
+import { CursorPosition } from 'src/app/website/interfaces/cursor-position.interface';
 import { ImageDataService } from '../../../shared/services/image-data.service';
+import { Tools } from '../../enums/tools.enum';
+import { Cursors } from '../../enums/cursors.enum';
+// import { Tools } from 'src/app/website/enums/tools.enum';
+
 @Component({
   selector: 'app-canvas',
   templateUrl: './canvas.component.html',
@@ -44,7 +48,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private isSelectDrawn = false;
 
   private selectedImage: ImageData | undefined;
-  public canvasCursor = 'crosshair';
+  public canvasCursor: Cursors = Cursors.Crosshair;
   private XY: CursorPosition = {
     x: 0,
     y: 0,
@@ -69,7 +73,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private currentCanvasImage = new Image();
   private color: string = '';
 
-  private toolName = '';
+  private toolName!: Tools;
+
   private ctx!: CanvasRenderingContext2D;
 
   private isDrawing: boolean = false;
@@ -120,7 +125,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initTool(): void {
     // get last value from behavior subject
-    this.toolsService.getSelectedButton().subscribe((currentTool) => {
+    this.toolsService.getSelectedButton().subscribe((currentTool: Tools) => {
       this.toolName = currentTool; //get tool name
       this.canvasStateService.setResetValue(false);
     });
@@ -130,7 +135,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.canvasStateService.getResetValue().subscribe((currentState) => {
       if (!currentState) {
         //check if there is still a last selected area
-        if (this.selectedImage != undefined && this.toolName != 'Move') {
+        if (this.selectedImage != undefined && this.toolName != Tools.Move) {
           this.checkLastSelectedArea();
         }
         //reset values
@@ -172,15 +177,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.imageDataService.setImage(undefined);
 
     switch (this.toolName) {
-      case 'Rectangle':
+      case Tools.Rectangle:
         this.createComponent();
         break;
-      case 'Select':
+      case Tools.Select:
         this.deleteComponent();
         this.createComponent();
         this.paintSelectedArea();
         break;
-      case 'Move':
+      case Tools.Move:
         this.setDeltaXY(event.offsetX, event.offsetY);
         break;
 
@@ -196,23 +201,23 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.isDrawing) {
       //SHAPE SELECTION
       switch (this.toolName) {
-        case 'Line':
+        case Tools.Line:
           this.drawLine(event);
           break;
-        case 'Rectangle':
+        case Tools.Rectangle:
           this.drawRectangleDiv(event);
           break;
-        case 'Ellipse':
+        case Tools.Ellipse:
           // this.drawEllipse(event);
           break;
-        case 'Select':
+        case Tools.Select:
           this.drawRectangleDiv(event);
           this.setSelectStyles();
           break;
-        case 'Move':
+        case Tools.Move:
           this.moveObject(event);
           break;
-        case 'Eraser':
+        case Tools.Eraser:
           this.erase(event);
           break;
         default:
@@ -237,17 +242,17 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //verificar si existen dimensiones de lo que se dibujó
     if (this.objectProps.width > 0 && this.objectProps.height > 0) {
       switch (this.toolName) {
-        case 'Line':
+        case Tools.Line:
           break;
-        case 'Rectangle':
+        case Tools.Rectangle:
           this.drawRectangle(this.objectProps);
           this.deleteComponent(); //delete component when any shape is drawed
 
           break;
-        case 'Ellipse':
+        case Tools.Ellipse:
           break;
 
-        case 'Select':
+        case Tools.Select:
           this.selectImageArea(this.objectProps); //get the fragment of canvas
           this.clearSelectedArea(this.objectProps); //remove fragment from selection
           this.setAuxDivImage(); //set image to auxCanvas
@@ -303,13 +308,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       event.offsetX > this.objectProps.left &&
       event.offsetX < this.objectProps.width + this.objectProps.left
     ) {
-      this.canvasCursor = 'move';
-      this.toolName = 'Move'; //Avoid nested select
+      this.canvasCursor = Cursors.Move;
+      this.toolName = Tools.Move; //Avoid nested select
       this.isInsideDynamicComponent = true;
     } else {
-      this.canvasCursor = 'crosshair';
+      this.canvasCursor = Cursors.Crosshair;
 
-      this.toolName = 'Select'; // a new select can be drawed
+      this.toolName = Tools.Select; // a new select can be drawed
       this.isInsideDynamicComponent = false;
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CanvasDimensions } from '../../shared/interfaces/canvas-dimensions.interface';
+import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 
 @Injectable({
   providedIn: 'root',

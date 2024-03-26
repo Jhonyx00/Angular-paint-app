@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatusBarService } from '../../services/statusbar.service';
-import { CursorPosition } from 'src/app/shared/interfaces/cursor-position.interface';
-import { CanvasDimensions } from 'src/app/shared/interfaces/canvas-dimensions.interface';
+import { CursorPosition } from 'src/app/website/interfaces/cursor-position.interface';
+import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
 
 @Component({
   selector: 'app-status',

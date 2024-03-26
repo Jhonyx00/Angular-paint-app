@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CursorPosition } from '../../shared/interfaces/cursor-position.interface';
-import { CanvasDimensions } from '../../shared/interfaces/canvas-dimensions.interface';
+import { CursorPosition } from '../interfaces/cursor-position.interface';
+import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 
 @Injectable({
   providedIn: 'root',

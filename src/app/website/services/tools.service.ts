@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Tools } from '../enums/tools.enum';
 
 @Injectable({
   providedIn: 'root',
@@ -8,13 +9,13 @@ export class ToolsService {
   constructor() {}
 
   //  selected button
-  private selectedButton = new BehaviorSubject<string>('Line');
+  private selectedButton = new BehaviorSubject<Tools>(Tools.Line);
 
-  public setSelectedButton(selectedShape: string): void {
+  public setSelectedButton(selectedShape: Tools): void {
     this.selectedButton.next(selectedShape);
   }
 
-  public getSelectedButton(): Observable<string> {
+  public getSelectedButton(): Observable<Tools> {
     return this.selectedButton.asObservable();
   }
 
@@ -28,7 +29,4 @@ export class ToolsService {
   public getSelectedColor(): Observable<string> {
     return this.selectedColor.asObservable();
   }
-
-  //crear un behavior subject que indique si esta dentro o fuera del foco del canvas al hacer click en la pantalla
-  // para controlar el reseteo
 }
