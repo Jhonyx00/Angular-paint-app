@@ -10,14 +10,7 @@ body {
   zoom: 100%;
 }
 
-/* each toolbar component */
 .tool-container {
-  /* display: flex;
-  justify-content: center;
-  align-items: center;
-  align-content: center;
-  flex-direction: column; */
-
   display: grid;
   grid-row-gap: 5px;
   grid-column-gap: 5px;

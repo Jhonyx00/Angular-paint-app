@@ -40,25 +40,25 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   //DYNAMIC COMPONENT
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;
-  public isInsideDynamicComponent = false;
-  public isSelectDrawn = false;
+  private isInsideDynamicComponent = false;
+  private isSelectDrawn = false;
 
   private selectedImage: ImageData | undefined;
-
-  public XY: CursorPosition = {
+  public canvasCursor = 'crosshair';
+  private XY: CursorPosition = {
     x: 0,
     y: 0,
   };
 
   private imagesArray: string[] = [];
 
-  public objectProps: DynamicComponentProperties = {
+  private objectProps: DynamicComponentProperties = {
     width: 0,
     height: 0,
     top: 0,
     left: 0,
     background: '',
-    border: '',
+    outline: '',
   };
 
   private canvasDimensions: CanvasDimensions = {
@@ -100,6 +100,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.initColor();
     this.initTool();
     this.updateCanvasValue();
+    this.setInitialValues();
   }
 
   private initContext() {
@@ -121,23 +122,26 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     // get last value from behavior subject
     this.toolsService.getSelectedButton().subscribe((currentTool) => {
       this.toolName = currentTool; //get tool name
-      console.log('Tool: ', this.toolName); //
+      this.canvasStateService.setResetValue(false);
+    });
+  }
 
-      //check if there is still a last selected area
-      if (this.selectedImage != undefined && this.toolName != 'Move') {
-        this.checkLastSelectedArea();
+  private setInitialValues(): void {
+    this.canvasStateService.getResetValue().subscribe((currentState) => {
+      if (!currentState) {
+        //check if there is still a last selected area
+        if (this.selectedImage != undefined && this.toolName != 'Move') {
+          this.checkLastSelectedArea();
+        }
+        //reset values
+        this.resetAuxComponent();
+        this.resetObjectProperties();
       }
-
-      // reset ImageData object to avoid bug on first mousedown when "select" tool is selected
-
-      this.resetAuxComponent();
-      this.resetObjectProperties();
     });
   }
 
   private resetAuxComponent() {
-    this.selectedImage = undefined;
-    this.imageDataService.setImage(this.selectedImage);
+    this.imageDataService.setImage(undefined);
   }
 
   private resetObjectProperties() {
@@ -145,7 +149,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.objectProps.left = 0;
     this.objectProps.width = 0;
     this.objectProps.height = 0;
-    this.objectProps.border = '';
+    this.objectProps.outline = '';
     this.objectProps.background = '';
   }
 
@@ -154,7 +158,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       .getAuxComponent()
       .subscribe((currentObjectDimensions) => {
         this.objectProps = currentObjectDimensions;
-        //console.log('Ha cambiado el componente');
       });
   }
 
@@ -172,13 +175,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       case 'Rectangle':
         this.createComponent();
         break;
-
       case 'Select':
         this.deleteComponent();
         this.createComponent();
         this.paintSelectedArea();
         break;
-
       case 'Move':
         this.setDeltaXY(event.offsetX, event.offsetY);
         break;
@@ -186,6 +187,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       default:
         break;
     }
+
+    this.canvasStateService.setResetValue(true);
   }
 
   public mouseMove(event: MouseEvent): void {
@@ -204,6 +207,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
         case 'Select':
           this.drawRectangleDiv(event);
+          this.setSelectStyles();
           break;
         case 'Move':
           this.moveObject(event);
@@ -215,11 +219,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
       }
     } else {
-      ///detect if the "select" rectangle is done
       if (this.isSelectDrawn) {
         this.isMouseInside(event);
-      } else {
-        //onsole.log('ninguna seleccion');
       }
     }
 
@@ -292,7 +293,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.dynamicComponentService.setDynamicComponentDimensions(
         this.objectProps
       );
-      //this.setCurrentCanvasImage();
     }
   }
 
@@ -303,9 +303,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       event.offsetX > this.objectProps.left &&
       event.offsetX < this.objectProps.width + this.objectProps.left
     ) {
+      this.canvasCursor = 'move';
       this.toolName = 'Move'; //Avoid nested select
       this.isInsideDynamicComponent = true;
     } else {
+      this.canvasCursor = 'crosshair';
+
       this.toolName = 'Select'; // a new select can be drawed
       this.isInsideDynamicComponent = false;
     }
@@ -396,7 +399,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       width: newX,
       height: newY,
       background: this.color,
-      border: '',
+      outline: '',
     };
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
@@ -432,18 +435,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       };
     }
 
-    //set styles it the tool is "Select"
-    //puedo colocar esto en una funcion aparte y condicionar
-
-    if (this.toolName == 'Select') {
-      this.objectProps.border = '2px dashed gray';
-      this.objectProps.background = 'transparent';
-    }
-
-    //puedo colocar esto en una funcion aparte para que esta solo se dedique a dibujar
     this.dynamicComponentService.setDynamicComponentDimensions(
       this.objectProps
     );
+  }
+
+  private setSelectStyles() {
+    this.objectProps.outline = '2px dashed gray';
+    this.objectProps.background = 'transparent';
   }
 
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo

@@ -27,4 +27,14 @@ export class CanvasStateService {
   public getCanvasDimensions(): Observable<CanvasDimensions> {
     return this.canvasDimensions.asObservable();
   }
+
+  private isOnCanvas = new BehaviorSubject<boolean>(false);
+
+  public setResetValue(isReset: boolean) {
+    this.isOnCanvas.next(isReset);
+  }
+
+  public getResetValue(): Observable<boolean> {
+    return this.isOnCanvas;
+  }
 }

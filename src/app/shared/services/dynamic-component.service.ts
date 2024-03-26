@@ -15,7 +15,7 @@ export class DynamicComponentService {
       width: 0,
       height: 0,
       background: '',
-      border: '',
+      outline: '',
     });
 
   setDynamicComponentDimensions(newDimension: DynamicComponentProperties) {

@@ -20,5 +20,4 @@ canvas {
   height: 100%;
   background-color: transparent;
   z-index: 3 !important;
-  cursor: crosshair;
 }

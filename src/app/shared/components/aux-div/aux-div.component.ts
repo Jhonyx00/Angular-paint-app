@@ -36,7 +36,7 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
     top: 0,
     left: 0,
     background: '',
-    border: '',
+    outline: '',
   };
 
   ngOnInit(): void {
