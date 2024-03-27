@@ -184,6 +184,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       case Tools.Triangle:
       case Tools.Hexagon:
       case Tools.Pentagon:
+      case Tools.Star:
         this.createComponent();
         break;
 
@@ -223,6 +224,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case Tools.Select:
         case Tools.Hexagon:
         case Tools.Pentagon:
+        case Tools.Star:
           this.drawShapeContainer(event);
           break;
 
@@ -278,6 +280,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
         case Tools.Pentagon:
           this.drawPentagon();
+          break;
+
+        case Tools.Star:
+          this.drawStar();
           break;
 
         case Tools.Select:
@@ -496,14 +502,19 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
       case Tools.Hexagon:
         this.objectProps.clipPath =
-          'polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%)';
+          'polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%)';
 
         break;
 
       case Tools.Pentagon:
         this.objectProps.clipPath =
-          'polygon(50% 0%, 0% 40%, 20% 100%, 80% 100%, 100% 40%)';
+          'polygon(50% 0%, 0% 38%, 18% 100%, 82% 100%, 100% 38%)';
 
+        break;
+
+      case Tools.Star:
+        this.objectProps.clipPath =
+          'polygon(50% 0%,63% 38%,100% 38%,69% 59%,82% 100%,50% 75%,18% 100%,31% 59%,0% 38%,37% 38%)';
         break;
 
       default:
@@ -564,15 +575,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const { width, height, top, left } = this.objectProps;
     /*Numerical values expressed in percentage indicate where to place each point 
       according to the width and height of aux component:
-      height * 0.25 = 25% of aux component height 
+      width * 0.25 = 25% of aux component height 
       */
     const polygonCoords: Point[] = [
-      { x: left + width * 0.5, y: top },
-      { x: left, y: top + height * 0.25 },
-      { x: left, y: top + height * 0.75 },
-      { x: left + width * 0.5, y: top + height },
-      { x: left + width, y: top + height * 0.75 },
-      { x: left + width, y: top + height * 0.25 },
+      { x: left + width * 0.25, y: top },
+      { x: left, y: top + height * 0.5 },
+      { x: left + width * 0.25, y: top + height },
+      { x: left + width * 0.75, y: top + height },
+      { x: left + width, y: top + height * 0.5 },
+      { x: left + width * 0.75, y: top },
     ];
 
     this.ctx.beginPath();
@@ -585,13 +596,35 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawPentagon() {
     const { width, height, top, left } = this.objectProps;
-
     const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
-      { x: left, y: top + height * 0.4 },
-      { x: left + width * 0.2, y: top + height },
-      { x: left + width * 0.8, y: top + height },
-      { x: left + width, y: top + height * 0.4 },
+      { x: left, y: top + height * 0.38 },
+      { x: left + width * 0.18, y: top + height },
+      { x: left + width * 0.82, y: top + height },
+      { x: left + width, y: top + height * 0.38 },
+    ];
+
+    this.ctx.beginPath();
+    for (let i = 0; i < polygonCoords.length; i++) {
+      this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  public drawStar() {
+    const { width, height, top, left } = this.objectProps;
+    const polygonCoords: Point[] = [
+      { x: left + width * 0.5, y: top },
+      { x: left + width * 0.37, y: top + height * 0.38 },
+      { x: left, y: top + height * 0.38 },
+      { x: left + width * 0.31, y: top + height * 0.59 },
+      { x: left + width * 0.18, y: top + height * 1 },
+      { x: left + width * 0.5, y: top + height * 0.75 },
+      { x: left + width * 0.82, y: top + height * 1 },
+      { x: left + width * 0.69, y: top + height * 0.59 },
+      { x: left + width * 1, y: top + height * 0.38 },
+      { x: left + width * 0.63, y: top + height * 0.38 },
     ];
 
     this.ctx.beginPath();
