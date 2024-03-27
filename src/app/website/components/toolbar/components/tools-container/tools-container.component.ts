@@ -58,7 +58,7 @@ export class ToolbarComponent implements OnDestroy {
   public selectionItems: Tool[] = [
     {
       toolName: Tools.Select,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/select.svg',
     },
     {
       toolName: Tools.Select2,

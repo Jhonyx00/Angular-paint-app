@@ -121,6 +121,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.color = currentColor;
       this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.color;
+      this.ctx.lineWidth = 2;
+      this.ctx.lineCap = 'round';
     });
   }
 
@@ -216,6 +218,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       switch (this.toolName) {
         case Tools.Line:
           this.drawLine(event);
+          break;
+
+        case Tools.Select2:
+          this.drawLine(event);
+
+          this.setSelect2Styles();
           break;
 
         case Tools.Rectangle:
@@ -434,8 +442,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawLine(event: MouseEvent): void {
     //these two must be public and its value can change with toolbar buttons
-    this.ctx.lineWidth = 2;
-    this.ctx.lineCap = 'round';
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
@@ -529,6 +536,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       'polygon(50% 0%, 0% 40%, 20% 100%, 80% 100%, 100% 40%)';
   }
 
+  private setSelect2Styles() {
+    this.ctx.setLineDash([5, 20]);
+    this.ctx.strokeStyle = 'gray';
+  }
+
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
   private drawRectangle(
     dynamicComponentProperties: DynamicComponentProperties
@@ -560,25 +572,33 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ): void {
     const { width, height, top, left } = dynamicComponentProperties;
 
+    const polygonCoords = [
+      { x: left + width / 2, y: top },
+      { x: left, y: top + height },
+      { x: left + width, y: top + height },
+    ];
+
     this.ctx.beginPath();
-    this.ctx.moveTo(left + width / 2, top);
-    this.ctx.lineTo(left, top + height);
-    this.ctx.lineTo(left + width, top + height);
+    for (let i = 0; i < polygonCoords.length; i++) {
+      this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
+    }
     this.ctx.closePath();
     this.ctx.fill();
   }
 
   private drawHexagon(dynamicComponentProperties: DynamicComponentProperties) {
     const { width, height, top, left } = dynamicComponentProperties;
-    this.ctx.beginPath();
+
     const polygonCoords = [
-      { x: left + width / 2, y: top },
-      { x: left, y: top + height / 4 },
-      { x: left, y: top + height / (6 / 4.5) },
-      { x: left + width / 2, y: top + height },
-      { x: left + width, y: top + height / (6 / 4.5) },
-      { x: left + width, y: top + height / 4 },
+      { x: left + width * 0.5, y: top },
+      { x: left, y: top + height * 0.25 },
+      { x: left, y: top + height * 0.75 },
+      { x: left + width * 0.5, y: top + height },
+      { x: left + width, y: top + height * 0.75 },
+      { x: left + width, y: top + height * 0.25 },
     ];
+
+    this.ctx.beginPath();
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
@@ -588,7 +608,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawPentagon(dynamicComponentProperties: DynamicComponentProperties) {
     const { width, height, top, left } = dynamicComponentProperties;
-    this.ctx.beginPath();
+
     const polygonCoords = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height * 0.4 },
@@ -596,6 +616,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       { x: left + width * 0.8, y: top + height },
       { x: left + width, y: top + height * 0.4 },
     ];
+
+    this.ctx.beginPath();
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
