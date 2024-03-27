@@ -192,6 +192,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         this.deleteComponent();
         this.createComponent();
         this.paintSelectedArea();
+        this.checkSelectBackground();
         break;
       case Tools.Move:
         this.setDeltaXY(event.offsetX, event.offsetY);
@@ -276,6 +277,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.selectImageArea(this.objectProps); //get the fragment of canvas
           this.clearSelectedArea(this.objectProps); //remove fragment from selection
           this.setAuxDivImage(); //set image to auxCanvas
+          this.checkSelectBackground();
           break;
 
         default:
@@ -468,6 +470,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private setSelectStyles() {
     this.objectProps.outline = '2px dashed gray';
     this.objectProps.background = 'transparent';
+  }
+
+  private checkSelectBackground() {
+    if (this.isDrawing) {
+      this.objectProps.background = 'transparent';
+    } else {
+      this.objectProps.background = 'white';
+    }
   }
 
   private setEllipseStyles() {
