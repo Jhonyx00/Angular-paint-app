@@ -16,11 +16,10 @@ import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.di
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { DynamicComponentProperties } from 'src/app/shared/interfaces/dynamic-component.interface';
 import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
-import { CursorPosition } from 'src/app/website/interfaces/cursor-position.interface';
+import { Point } from 'src/app/website/interfaces/cursor-position.interface';
 import { ImageDataService } from '../../../shared/services/image-data.service';
 import { Tools } from '../../enums/tools.enum';
 import { Cursors } from '../../enums/cursors.enum';
-// import { Tools } from 'src/app/website/enums/tools.enum';
 
 @Component({
   selector: 'app-canvas',
@@ -36,11 +35,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     private imageDataService: ImageDataService
   ) {}
 
-  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
+  ///////// VARS
 
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
   @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
 
-  ///////// VARS
   //DYNAMIC COMPONENT
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;
@@ -49,11 +48,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private selectedImage: ImageData | undefined;
   public canvasCursor: Cursors = Cursors.Crosshair;
-  private XY: CursorPosition = {
+  private XY: Point = {
     x: 0,
     y: 0,
   };
 
+  // private polygonCoords: Point[] = [];
   private imagesArray: string[] = [];
 
   private objectProps: DynamicComponentProperties = {
@@ -81,7 +81,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private isDrawing: boolean = false;
 
   // Mouse down position
-  private mouseDownPosition: CursorPosition = {
+  private mouseDownPosition: Point = {
     x: 0,
     y: 0,
   };
@@ -95,7 +95,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private initCanvasDimensions(): void {
     this.canvas.nativeElement.width = this.canvasDimensions.width;
     this.canvas.nativeElement.height = this.canvasDimensions.height;
-    this.canvasStateService.setCanvasDimensions(this.canvasDimensions);
+    this.statusBarService.setCanvasDimensions(this.canvasDimensions);
   }
 
   ////AFTER INIT
@@ -186,14 +186,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       case Tools.Rectangle:
       case Tools.Ellipse:
       case Tools.Triangle:
+      case Tools.Hexagon:
+      case Tools.Pentagon:
         this.createComponent();
         break;
+
       case Tools.Select:
         this.deleteComponent();
         this.createComponent();
         this.paintSelectedArea();
         this.checkSelectBackground();
         break;
+
       case Tools.Move:
         this.setDeltaXY(event.offsetX, event.offsetY);
         break;
@@ -213,30 +217,45 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case Tools.Line:
           this.drawLine(event);
           break;
+
         case Tools.Rectangle:
           this.drawRectangleDiv(event);
-
           break;
+
         case Tools.Ellipse:
           this.drawRectangleDiv(event);
           this.setEllipseStyles();
           break;
+
         case Tools.Triangle:
           this.drawRectangleDiv(event);
           this.setTriangleStyles();
-
           break;
 
         case Tools.Select:
           this.drawRectangleDiv(event);
           this.setSelectStyles();
           break;
+
+        case Tools.Hexagon:
+          this.drawRectangleDiv(event);
+          this.setHexagonStyles();
+          break;
+
+        case Tools.Pentagon:
+          this.drawRectangleDiv(event);
+          this.setPentagonStyles();
+
+          break;
+
         case Tools.Move:
           this.moveObject(event);
           break;
+
         case Tools.Eraser:
           this.erase(event);
           break;
+
         default:
           break;
       }
@@ -271,6 +290,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case Tools.Triangle:
           this.drawTriangle(this.objectProps);
           this.deleteComponent();
+          break;
+
+        case Tools.Hexagon:
+          this.deleteComponent();
+          this.drawHexagon(this.objectProps);
+
+          break;
+
+        case Tools.Pentagon:
+          this.deleteComponent();
+          this.drawPentagon(this.objectProps);
+
           break;
 
         case Tools.Select:
@@ -403,7 +434,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawLine(event: MouseEvent): void {
     //these two must be public and its value can change with toolbar buttons
-    this.ctx.lineWidth = 3;
+    this.ctx.lineWidth = 2;
     this.ctx.lineCap = 'round';
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
@@ -488,27 +519,35 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.objectProps.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
   }
 
+  private setHexagonStyles() {
+    this.objectProps.clipPath =
+      'polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%)';
+  }
+
+  private setPentagonStyles() {
+    this.objectProps.clipPath =
+      'polygon(50% 0%, 0% 40%, 20% 100%, 80% 100%, 100% 40%)';
+  }
+
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
   private drawRectangle(
     dynamicComponentProperties: DynamicComponentProperties
   ): void {
-    this.ctx.fillRect(
-      dynamicComponentProperties.left,
-      dynamicComponentProperties.top,
-      dynamicComponentProperties.width,
-      dynamicComponentProperties.height
-    );
+    const { width, height, top, left } = dynamicComponentProperties;
+    this.ctx.fillRect(left, top, width, height);
   }
 
   private drawEllipse(dynamicComponentProperties: DynamicComponentProperties) {
+    const { width, height, top, left } = dynamicComponentProperties;
+
     this.ctx.fillStyle = this.color;
     const endAngle = 2 * Math.PI;
     this.ctx.beginPath();
     this.ctx.ellipse(
-      dynamicComponentProperties.left + dynamicComponentProperties.width / 2,
-      dynamicComponentProperties.top + dynamicComponentProperties.height / 2,
-      Math.abs(dynamicComponentProperties.width) / 2,
-      Math.abs(dynamicComponentProperties.height) / 2,
+      left + width / 2,
+      top + height / 2,
+      Math.abs(width) / 2,
+      Math.abs(height) / 2,
       0,
       0,
       endAngle
@@ -519,22 +558,48 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private drawTriangle(
     dynamicComponentProperties: DynamicComponentProperties
   ): void {
+    const { width, height, top, left } = dynamicComponentProperties;
+
     this.ctx.beginPath();
-    this.ctx.moveTo(
-      dynamicComponentProperties.left + dynamicComponentProperties.width / 2,
-      dynamicComponentProperties.top
-    );
-    this.ctx.lineTo(
-      dynamicComponentProperties.left,
-      +dynamicComponentProperties.top + dynamicComponentProperties.height
-    );
-    this.ctx.lineTo(
-      dynamicComponentProperties.left + dynamicComponentProperties.width,
-      dynamicComponentProperties.top + dynamicComponentProperties.height
-    );
-
+    this.ctx.moveTo(left + width / 2, top);
+    this.ctx.lineTo(left, top + height);
+    this.ctx.lineTo(left + width, top + height);
     this.ctx.closePath();
+    this.ctx.fill();
+  }
 
+  private drawHexagon(dynamicComponentProperties: DynamicComponentProperties) {
+    const { width, height, top, left } = dynamicComponentProperties;
+    this.ctx.beginPath();
+    const polygonCoords = [
+      { x: left + width / 2, y: top },
+      { x: left, y: top + height / 4 },
+      { x: left, y: top + height / (6 / 4.5) },
+      { x: left + width / 2, y: top + height },
+      { x: left + width, y: top + height / (6 / 4.5) },
+      { x: left + width, y: top + height / 4 },
+    ];
+    for (let i = 0; i < polygonCoords.length; i++) {
+      this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  private drawPentagon(dynamicComponentProperties: DynamicComponentProperties) {
+    const { width, height, top, left } = dynamicComponentProperties;
+    this.ctx.beginPath();
+    const polygonCoords = [
+      { x: left + width * 0.5, y: top },
+      { x: left, y: top + height * 0.4 },
+      { x: left + width * 0.2, y: top + height },
+      { x: left + width * 0.8, y: top + height },
+      { x: left + width, y: top + height * 0.4 },
+    ];
+    for (let i = 0; i < polygonCoords.length; i++) {
+      this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
+    }
+    this.ctx.closePath();
     this.ctx.fill();
   }
 

@@ -16,6 +16,7 @@ export class DynamicComponentService {
       height: 0,
       background: '',
       outline: '',
+      clipPath: '',
     });
 
   setDynamicComponentDimensions(newDimension: DynamicComponentProperties) {

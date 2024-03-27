@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatusBarService } from '../../services/statusbar.service';
-import { CursorPosition } from 'src/app/website/interfaces/cursor-position.interface';
+import { Point } from 'src/app/website/interfaces/cursor-position.interface';
 import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
 
 @Component({
@@ -8,10 +8,10 @@ import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.i
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.css'],
 })
-export class StatusComponent implements OnInit, OnDestroy {
+export class StatusComponent implements OnInit {
   constructor(private statusBarService: StatusBarService) {}
 
-  public cursosrPosition: CursorPosition = {
+  public cursosrPosition: Point = {
     x: 0,
     y: 0,
   };
@@ -31,8 +31,7 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   private updateCursorPosition() {
     this.statusBarService.getCursorPosition().subscribe((currentPosition) => {
-      this.cursosrPosition.x = currentPosition.x;
-      this.cursosrPosition.y = currentPosition.y;
+      this.cursosrPosition = currentPosition;
     });
   }
 
@@ -44,12 +43,7 @@ export class StatusComponent implements OnInit, OnDestroy {
 
   private displayCanvasDimensions() {
     this.statusBarService.getCanvasDimensions().subscribe((currentSize) => {
-      this.canvasDimensions.width = currentSize.width;
-      this.canvasDimensions.height = currentSize.height;
+      this.canvasDimensions = currentSize;
     });
-  }
-
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
   }
 }

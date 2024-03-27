@@ -5,5 +5,5 @@ export interface DynamicComponentProperties {
   height: number;
   background: string;
   outline: string;
-  clipPath?: string;
+  clipPath: string;
 }

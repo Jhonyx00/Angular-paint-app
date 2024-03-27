@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CursorPosition } from '../interfaces/cursor-position.interface';
+import { Point } from '../interfaces/cursor-position.interface';
 import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 
 @Injectable({
@@ -9,14 +9,14 @@ import { CanvasDimensions } from '../interfaces/canvas-dimensions.interface';
 export class StatusBarService {
   constructor() {}
 
-  private cursorPosition = new BehaviorSubject<CursorPosition>({ x: 0, y: 0 });
+  private cursorPosition = new BehaviorSubject<Point>({ x: 0, y: 0 });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
   private canvasDimensions = new BehaviorSubject<CanvasDimensions>({
     width: 0,
     height: 0,
   });
 
-  setCursorPosition(posXY: CursorPosition) {
+  setCursorPosition(posXY: Point) {
     this.cursorPosition.next(posXY);
   }
 
@@ -28,13 +28,14 @@ export class StatusBarService {
     this.canvasDimensions.next(size);
   }
 
-  public getCursorPosition(): Observable<CursorPosition> {
+  public getCursorPosition(): Observable<Point> {
     return this.cursorPosition.asObservable();
   }
 
   public getOutsideCanvas(): Observable<boolean> {
     return this.isOutsideCanvas.asObservable();
   }
+
   public getCanvasDimensions(): Observable<CanvasDimensions> {
     return this.canvasDimensions.asObservable();
   }

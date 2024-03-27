@@ -49,6 +49,10 @@ export class ToolbarComponent implements OnDestroy {
       toolName: Tools.Star,
       iconUrl: '../../../../assets/svg/star.svg',
     },
+    {
+      toolName: Tools.Pentagon,
+      iconUrl: '../../../../assets/svg/pentagon.svg',
+    },
   ];
 
   public selectionItems: Tool[] = [
