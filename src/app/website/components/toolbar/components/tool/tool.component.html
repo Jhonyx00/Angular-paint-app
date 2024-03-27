@@ -2,7 +2,6 @@
   <span>{{ toolGroupName }}</span>
   <div class="tool">
     <button
-      class="boton"
       *ngFor="let item of toolItems"
       [ngClass]="item.toolName === selectedItemName ? 'selected-tool' : ''"
       (click)="sendToolName(item.toolName)"

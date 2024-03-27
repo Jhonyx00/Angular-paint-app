@@ -36,18 +36,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {}
 
   ///////// VARS
-
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
-  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
-
   //DYNAMIC COMPONENT
+  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<AuxDivComponent>;
   private isInsideDynamicComponent = false;
   private isSelectDrawn = false;
-
   private selectedImage: ImageData | undefined;
   public canvasCursor: Cursors = Cursors.Crosshair;
+
   private XY: Point = {
     x: 0,
     y: 0,
@@ -55,7 +53,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   // private polygonCoords: Point[] = [];
   private imagesArray: string[] = [];
-
   private objectProps: DynamicComponentProperties = {
     width: 0,
     height: 0,
@@ -71,20 +68,17 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     height: 500,
   };
 
-  private currentCanvasImage = new Image();
-  private color: string = '';
-
-  private toolName!: Tools;
-
-  private ctx!: CanvasRenderingContext2D;
-
-  private isDrawing: boolean = false;
-
   // Mouse down position
   private mouseDownPosition: Point = {
     x: 0,
     y: 0,
   };
+
+  private currentCanvasImage = new Image();
+  private color: string = '';
+  private toolName!: Tools;
+  private ctx!: CanvasRenderingContext2D;
+  private isDrawing: boolean = false;
 
   ////ON INIT
   ngOnInit(): void {
@@ -181,7 +175,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mouseDownPosition.x = event.offsetX;
     this.mouseDownPosition.y = event.offsetY;
 
-    //to prevent showing the last image in second canvas
+    //this prevent showing the last image in aux component
     this.imageDataService.setImage(undefined);
 
     switch (this.toolName) {
@@ -212,7 +206,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public mouseMove(event: MouseEvent): void {
-    //si se esta dibujando
     if (this.isDrawing) {
       //SHAPE SELECTION
       switch (this.toolName) {
@@ -222,38 +215,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
         case Tools.Select2:
           this.drawLine(event);
-
-          this.setSelect2Styles();
           break;
 
         case Tools.Rectangle:
-          this.drawRectangleDiv(event);
-          break;
-
         case Tools.Ellipse:
-          this.drawRectangleDiv(event);
-          this.setEllipseStyles();
-          break;
-
         case Tools.Triangle:
-          this.drawRectangleDiv(event);
-          this.setTriangleStyles();
-          break;
-
         case Tools.Select:
-          this.drawRectangleDiv(event);
-          this.setSelectStyles();
-          break;
-
         case Tools.Hexagon:
-          this.drawRectangleDiv(event);
-          this.setHexagonStyles();
-          break;
-
         case Tools.Pentagon:
-          this.drawRectangleDiv(event);
-          this.setPentagonStyles();
-
+          this.drawShapeContainer(event);
           break;
 
         case Tools.Move:
@@ -267,12 +237,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         default:
           break;
       }
+      //Set properties to aux component while drawing
+      this.dynamicComponentService.setDynamicComponentDimensions(
+        this.objectProps
+      );
+      //Set styles depending on the selected tool
+      this.setShapeContainerStyles(this.toolName);
     } else {
       if (this.isSelectDrawn) {
         this.isMouseInside(event);
       }
     }
-    //SET properties to be accesibble from status component
+    //Set properties to be accessible from status component
     this.statusBarService.setCursorPosition({
       x: event.offsetX,
       y: event.offsetY,
@@ -282,45 +258,41 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   public mouseUp(): void {
     this.isDrawing = false;
 
-    //verificar si existen dimensiones de lo que se dibujó
     if (this.objectProps.width > 0 && this.objectProps.height > 0) {
       switch (this.toolName) {
         case Tools.Rectangle:
-          this.drawRectangle(this.objectProps);
-          this.deleteComponent(); //delete component when any shape is drawed
+          this.drawRectangle();
           break;
 
         case Tools.Ellipse:
-          this.drawEllipse(this.objectProps);
-          this.deleteComponent(); //delete component when any shape is drawed
+          this.drawEllipse();
           break;
 
         case Tools.Triangle:
-          this.drawTriangle(this.objectProps);
-          this.deleteComponent();
+          this.drawTriangle();
           break;
 
         case Tools.Hexagon:
-          this.deleteComponent();
-          this.drawHexagon(this.objectProps);
-
+          this.drawHexagon();
           break;
 
         case Tools.Pentagon:
-          this.deleteComponent();
-          this.drawPentagon(this.objectProps);
-
+          this.drawPentagon();
           break;
 
         case Tools.Select:
-          this.selectImageArea(this.objectProps); //get the fragment of canvas
-          this.clearSelectedArea(this.objectProps); //remove fragment from selection
+          this.selectImageArea(); //get the fragment of canvas
+          this.clearSelectedArea(); //remove fragment from selection
           this.setAuxDivImage(); //set image to auxCanvas
           this.checkSelectBackground();
           break;
 
         default:
           break;
+      }
+
+      if (this.toolName != Tools.Select && this.toolName != Tools.Move) {
+        this.deleteComponent();
       }
     }
 
@@ -403,18 +375,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private selectImageArea(area: DynamicComponentProperties) {
+  private selectImageArea() {
+    const { width, height, top, left } = this.objectProps;
+    this.selectedImage = this.ctx.getImageData(left, top, width, height);
     this.isSelectDrawn = true; // a new rectangle select
-    this.selectedImage = this.ctx.getImageData(
-      area.left,
-      area.top,
-      area.width,
-      area.height
-    );
   }
 
-  private clearSelectedArea(area: DynamicComponentProperties) {
-    this.ctx.clearRect(area.left, area.top, area.width, area.height);
+  private clearSelectedArea() {
+    const { width, height, top, left } = this.objectProps;
+    this.ctx.clearRect(left, top, width, height);
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
@@ -439,10 +408,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   ///                     SHAPES
-
   private drawLine(event: MouseEvent): void {
-    //these two must be public and its value can change with toolbar buttons
-
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(event.offsetX, event.offsetY);
@@ -451,18 +417,17 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mouseDownPosition.y = event.offsetY;
   }
 
-  private drawRectangleDiv(event: MouseEvent): void {
+  private drawShapeContainer(event: MouseEvent): void {
     const rectangleWidth = event.offsetX - this.mouseDownPosition.x;
     const rectangleHeight = event.offsetY - this.mouseDownPosition.y;
-
-    const newX = Math.abs(event.offsetX - this.mouseDownPosition.x);
-    const newY = Math.abs(event.offsetY - this.mouseDownPosition.y);
+    const newWidth = Math.abs(event.offsetX - this.mouseDownPosition.x);
+    const newHeight = Math.abs(event.offsetY - this.mouseDownPosition.y);
 
     this.objectProps = {
       top: 0,
       left: 0,
-      width: newX,
-      height: newY,
+      width: newWidth,
+      height: newHeight,
       background: this.color,
       outline: '',
       clipPath: '',
@@ -499,15 +464,52 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         left: this.mouseDownPosition.x,
       };
     }
-
-    this.dynamicComponentService.setDynamicComponentDimensions(
-      this.objectProps
-    );
   }
 
-  private setSelectStyles() {
-    this.objectProps.outline = '2px dashed gray';
-    this.objectProps.background = 'transparent';
+  //Set styles depending on the selected tool (only tools that have a container)
+  private setShapeContainerStyles(toolName: string) {
+    switch (toolName) {
+      case Tools.Select2:
+        this.ctx.setLineDash([5, 20]);
+        this.ctx.strokeStyle = 'gray';
+
+        break;
+
+      case Tools.Rectangle:
+        break;
+
+      case Tools.Ellipse:
+        this.objectProps.clipPath = 'ellipse(50% 50% at 50% 50%)';
+
+        break;
+
+      case Tools.Triangle:
+        this.objectProps.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+
+        break;
+
+      case Tools.Select:
+        this.objectProps.outline = '2px dashed gray';
+        this.objectProps.background = 'transparent';
+
+        break;
+
+      case Tools.Hexagon:
+        this.objectProps.clipPath =
+          'polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%)';
+
+        break;
+
+      case Tools.Pentagon:
+        this.objectProps.clipPath =
+          'polygon(50% 0%, 0% 40%, 20% 100%, 80% 100%, 100% 40%)';
+
+        break;
+
+      default:
+        break;
+    }
+    // console.log('sent tool:', toolName);
   }
 
   private checkSelectBackground() {
@@ -518,48 +520,22 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private setEllipseStyles() {
-    this.objectProps.clipPath = 'ellipse(50% 50% at 50% 50%)';
-  }
-
-  private setTriangleStyles() {
-    this.objectProps.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
-  }
-
-  private setHexagonStyles() {
-    this.objectProps.clipPath =
-      'polygon(50% 0%, 0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%)';
-  }
-
-  private setPentagonStyles() {
-    this.objectProps.clipPath =
-      'polygon(50% 0%, 0% 40%, 20% 100%, 80% 100%, 100% 40%)';
-  }
-
-  private setSelect2Styles() {
-    this.ctx.setLineDash([5, 20]);
-    this.ctx.strokeStyle = 'gray';
-  }
-
   //podria devolver un objeto con las dimensiones del rectangulo recien dibujado para luego poder moverlo
-  private drawRectangle(
-    dynamicComponentProperties: DynamicComponentProperties
-  ): void {
-    const { width, height, top, left } = dynamicComponentProperties;
+  private drawRectangle(): void {
+    const { width, height, top, left } = this.objectProps;
     this.ctx.fillRect(left, top, width, height);
   }
 
-  private drawEllipse(dynamicComponentProperties: DynamicComponentProperties) {
-    const { width, height, top, left } = dynamicComponentProperties;
+  private drawEllipse() {
+    const { width, height, top, left } = this.objectProps;
 
-    this.ctx.fillStyle = this.color;
     const endAngle = 2 * Math.PI;
     this.ctx.beginPath();
     this.ctx.ellipse(
-      left + width / 2,
-      top + height / 2,
-      Math.abs(width) / 2,
-      Math.abs(height) / 2,
+      left + width * 0.5,
+      top + height * 0.5,
+      Math.abs(width) * 0.5,
+      Math.abs(height) * 0.5,
       0,
       0,
       endAngle
@@ -567,13 +543,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.fill();
   }
 
-  private drawTriangle(
-    dynamicComponentProperties: DynamicComponentProperties
-  ): void {
-    const { width, height, top, left } = dynamicComponentProperties;
+  private drawTriangle(): void {
+    const { width, height, top, left } = this.objectProps;
 
-    const polygonCoords = [
-      { x: left + width / 2, y: top },
+    const polygonCoords: Point[] = [
+      { x: left + width * 0.5, y: top },
       { x: left, y: top + height },
       { x: left + width, y: top + height },
     ];
@@ -586,10 +560,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.fill();
   }
 
-  private drawHexagon(dynamicComponentProperties: DynamicComponentProperties) {
-    const { width, height, top, left } = dynamicComponentProperties;
-
-    const polygonCoords = [
+  private drawHexagon() {
+    const { width, height, top, left } = this.objectProps;
+    /*Numerical values expressed in percentage indicate where to place each point 
+      according to the width and height of aux component:
+      height * 0.25 = 25% of aux component height 
+      */
+    const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height * 0.25 },
       { x: left, y: top + height * 0.75 },
@@ -606,10 +583,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.fill();
   }
 
-  private drawPentagon(dynamicComponentProperties: DynamicComponentProperties) {
-    const { width, height, top, left } = dynamicComponentProperties;
+  private drawPentagon() {
+    const { width, height, top, left } = this.objectProps;
 
-    const polygonCoords = [
+    const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height * 0.4 },
       { x: left + width * 0.2, y: top + height },

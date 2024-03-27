@@ -3,7 +3,7 @@
   width: 2.6em;
   height: 2.6em;
   border: 1px solid lightgrey;
-  appearance: none;
+  border-radius: 0.21em;
 }
 
 .color-input {
@@ -27,6 +27,19 @@
   height: 1em;
   border: 1px solid gray;
   border-radius: 0.2em;
+}
+
+.tool-container {
+  display: grid;
+  grid-row-gap: 5px;
+  grid-column-gap: 5px;
+  padding: 5px;
+  border-bottom: 2px solid lightgray;
+}
+
+.tool-container span {
+  font-size: 12px;
+  text-align: center;
 }
 
 /* input[type="color"]::-webkit-color-swatch-wrapper {
