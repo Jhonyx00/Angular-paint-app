@@ -85,7 +85,7 @@ export class ToolbarComponent implements OnDestroy {
   public eraserItems: Tool[] = [
     {
       toolName: Tools.Eraser,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
+      iconUrl: '../../../../assets/svg/eraser.svg',
     },
     {
       toolName: Tools.Eraser2,

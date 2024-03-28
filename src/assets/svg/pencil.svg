@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
     <!-- Pencil -->
-    <rect x="60" y="0" width="30" height="70" style="fill:none;stroke:gray;stroke-width:6" 
-    transform="rotate(45 20 20)"/>
+    <polygon points="80,0 65,15 85,35 100,20 " style="fill:pink;" />
+    <polygon points="85,35 65,15 60,20 80,40 " style="fill:gray;" />
+    <polygon points="60,20 15,65 35,85 80,40" style="fill:goldenrod;" />
+    <polygon points="8,85 15,92 35,85 15,65   " style="fill:mistyrose;" />
+    <polygon points="8,85 5,95 15,92" style="fill:black;" />
 </svg>
