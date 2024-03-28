@@ -4,11 +4,11 @@ import { Point } from 'src/app/website/interfaces/cursor-position.interface';
 import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
 
 @Component({
-  selector: 'app-status',
+  selector: 'statusbar-component',
   templateUrl: './status.component.html',
   styleUrls: ['./status.component.css'],
 })
-export class StatusComponent implements OnInit {
+export class StatusbarComponent implements OnInit {
   constructor(private statusBarService: StatusBarService) {}
 
   public cursosrPosition: Point = {

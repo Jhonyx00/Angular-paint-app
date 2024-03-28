@@ -3,7 +3,7 @@ import { Tools } from 'src/app/website/enums/tools.enum';
 import { Tool } from 'src/app/website/interfaces/selected-tool.interface';
 
 @Component({
-  selector: 'app-tool',
+  selector: 'tool-component',
   templateUrl: './tool.component.html',
   styleUrls: ['./tool.component.css'],
 })

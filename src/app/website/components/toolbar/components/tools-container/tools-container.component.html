@@ -1,41 +1,41 @@
 <div class="toolbar-container">
-  <app-tool
+  <tool-component
     [toolItems]="fileItems"
     [toolGroupName]="files"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
-  <app-tool
+  ></tool-component>
+  <tool-component
     [toolItems]="actionItems"
     [toolGroupName]="actions"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
+  ></tool-component>
 
-  <app-tool
+  <tool-component
     [toolItems]="shapeItems"
     [toolGroupName]="shapes"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
-  <app-tool
+  ></tool-component>
+  <tool-component
     [toolItems]="pencilItems"
     [toolGroupName]="pencils"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
-  <app-tool
+  ></tool-component>
+  <tool-component
     [toolItems]="eraserItems"
     [toolGroupName]="erasers"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
-  <app-tool
+  ></tool-component>
+  <tool-component
     [toolItems]="selectionItems"
     [toolGroupName]="selection"
     [selectedItemName]="selectedItemName"
     (onPropertiesSent)="setSelectedTool($event)"
-  ></app-tool>
+  ></tool-component>
 
-  <app-color></app-color>
+  <color-component></color-component>
 </div>

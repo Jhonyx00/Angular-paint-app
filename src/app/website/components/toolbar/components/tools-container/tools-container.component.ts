@@ -5,7 +5,7 @@ import { Tools } from 'src/app/website/enums/tools.enum';
 import { Tool } from 'src/app/website/interfaces/selected-tool.interface';
 
 @Component({
-  selector: 'app-toolbar',
+  selector: 'toolbar-component',
   templateUrl: './tools-container.component.html',
   styleUrls: ['./tools-container.component.css'],
 })

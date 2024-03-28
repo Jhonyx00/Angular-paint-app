@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ToolsService } from '../../../../services/tools.service';
 
 @Component({
-  selector: 'app-color',
+  selector: 'color-component',
   templateUrl: './color-palette.component.html',
   styleUrls: ['./color-palette.component.css'],
 })
@@ -35,5 +35,3 @@ export class ColorComponent implements OnDestroy {
     throw new Error('Method not implemented.');
   }
 }
-
-//no necesitaba notificar naada

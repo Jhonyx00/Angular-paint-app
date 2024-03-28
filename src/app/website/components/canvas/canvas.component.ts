@@ -22,7 +22,7 @@ import { Tools } from '../../enums/tools.enum';
 import { Cursors } from '../../enums/cursors.enum';
 
 @Component({
-  selector: 'app-canvas',
+  selector: 'canvas-component',
   templateUrl: './canvas.component.html',
   styleUrls: ['./canvas.component.css'],
 })
@@ -51,7 +51,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     y: 0,
   };
 
-  // private polygonCoords: Point[] = [];
   private imagesArray: string[] = [];
   private objectProps: DynamicComponentProperties = {
     width: 0,
