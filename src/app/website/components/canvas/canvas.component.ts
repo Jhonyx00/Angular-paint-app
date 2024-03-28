@@ -482,6 +482,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         break;
 
       case Tools.Rectangle:
+        this.objectProps.clipPath =
+          'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
+
         break;
 
       case Tools.Ellipse:

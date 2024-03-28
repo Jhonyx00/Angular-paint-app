@@ -1,4 +1,4 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <!-- Estrella de 5 puntas -->
-    <polygon points="50,5 20,95 95,35 5,35 80,95" style="fill:none;stroke:black;stroke-width:6" />
+    <!--Star-->
+    <polygon points="50 0, 63 38, 100 38, 69 59, 82 100, 50 75, 18 100, 31 59, 0 38, 37 38" style="fill:gray;" />
 </svg>

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <!-- Rectángulo -->
-    <rect x="60" y="0" width="30" height="70" style="fill:none;stroke:black;stroke-width:6" 
+    <!-- Pencil -->
+    <rect x="60" y="0" width="30" height="70" style="fill:none;stroke:gray;stroke-width:6" 
     transform="rotate(45 20 20)"/>
 </svg>

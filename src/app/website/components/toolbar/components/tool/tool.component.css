@@ -5,13 +5,13 @@ button {
   width: 1.8em;
   height: 1.8em;
   border-radius: 0.4em;
+  padding: 0.2em;
+}
 
-  > img {
-    width: 100%;
-    height: 100%;
-    border-radius: inherit;
-    padding: 0.2em;
-  }
+.icon {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0, 0, 0);
 }
 
 button:hover {
@@ -27,7 +27,7 @@ button:hover {
   border-bottom: 2px solid lightgray;
 }
 
-.tool-container span {
+.tool-container span.tool-group {
   font-size: 12px;
   text-align: center;
 }
@@ -43,4 +43,59 @@ button:hover {
 
 .selected-tool {
   box-shadow: 0px 0px 0px 2px #5286ff;
+}
+
+.Pentagon {
+  clip-path: polygon(50% 0%, 0% 38%, 18% 100%, 82% 100%, 100% 38%);
+}
+
+.Hexagon {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.Triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.Ellipse {
+  clip-path: ellipse(50% 50% at 50% 50%);
+}
+
+.Rectangle {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.Star {
+  clip-path: polygon(
+    50% 0%,
+    63% 38%,
+    100% 38%,
+    69% 59%,
+    82% 100%,
+    50% 75%,
+    18% 100%,
+    31% 59%,
+    0% 38%,
+    37% 38%
+  );
+}
+
+.Undo {
+  clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+}
+
+.Redo {
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+}
+
+.Select {
+  /* clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%); */
+  outline: 1.5px dashed gray;
+  background-color: transparent;
+}
+
+.Eraser {
+  clip-path: polygon(70% 0%, 30% 40%, 60% 70%, 100% 30%);
+
+  background-color: rgb(215, 164, 173);
 }
