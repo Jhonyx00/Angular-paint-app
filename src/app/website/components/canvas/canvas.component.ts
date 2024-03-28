@@ -184,6 +184,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       case Tools.Hexagon:
       case Tools.Pentagon:
       case Tools.Star:
+      case Tools.Rhombus:
         this.createComponent();
         break;
 
@@ -224,6 +225,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case Tools.Hexagon:
         case Tools.Pentagon:
         case Tools.Star:
+        case Tools.Rhombus:
           this.drawShapeContainer(event);
           break;
 
@@ -283,6 +285,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
         case Tools.Star:
           this.drawStar();
+          break;
+
+        case Tools.Rhombus:
+          this.drawRhombus();
           break;
 
         case Tools.Select:
@@ -351,7 +357,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isInsideDynamicComponent = true;
     } else {
       this.canvasCursor = Cursors.Crosshair;
-
       this.toolName = Tools.Select; // a new select can be drawed
       this.isInsideDynamicComponent = false;
     }
@@ -519,6 +524,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           'polygon(50% 0%,63% 38%,100% 38%,69% 59%,82% 100%,50% 75%,18% 100%,31% 59%,0% 38%,37% 38%)';
         break;
 
+      case Tools.Rhombus:
+        this.objectProps.clipPath =
+          'polygon(50% 0%, 0% 50%, 50% 100%, 100% 50%)';
+        break;
+
       default:
         break;
     }
@@ -627,6 +637,26 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       { x: left + width * 0.69, y: top + height * 0.59 },
       { x: left + width * 1, y: top + height * 0.38 },
       { x: left + width * 0.63, y: top + height * 0.38 },
+    ];
+
+    this.ctx.beginPath();
+    for (let i = 0; i < polygonCoords.length; i++) {
+      this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
+    }
+    this.ctx.closePath();
+    this.ctx.fill();
+  }
+
+  ///HACER QUE CADA FUNCION RETORNE LA FORMA QUE SE DIBUJA PARA LUEGO PASARLA POR EL SERVICIO AL COMPONENTE AUXILIAR Y COLOCARLA
+
+  private drawRhombus() {
+    const { width, height, top, left } = this.objectProps;
+
+    const polygonCoords: Point[] = [
+      { x: left + width * 0.5, y: top },
+      { x: left, y: top + height * 0.5 },
+      { x: left + width * 0.5, y: top + height },
+      { x: left + width, y: top + height * 0.5 },
     ];
 
     this.ctx.beginPath();

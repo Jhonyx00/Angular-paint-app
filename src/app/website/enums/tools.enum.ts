@@ -6,6 +6,7 @@ export enum Tools {
   Triangle = 'Triangle',
   Star = 'Star',
   Pentagon = 'Pentagon',
+  Rhombus = 'Rhombus',
 
   //Move
   Move = 'Move',
