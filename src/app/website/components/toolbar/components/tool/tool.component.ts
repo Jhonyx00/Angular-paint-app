@@ -10,7 +10,7 @@ import { Tool } from 'src/app/website/interfaces/selected-tool.interface';
 export class ToolComponent {
   @Input() toolItems: Tool[] = [];
   @Input() toolGroupName: string = '';
-  @Input() selectedItemName: string = '';
+  @Input() selectedTool: string = '';
   @Output()
   onPropertiesSent = new EventEmitter<Tools>();
   sendToolName(toolName: Tools) {

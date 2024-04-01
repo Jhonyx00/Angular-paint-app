@@ -1,18 +1,19 @@
-.color-chooser {
-  cursor: pointer;
-  width: 2.6em;
-  height: 2.6em;
-  border: 1px solid lightgrey;
-  border-radius: 0.2em;
-}
-
-.color-input {
+.color-input-container {
   display: grid;
   place-items: center;
+  padding: 2px;
+  border-radius: 0.2em;
 }
+.color-chooser {
+  cursor: pointer;
+  border: 1px solid gray;
+  border-radius: 0.2em;
+
+  height: 3.75em;
+}
+
 .palette {
   list-style: none;
-  /* border: 1px solid gray; */
   display: grid;
   place-items: center;
   grid-template-rows: repeat(3, 1fr);
@@ -20,13 +21,14 @@
   grid-row-gap: 2px;
   grid-column-gap: 2px;
   padding: 2px;
+  border-radius: 0.2em;
 }
 
 .palette-item {
-  width: 1em;
-  height: 1em;
+  width: 100%;
+  height: 1.15em;
   border: 1px solid gray;
-  border-radius: 0.2em;
+  border-radius: inherit;
 }
 
 .tool-container {
@@ -34,7 +36,6 @@
   grid-row-gap: 5px;
   grid-column-gap: 5px;
   padding: 5px;
-  border-bottom: 2px solid lightgray;
 }
 
 .tool-container span {

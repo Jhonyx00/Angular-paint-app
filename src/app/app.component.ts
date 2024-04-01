@@ -1,4 +1,12 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -6,25 +14,16 @@ import { Component, HostListener, OnInit } from '@angular/core';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
+  constructor(private renderer: Renderer2) {}
+
   title = 'PaintXD';
-  toolName = 'Rectangle';
+  protected containerWidth = 0;
+  protected containerHeight = 0;
 
-  public div: any;
+  @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
+
   ngOnInit(): void {
-    this.div = document.getElementById('s');
-
-    // window.addEventListener('wheel', (event) => {
-    //   if (event.ctrlKey || event.metaKey) {
-    //     event.preventDefault();
-    //   }
-    //   console.log(event, event.ctrlKey);
-    // });
-  }
-
-  @HostListener('window:resize', ['$event']) onMouseMove(event: MouseEvent) {
-    //si se esta dibujando
-    //window.scrollTo(window.scrollX, window.screenY);
-    //console.log('resize', event);
-    // this.div.style.zoom = '90%';
+    this.containerWidth = this.canvasContainer.nativeElement.offsetWidth;
+    this.containerHeight = this.canvasContainer.nativeElement.offsetHeight;
   }
 }

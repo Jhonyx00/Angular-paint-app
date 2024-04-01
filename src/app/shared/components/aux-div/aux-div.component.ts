@@ -28,14 +28,15 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
 
-  public auxComponentProps: DynamicComponentProperties = {
-    width: 0,
-    height: 0,
+  public auxComponent: DynamicComponentProperties = {
     top: 0,
     left: 0,
+    width: 0,
+    height: 0,
     background: '',
-    outline: '',
-    clipPath: '',
+    componentClass: '',
+    referenceWidth: 0,
+    referenceHeight: 0,
   };
 
   ngOnInit(): void {
@@ -54,6 +55,7 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   initImage() {
     this.image$ = this.imageDataService.getImage().subscribe((image) => {
       if (image != undefined) {
+        //debo cambiar la dimension del canvas, con base en el nuevo valor de la redimension
         this.auxCanvas.nativeElement.width = image?.width;
         this.auxCanvas.nativeElement.height = image?.height;
         this.ctxAux.putImageData(image, 0, 0);
@@ -65,7 +67,7 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dynamicComponent$ = this.dynamicComponentService
       .getAuxComponent()
       .subscribe((currentAuxComponent: DynamicComponentProperties) => {
-        this.auxComponentProps = currentAuxComponent;
+        this.auxComponent = currentAuxComponent;
       });
   }
 

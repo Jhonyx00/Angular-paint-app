@@ -2,38 +2,38 @@
   <tool-component
     [toolItems]="fileItems"
     [toolGroupName]="files"
-    [selectedItemName]="selectedItemName"
+    [selectedTool]="selectedTool"
     (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="actionItems"
     [toolGroupName]="actions"
-    [selectedItemName]="selectedItemName"
+    [selectedTool]="selectedTool"
     (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
 
   <tool-component
     [toolItems]="shapeItems"
     [toolGroupName]="shapes"
-    [selectedItemName]="selectedItemName"
+    [selectedTool]="selectedTool"
     (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="pencilItems"
     [toolGroupName]="pencils"
-    [selectedItemName]="selectedItemName"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="eraserItems"
-    [toolGroupName]="erasers"
-    [selectedItemName]="selectedItemName"
+    [selectedTool]="selectedTool"
     (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="selectionItems"
     [toolGroupName]="selection"
-    [selectedItemName]="selectedItemName"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
+  ></tool-component>
+  <tool-component
+    [toolItems]="eraserItems"
+    [toolGroupName]="erasers"
+    [selectedTool]="selectedTool"
     (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
 

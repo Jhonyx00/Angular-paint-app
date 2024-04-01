@@ -2,3 +2,110 @@
   position: absolute;
   z-index: 2 !important;
 }
+
+/* hacer las clases de las figuras css aqui */
+.resize-button-container {
+  position: absolute;
+  z-index: 3; /* over aux component (2), under canvas-shield (4) */
+}
+.resize-button {
+  width: 1em;
+  height: 1em;
+  border: 1px solid black;
+  position: absolute;
+  background-color: rgb(204, 173, 221);
+}
+
+.resize-button:hover {
+  cursor: pointer;
+}
+
+#btn1 {
+  top: -1em;
+  left: -1em;
+}
+#btn2 {
+  top: 50%;
+  left: -1em;
+}
+#btn3 {
+  bottom: -1em;
+  left: -1em;
+}
+#btn4 {
+  bottom: -1em;
+  left: 50%;
+}
+#btn5 {
+  bottom: -1em;
+  right: -1em;
+}
+#btn6 {
+  right: -1em;
+  top: 50%;
+}
+#btn7 {
+  right: -1em;
+  top: -1em;
+}
+#btn8 {
+  top: -1em;
+  left: 50%;
+}
+
+/* shape clases */
+
+.Pentagon {
+  clip-path: polygon(50% 0%, 0% 38%, 18% 100%, 82% 100%, 100% 38%);
+}
+
+.Hexagon {
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.Triangle {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.Ellipse {
+  clip-path: ellipse(50% 50% at 50% 50%);
+}
+
+.Rectangle {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+}
+
+.Star {
+  clip-path: polygon(
+    50% 0%,
+    63% 38%,
+    100% 38%,
+    69% 59%,
+    82% 100%,
+    50% 75%,
+    18% 100%,
+    31% 59%,
+    0% 38%,
+    37% 38%
+  );
+}
+
+.Rhombus {
+  clip-path: polygon(50% 0%, 0% 50%, 50% 100%, 100% 50%);
+}
+
+.Undo {
+  clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+}
+
+.Redo {
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+}
+
+.Select {
+  outline: 2px dashed rgb(56, 56, 56);
+}
+
+.Move {
+  outline: 2px dashed rgb(56, 56, 56);
+}

@@ -15,8 +15,10 @@ export class DynamicComponentService {
       width: 0,
       height: 0,
       background: '',
-      outline: '',
-      clipPath: '',
+
+      componentClass: '',
+      referenceWidth: 0,
+      referenceHeight: 0,
     });
 
   setDynamicComponentDimensions(newDimension: DynamicComponentProperties) {

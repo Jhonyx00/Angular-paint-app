@@ -15,10 +15,11 @@ export class ToolbarComponent implements OnDestroy {
     private canvasStateService: CanvasStateService
   ) {}
 
-  public selectedItemName!: Tools;
+  public selectedTool!: Tools;
+  public selectedFileTool!: Tools;
 
   public shapes = 'Shapes';
-  public selection = 'Selection';
+  public selection = 'Select';
   public pencils = 'Pencils';
   public erasers = 'Erasers';
   public files = 'File';
@@ -130,34 +131,37 @@ export class ToolbarComponent implements OnDestroy {
     });
   }
 
-  setSelectedTool(valores: Tools) {
-    this.selectedItemName = valores;
+  setSelectedTool(toolName: Tools) {
+    if (toolName == 'Undo' || toolName == 'Redo' || toolName == 'Save') {
+      this.selectedFileTool = toolName;
+      switch (this.selectedFileTool) {
+        case 'Undo':
+          this.undo();
+          break;
 
-    switch (this.selectedItemName) {
-      case 'Undo':
-        this.undo();
-        break;
+        case 'Redo':
+          this.redo();
+          break;
 
-      case 'Redo':
-        this.redo();
-        break;
+        case 'Save':
+          this.saveWork();
+          break;
 
-      case 'Save':
-        this.saveWork();
-        break;
-
-      default:
-        this.initSelectedTool();
-        break;
+        default:
+          break;
+      }
+    } else {
+      this.selectedTool = toolName;
+      this.initSelectedTool();
     }
   }
 
   initSelectedTool() {
-    this.toolsService.setSelectedButton(this.selectedItemName);
+    this.toolsService.setSelectedButton(this.selectedTool);
   }
 
   private undo(): void {
-    // if normal array contains images, then it is porible to undo an action
+    // if normal array contains images, then it is posible to undo an action
     if (this.imagesList.length > 0) {
       this.imagesListAux.push(this.imagesList.pop());
 

@@ -3,7 +3,7 @@
   <div class="tool">
     <button
       *ngFor="let item of toolItems"
-      [ngClass]="item.toolName === selectedItemName ? 'selected-tool' : ''"
+      [ngClass]="item.toolName === selectedTool ? 'selected-tool' : ''"
       (click)="sendToolName(item.toolName)"
     >
       <img src="{{ item.iconUrl }}" alt="" />
