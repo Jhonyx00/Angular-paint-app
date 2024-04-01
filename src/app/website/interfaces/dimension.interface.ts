@@ -1,4 +1,4 @@
-export interface CanvasDimensions {
+export interface Dimension {
   width: number;
   height: number;
 }

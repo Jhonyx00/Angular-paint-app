@@ -1,4 +1,4 @@
-export enum Tools {
+export enum ToolName {
   //Shapes
   Rectangle = 'Rectangle',
   Ellipse = 'Ellipse',

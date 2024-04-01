@@ -1,12 +1,12 @@
 import { Component, OnDestroy } from '@angular/core';
-import { ToolsService } from '../../../../services/tools.service';
+import { ToolsService } from '../../services/tools.service';
 
 @Component({
-  selector: 'color-component',
+  selector: 'color-palette-component',
   templateUrl: './color-palette.component.html',
   styleUrls: ['./color-palette.component.css'],
 })
-export class ColorComponent implements OnDestroy {
+export class ColorPaletteComponent implements OnDestroy {
   constructor(private toolsService: ToolsService) {}
 
   public colors = new Array<string>(9);
@@ -26,8 +26,6 @@ export class ColorComponent implements OnDestroy {
     if (color != undefined) {
       this.input.value = color;
       this.toolsService.changeColor(color);
-    } else {
-      console.log('no se puede perrillo');
     }
   }
 

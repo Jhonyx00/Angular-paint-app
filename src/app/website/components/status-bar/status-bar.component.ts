@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatusBarService } from '../../services/statusbar.service';
-import { Point } from 'src/app/website/interfaces/cursor-position.interface';
-import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
+import { Point } from 'src/app/website/interfaces/point.interface';
+import { Dimension } from '../../interfaces/dimension.interface';
 
 @Component({
   selector: 'statusbar-component',
-  templateUrl: './status.component.html',
-  styleUrls: ['./status.component.css'],
+  templateUrl: './status-bar.component.html',
+  styleUrls: ['./status-bar.component.css'],
 })
-export class StatusbarComponent implements OnInit {
+export class StatusBarComponent implements OnInit {
   constructor(private statusBarService: StatusBarService) {}
 
   public cursosrPosition: Point = {
@@ -16,7 +16,7 @@ export class StatusbarComponent implements OnInit {
     y: 0,
   };
 
-  public canvasDimensions: CanvasDimensions = {
+  public canvasDimensions: Dimension = {
     width: 0,
     height: 0,
   };
@@ -42,8 +42,10 @@ export class StatusbarComponent implements OnInit {
   }
 
   private displayCanvasDimensions() {
-    this.statusBarService.getCanvasDimensions().subscribe((currentSize) => {
-      this.canvasDimensions = currentSize;
-    });
+    this.statusBarService
+      .getCanvasDimensions()
+      .subscribe((currentCanvasDimensions) => {
+        this.canvasDimensions = currentCanvasDimensions;
+      });
   }
 }

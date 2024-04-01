@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { Tools } from 'src/app/website/enums/tools.enum';
-import { Tool } from 'src/app/website/interfaces/selected-tool.interface';
+import { ToolName } from 'src/app/website/enums/tool-name.enum';
+import { Tool } from 'src/app/website/interfaces/tool.interface';
 
 @Component({
   selector: 'tool-component',
@@ -12,8 +12,8 @@ export class ToolComponent {
   @Input() toolGroupName: string = '';
   @Input() selectedTool: string = '';
   @Output()
-  onPropertiesSent = new EventEmitter<Tools>();
-  sendToolName(toolName: Tools) {
+  onPropertiesSent = new EventEmitter<ToolName>();
+  sendToolName(toolName: ToolName) {
     this.onPropertiesSent.emit(toolName);
   }
 }

@@ -6,19 +6,21 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
-import { DynamicComponentProperties } from '../../interfaces/dynamic-component.interface';
-import { DynamicComponentService } from '../../services/dynamic-component.service';
+import { ShapeContainer } from '../../interfaces/shape.interface';
+import { ShapeContainerService } from '../../services/shape-container.service';
 import { ImageDataService } from 'src/app/shared/services/image-data.service';
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-aux-div',
-  templateUrl: './aux-div.component.html',
-  styleUrls: ['./aux-div.component.css'],
+  selector: 'shape-container',
+  templateUrl: './shape-container.component.html',
+  styleUrls: ['./shape-container.component.css'],
 })
-export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ShapeContainerComponent
+  implements OnInit, AfterViewInit, OnDestroy
+{
   constructor(
-    private dynamicComponentService: DynamicComponentService,
+    private shapeContainerService: ShapeContainerService,
     private imageDataService: ImageDataService
   ) {}
 
@@ -28,7 +30,7 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
 
-  public auxComponent: DynamicComponentProperties = {
+  public auxComponent: ShapeContainer = {
     top: 0,
     left: 0,
     width: 0,
@@ -55,7 +57,6 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   initImage() {
     this.image$ = this.imageDataService.getImage().subscribe((image) => {
       if (image != undefined) {
-        //debo cambiar la dimension del canvas, con base en el nuevo valor de la redimension
         this.auxCanvas.nativeElement.width = image?.width;
         this.auxCanvas.nativeElement.height = image?.height;
         this.ctxAux.putImageData(image, 0, 0);
@@ -64,9 +65,9 @@ export class AuxDivComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initAuxComponentDimensions() {
-    this.dynamicComponent$ = this.dynamicComponentService
-      .getAuxComponent()
-      .subscribe((currentAuxComponent: DynamicComponentProperties) => {
+    this.dynamicComponent$ = this.shapeContainerService
+      .getShapeContainer()
+      .subscribe((currentAuxComponent: ShapeContainer) => {
         this.auxComponent = currentAuxComponent;
       });
   }

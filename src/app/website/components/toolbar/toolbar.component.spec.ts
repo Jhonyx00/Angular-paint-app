@@ -1,16 +1,15 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ToolbarComponent } from './toolbar.component';
 
-import { AuxDivComponent } from './aux-div.component';
-
-describe('AuxDivComponent', () => {
-  let component: AuxDivComponent;
-  let fixture: ComponentFixture<AuxDivComponent>;
+describe('ToolbarComponent', () => {
+  let component: ToolbarComponent;
+  let fixture: ComponentFixture<ToolbarComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [AuxDivComponent]
+      declarations: [ToolbarComponent],
     });
-    fixture = TestBed.createComponent(AuxDivComponent);
+    fixture = TestBed.createComponent(ToolbarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

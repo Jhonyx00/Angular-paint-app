@@ -13,14 +13,13 @@ import {
 import { StatusBarService } from '../../services/statusbar.service';
 import { CanvasStateService } from '../../services/canvas-state.service';
 import { ToolsService } from '../../services/tools.service';
-import { AuxDivComponent } from '../../../shared/components/aux-div/aux-div.component';
+import { ShapeContainerComponent } from '../../../shared/components/shape-container/shape-container.component';
 import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
-import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
-import { DynamicComponentProperties } from 'src/app/shared/interfaces/dynamic-component.interface';
-import { CanvasDimensions } from 'src/app/website/interfaces/canvas-dimensions.interface';
-import { Point } from 'src/app/website/interfaces/cursor-position.interface';
+import { ShapeContainerService } from 'src/app/shared/services/shape-container.service';
+import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
+import { Point } from 'src/app/website/interfaces/point.interface';
 import { ImageDataService } from '../../../shared/services/image-data.service';
-import { Tools } from '../../enums/tools.enum';
+import { ToolName } from '../../enums/tool-name.enum';
 import { Cursor } from '../../enums/cursors.enum';
 
 @Component({
@@ -33,7 +32,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     private statusBarService: StatusBarService,
     private canvasStateService: CanvasStateService,
     private toolsService: ToolsService,
-    private dynamicComponentService: DynamicComponentService,
+    private shapeContainerService: ShapeContainerService,
     private imageDataService: ImageDataService,
     private renderer: Renderer2
   ) {}
@@ -44,7 +43,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
   @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
-  private componentRef!: ComponentRef<AuxDivComponent>;
+  private componentRef!: ComponentRef<ShapeContainerComponent>;
   private isSelectDrawn = false;
   private onResizeButton = false;
   private onClickResizeButton = false;
@@ -53,13 +52,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private color: string = '';
-  private toolName!: Tools;
+  private toolName!: ToolName;
   private ctx!: CanvasRenderingContext2D;
   private isDrawing: boolean = false;
   private imagesArray: string[] = [];
   protected canvasCursor: Cursor = Cursor.Crosshair;
 
-  private objectProps: DynamicComponentProperties = {
+  private shapeContainer: ShapeContainer = {
     top: 0,
     left: 0,
     width: 0,
@@ -84,20 +83,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.initCanvasDimensions();
     this.initAuxDynamicComponent();
-
-    // let parent = this.renderer.parentNode(this.canvas);
-
-    // console.log(parent);
-
-    // const canvasContainer =
-    //   this.canvas.nativeElement.parentNode.parentNode.parentNode;
-    // console.log(canvasContainer);
   }
 
   private initCanvasDimensions(): void {
     // this.canvas.nativeElement.width = this.canvasDimensions.width;
     // this.canvas.nativeElement.height = this.canvasDimensions.height;
-    // console.log(this.containerWidth, this.containerHeight);
 
     this.canvas.nativeElement.width = this.containerWidth;
     this.canvas.nativeElement.height = this.containerHeight;
@@ -141,19 +131,19 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initTool(): void {
     // get last value from behavior subject
-    this.toolsService.getSelectedButton().subscribe((currentTool: Tools) => {
+    this.toolsService.getSelectedButton().subscribe((currentTool: ToolName) => {
       this.toolName = currentTool; //get tool name
       this.canvasStateService.setResetValue(false);
     });
   }
 
   private setInitialValues(): void {
-    this.canvasStateService.getResetValue().subscribe((currentState) => {
-      //console.log('Current state:', currentState);
+    this.canvasStateService.getResetValue().subscribe((currentCanvasState) => {
+      //console.log('Current state:', currentCanvasState);
 
-      if (!currentState) {
+      if (!currentCanvasState) {
         //check if there is still a last selected area
-        if (this.selectedImage != undefined && this.toolName != Tools.Move) {
+        if (this.selectedImage != undefined && this.toolName != ToolName.Move) {
           this.checkLastSelectedArea();
         }
         //reset values
@@ -171,19 +161,19 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private resetObjectProperties() {
-    this.objectProps.top = 0;
-    this.objectProps.left = 0;
-    this.objectProps.width = 0;
-    this.objectProps.height = 0;
-    this.objectProps.background = '';
-    this.objectProps.componentClass = '';
+    this.shapeContainer.top = 0;
+    this.shapeContainer.left = 0;
+    this.shapeContainer.width = 0;
+    this.shapeContainer.height = 0;
+    this.shapeContainer.background = '';
+    this.shapeContainer.componentClass = '';
   }
 
   private initAuxDynamicComponent(): void {
-    this.dynamicComponentService
-      .getAuxComponent()
-      .subscribe((currentObjectDimensions) => {
-        this.objectProps = currentObjectDimensions;
+    this.shapeContainerService
+      .getShapeContainer()
+      .subscribe((currentShapeContainer) => {
+        this.shapeContainer = currentShapeContainer;
       });
   }
 
@@ -200,18 +190,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.imageDataService.setImage(undefined);
 
       switch (this.toolName) {
-        case Tools.Rectangle:
-        case Tools.Ellipse:
-        case Tools.Triangle:
-        case Tools.Hexagon:
-        case Tools.Pentagon:
-        case Tools.Star:
-        case Tools.Rhombus:
+        case ToolName.Rectangle:
+        case ToolName.Ellipse:
+        case ToolName.Triangle:
+        case ToolName.Hexagon:
+        case ToolName.Pentagon:
+        case ToolName.Star:
+        case ToolName.Rhombus:
           this.createComponent();
 
           break;
 
-        case Tools.Select:
+        case ToolName.Select:
           this.deleteComponent();
 
           this.createComponent();
@@ -224,7 +214,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.checkSelectBackground();
           break;
 
-        case Tools.Move:
+        case ToolName.Move:
           this.setDeltaXY(event.offsetX, event.offsetY);
           break;
 
@@ -240,30 +230,30 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.isDrawing) {
       //SHAPE SELECTION
       switch (this.toolName) {
-        case Tools.Line:
+        case ToolName.Line:
           this.drawLine(event);
           break;
 
-        case Tools.Select2:
+        case ToolName.Select2:
           this.drawLine(event);
           break;
 
-        case Tools.Rectangle:
-        case Tools.Ellipse:
-        case Tools.Triangle:
-        case Tools.Select:
-        case Tools.Hexagon:
-        case Tools.Pentagon:
-        case Tools.Star:
-        case Tools.Rhombus:
+        case ToolName.Rectangle:
+        case ToolName.Ellipse:
+        case ToolName.Triangle:
+        case ToolName.Select:
+        case ToolName.Hexagon:
+        case ToolName.Pentagon:
+        case ToolName.Star:
+        case ToolName.Rhombus:
           this.drawShapeContainer(event);
           break;
 
-        case Tools.Move:
+        case ToolName.Move:
           this.moveShapeContainer(event, this.isMouseInsideSelect(event));
           break;
 
-        case Tools.Eraser:
+        case ToolName.Eraser:
           this.erase(event);
           break;
 
@@ -274,8 +264,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       //Set properties to aux component while drawing
       //necesary to view the aux compponent while drawing
       ///only modify required properties (top, left, width, height) if it is possible
-      this.dynamicComponentService.setDynamicComponentDimensions(
-        this.objectProps
+      this.shapeContainerService.setShapeContainerPropesties(
+        this.shapeContainer
       );
       //Set styles depending on the selected tool
       this.setShapeContainerStyles(this.toolName);
@@ -284,9 +274,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       if (this.isSelectDrawn) {
         if (this.isMouseInsideSelect(event)) {
-          this.setCursorAndToolname(Cursor.Move, Tools.Move);
+          this.setCursorAndToolname(Cursor.Move, ToolName.Move);
         } else {
-          this.setCursorAndToolname(Cursor.Crosshair, Tools.Select);
+          this.setCursorAndToolname(Cursor.Crosshair, ToolName.Select);
         }
         this.onResizeButtonClick(event);
       }
@@ -303,37 +293,37 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isDrawing = false;
     this.onClickResizeButton = false;
 
-    if (this.objectProps.width > 0 && this.objectProps.height > 0) {
+    if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
       switch (this.toolName) {
-        case Tools.Rectangle:
+        case ToolName.Rectangle:
           this.drawRectangle();
           break;
 
-        case Tools.Ellipse:
+        case ToolName.Ellipse:
           this.drawEllipse();
           break;
 
-        case Tools.Triangle:
+        case ToolName.Triangle:
           this.drawTriangle();
           break;
 
-        case Tools.Hexagon:
+        case ToolName.Hexagon:
           this.drawHexagon();
           break;
 
-        case Tools.Pentagon:
+        case ToolName.Pentagon:
           this.drawPentagon();
           break;
 
-        case Tools.Star:
+        case ToolName.Star:
           this.drawStar();
           break;
 
-        case Tools.Rhombus:
+        case ToolName.Rhombus:
           this.drawRhombus();
           break;
 
-        case Tools.Select:
+        case ToolName.Select:
           this.selectImageArea(); //get the fragment of canvas
           this.clearSelectedArea(); //remove fragment from selection
           this.setAuxDivImage(); //set image to auxCanvas
@@ -344,11 +334,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
       }
       //set dimensions of aux component when mouse is up
-      this.dynamicComponentService.setDynamicComponentDimensions(
-        this.objectProps
+      this.shapeContainerService.setShapeContainerPropesties(
+        this.shapeContainer
       );
       //instantly delete dynamic component when selected tool is a shape
-      if (this.toolName != Tools.Select && this.toolName != Tools.Move) {
+      if (this.toolName != ToolName.Select && this.toolName != ToolName.Move) {
         this.deleteComponent();
       }
       //get new aux component image when resizing it
@@ -372,8 +362,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private updateCanvasValue(): void {
-    this.canvasStateService.getImageList().subscribe((currentList) => {
-      this.imagesArray = currentList;
+    this.canvasStateService.getImageList().subscribe((currentImage) => {
+      this.imagesArray = currentImage;
 
       if (this.imagesArray.length > 0) {
         this.setCurrentCanvasImage();
@@ -385,13 +375,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private moveShapeContainer(event: MouseEvent, isMouseInside: boolean): void {
     if (isMouseInside) {
-      this.objectProps.top = event.offsetY - this.XY.y;
-      this.objectProps.left = event.offsetX - this.XY.x;
+      this.shapeContainer.top = event.offsetY - this.XY.y;
+      this.shapeContainer.left = event.offsetX - this.XY.x;
     }
   }
 
   private isMouseInsideSelect(event: MouseEvent): boolean {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     if (
       event.offsetY > top - 16 &&
       event.offsetY < height + top + 16 &&
@@ -404,14 +394,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private setCursorAndToolname(canvasCursor: Cursor, toolName: Tools): void {
+  private setCursorAndToolname(canvasCursor: Cursor, toolName: ToolName): void {
     this.canvasCursor = canvasCursor;
     this.toolName = toolName; //Avoid nested select
   }
 
   private onResizeButtonClick(event: MouseEvent): void {
     //detect all buttons only
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const { offsetX, offsetY } = event;
     if (
       offsetX < left &&
@@ -427,7 +417,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private resizeAuxComponent(event: MouseEvent): void {
-    const { top, left, referenceWidth, referenceHeight } = this.objectProps;
+    const { top, left, referenceWidth, referenceHeight } = this.shapeContainer;
     const { offsetX, offsetY } = event;
 
     //calculate value from mousedown to offset
@@ -441,10 +431,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //set new values to aux component
 
     if (newWidth > 0 && newHeight > 0) {
-      this.objectProps.left = offsetX;
-      this.objectProps.top = offsetY;
-      this.objectProps.width = newWidth;
-      this.objectProps.height = newHeight;
+      this.shapeContainer.left = offsetX;
+      this.shapeContainer.top = offsetY;
+      this.shapeContainer.width = newWidth;
+      this.shapeContainer.height = newHeight;
     }
   }
 
@@ -452,25 +442,25 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.selectedImage != undefined && !this.resizedImage.src) {
       this.ctx.putImageData(
         this.selectedImage,
-        this.objectProps.left,
-        this.objectProps.top
+        this.shapeContainer.left,
+        this.shapeContainer.top
       );
     } else if (this.resizedImage.src) {
       //only if selection style is not transparent
       this.ctx.fillStyle = 'white';
       this.ctx.fillRect(
-        this.objectProps.left,
-        this.objectProps.top,
-        this.objectProps.width,
-        this.objectProps.height
+        this.shapeContainer.left,
+        this.shapeContainer.top,
+        this.shapeContainer.width,
+        this.shapeContainer.height
       );
 
       this.ctx.drawImage(
         this.resizedImage,
-        this.objectProps.left,
-        this.objectProps.top,
-        this.objectProps.width,
-        this.objectProps.height
+        this.shapeContainer.left,
+        this.shapeContainer.top,
+        this.shapeContainer.width,
+        this.shapeContainer.height
       );
 
       this.ctx.fillStyle = this.color;
@@ -479,8 +469,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private setDeltaXY(offsetX: number, offsetY: number): void {
     this.XY = {
-      x: Math.abs(this.objectProps.left - offsetX),
-      y: Math.abs(this.objectProps.top - offsetY),
+      x: Math.abs(this.shapeContainer.left - offsetX),
+      y: Math.abs(this.shapeContainer.top - offsetY),
     };
   }
 
@@ -491,19 +481,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private selectImageArea(): void {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     this.selectedImage = this.ctx.getImageData(left, top, width, height);
     this.isSelectDrawn = true; // a new rectangle select
   }
 
   private clearSelectedArea() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     this.ctx.clearRect(left, top, width, height);
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
   private setCurrentCanvasImage(): void {
-    ///guardarla mejor como imageData en vez de base64
     this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
     this.currentCanvasImage.onload = () => {
       this.ctx.clearRect(0, 0, this.containerWidth, this.containerHeight);
@@ -517,16 +506,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isSelectDrawn = false;
   }
 
-  //Set styles depending on the selected tool (only tools that have a container)
-  private setShapeContainerStyles(toolName: Tools) {
-    this.objectProps.componentClass = toolName;
+  //Set styles depending on the selected tool (only ToolName that have a container)
+  private setShapeContainerStyles(toolName: ToolName) {
+    this.shapeContainer.componentClass = toolName;
   }
 
   private checkSelectBackground() {
     if (this.isDrawing) {
-      this.objectProps.background = 'transparent';
+      this.shapeContainer.background = 'transparent';
     } else {
-      this.objectProps.background = 'white';
+      this.shapeContainer.background = 'white';
     }
   }
 
@@ -540,44 +529,44 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const newWidth = Math.abs(dX);
     const newHeight = Math.abs(dY);
 
-    this.objectProps = {
+    this.shapeContainer = {
       top: 0,
       left: 0,
       width: newWidth,
       height: newHeight,
-      background: this.toolName == Tools.Select ? 'transparent' : this.color,
+      background: this.toolName == ToolName.Select ? 'transparent' : this.color,
       componentClass: '',
       referenceWidth: newWidth,
       referenceHeight: newHeight,
     };
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
-      this.objectProps = {
-        ...this.objectProps,
+      this.shapeContainer = {
+        ...this.shapeContainer,
         top: event.offsetY,
         left: this.mouseDownPosition.x,
       };
     }
     // Quadrant 2
     else if (rectangleWidth < 0 && rectangleHeight < 0) {
-      this.objectProps = {
-        ...this.objectProps,
+      this.shapeContainer = {
+        ...this.shapeContainer,
         top: event.offsetY,
         left: event.offsetX,
       };
     }
     // Quadrant 3
     else if (rectangleWidth < 0 && rectangleHeight > 0) {
-      this.objectProps = {
-        ...this.objectProps,
+      this.shapeContainer = {
+        ...this.shapeContainer,
         top: this.mouseDownPosition.y,
         left: event.offsetX,
       };
     }
     //Quadrant 4
     else {
-      this.objectProps = {
-        ...this.objectProps,
+      this.shapeContainer = {
+        ...this.shapeContainer,
         top: this.mouseDownPosition.y,
         left: this.mouseDownPosition.x,
       };
@@ -594,12 +583,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawRectangle(): void {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     this.ctx.fillRect(left, top, width, height);
   }
 
   private drawEllipse() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const endAngle = 2 * Math.PI;
     this.ctx.beginPath();
     this.ctx.ellipse(
@@ -615,7 +604,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawTriangle(): void {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height },
@@ -631,7 +620,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawHexagon() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     /*Numerical values expressed in percentage indicate where to place each point 
       according to the width and height of aux component:
       width * 0.25 = 25% of aux component height 
@@ -654,7 +643,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawPentagon() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height * 0.38 },
@@ -672,7 +661,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   public drawStar() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left + width * 0.37, y: top + height * 0.38 },
@@ -697,7 +686,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ///HACER QUE CADA FUNCION RETORNE LA FORMA QUE SE DIBUJA PARA LUEGO PASARLA POR EL SERVICIO AL COMPONENTE AUXILIAR Y COLOCARLA
 
   private drawRhombus() {
-    const { width, height, top, left } = this.objectProps;
+    const { width, height, top, left } = this.shapeContainer;
     const polygonCoords: Point[] = [
       { x: left + width * 0.5, y: top },
       { x: left, y: top + height * 0.5 },
@@ -720,7 +709,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   //    DINAMIC COMPONENT FUNCTIONS
   private createComponent(): void {
-    this.componentRef = this.dynamicHost.createComponent(AuxDivComponent);
+    this.componentRef = this.dynamicHost.createComponent(
+      ShapeContainerComponent
+    );
   }
 
   private deleteComponent(): void {

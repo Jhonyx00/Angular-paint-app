@@ -1,8 +1,6 @@
 import {
-  AfterViewInit,
   Component,
   ElementRef,
-  HostListener,
   OnInit,
   Renderer2,
   ViewChild,

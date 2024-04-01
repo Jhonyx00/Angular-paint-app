@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DynamicHostDirective } from './directives/dynamic-host.directive';
-import { AuxDivComponent } from './components/aux-div/aux-div.component';
+import { ShapeContainerComponent } from './components/shape-container/shape-container.component';
 
 @NgModule({
-  declarations: [DynamicHostDirective, AuxDivComponent],
+  declarations: [DynamicHostDirective, ShapeContainerComponent],
   imports: [CommonModule],
-  exports: [DynamicHostDirective, AuxDivComponent],
+  exports: [DynamicHostDirective, ShapeContainerComponent],
 })
 export class SharedModule {}

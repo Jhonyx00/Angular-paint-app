@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { StatusComponent } from './status.component';
+import { StatusBarComponent } from './status-bar.component';
 
 describe('StatusComponent', () => {
-  let component: StatusComponent;
-  let fixture: ComponentFixture<StatusComponent>;
+  let component: StatusBarComponent;
+  let fixture: ComponentFixture<StatusBarComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [StatusComponent]
+      declarations: [StatusBarComponent],
     });
-    fixture = TestBed.createComponent(StatusComponent);
+    fixture = TestBed.createComponent(StatusBarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,7 +1,7 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[DynamicDiv]',
+  selector: '[shapeContainer]',
 })
 export class DynamicHostDirective {
   constructor(public _viewContainerRef: ViewContainerRef) {}
