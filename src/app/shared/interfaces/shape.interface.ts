@@ -3,6 +3,8 @@ export interface ShapeContainer {
   left: number;
   width: number;
   height: number;
+  referenceTop: number;
+  referenceLeft: number;
   referenceWidth: number;
   referenceHeight: number;
   background: string;

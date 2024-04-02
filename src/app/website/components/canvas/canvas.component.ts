@@ -47,6 +47,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private isSelectDrawn = false;
   private onResizeButton = false;
   private onClickResizeButton = false;
+  private resize = false;
   private selectedImage: ImageData | undefined;
   private auxComponent!: HTMLCanvasElement;
   private resizedImage = new Image();
@@ -65,6 +66,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     height: 0,
     background: '',
     componentClass: '',
+    referenceTop: 0,
+    referenceLeft: 0,
     referenceWidth: 0,
     referenceHeight: 0,
   };
@@ -91,7 +94,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.canvas.nativeElement.width = this.containerWidth;
     this.canvas.nativeElement.height = this.containerHeight;
-    console.log(this.containerWidth, this.containerHeight);
+    // console.log(this.containerWidth, this.containerHeight);
 
     this.statusBarService.setCanvasDimensions({
       width: this.containerWidth,
@@ -165,6 +168,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.left = 0;
     this.shapeContainer.width = 0;
     this.shapeContainer.height = 0;
+    this.shapeContainer.referenceTop = 0;
+    this.shapeContainer.referenceLeft = 0;
+    this.shapeContainer.referenceWidth = 0;
+    this.shapeContainer.referenceHeight = 0;
     this.shapeContainer.background = '';
     this.shapeContainer.componentClass = '';
   }
@@ -181,12 +188,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   public mouseDown(event: MouseEvent): void {
     this.mouseDownPosition.x = event.offsetX;
     this.mouseDownPosition.y = event.offsetY;
-
     if (this.onResizeButton) {
-      console.log('top left corner');
+      //console.log('top left corner');
       this.onClickResizeButton = true;
+      this.resize = true;
     } else {
       this.isDrawing = true;
+      this.resize = false;
       this.imageDataService.setImage(undefined);
 
       switch (this.toolName) {
@@ -270,7 +278,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       //Set styles depending on the selected tool
       this.setShapeContainerStyles(this.toolName);
     } else if (this.onClickResizeButton) {
-      this.resizeAuxComponent(event);
+      this.resizeShapeComponent(event);
     } else {
       if (this.isSelectDrawn) {
         if (this.isMouseInsideSelect(event)) {
@@ -281,7 +289,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         this.onResizeButtonClick(event);
       }
     }
-
     //Set properties to be accessible from status component
     this.statusBarService.setCursorPosition({
       x: event.offsetX,
@@ -326,28 +333,35 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case ToolName.Select:
           this.selectImageArea(); //get the fragment of canvas
           this.clearSelectedArea(); //remove fragment from selection
-          this.setAuxDivImage(); //set image to auxCanvas
+          this.setShapeContainerImage(); //set image to auxCanvas
           this.checkSelectBackground(); //check if selection background is white
           break;
 
         default:
           break;
       }
-      //set dimensions of aux component when mouse is up
-      this.shapeContainerService.setShapeContainerPropesties(
-        this.shapeContainer
-      );
+
       //instantly delete dynamic component when selected tool is a shape
       if (this.toolName != ToolName.Select && this.toolName != ToolName.Move) {
         this.deleteComponent();
       }
       //get new aux component image when resizing it
       if (this.onResizeButton) {
-        //console.log('top left corner dropped');
+        //if corner button pressed
         const auxComponentUrl = this.auxComponent.toDataURL();
         //this.resizedImage.src = this.auxComponentUrl;
         this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
+
+        this.shapeContainer.referenceTop = this.shapeContainer.top;
+        this.shapeContainer.referenceLeft = this.shapeContainer.left;
+        this.shapeContainer.referenceWidth = this.shapeContainer.width;
+        this.shapeContainer.referenceHeight = this.shapeContainer.height;
       }
+
+      //set dimensions of aux component when mouse is up
+      this.shapeContainerService.setShapeContainerPropesties(
+        this.shapeContainer
+      );
     }
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
@@ -377,16 +391,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (isMouseInside) {
       this.shapeContainer.top = event.offsetY - this.XY.y;
       this.shapeContainer.left = event.offsetX - this.XY.x;
+      this.shapeContainer.referenceTop = event.offsetY - this.XY.y;
+      this.shapeContainer.referenceLeft = event.offsetX - this.XY.x;
     }
   }
 
   private isMouseInsideSelect(event: MouseEvent): boolean {
     const { width, height, top, left } = this.shapeContainer;
     if (
-      event.offsetY > top - 16 &&
-      event.offsetY < height + top + 16 &&
-      event.offsetX > left - 16 &&
-      event.offsetX < width + left + 16
+      event.offsetY > top - 8 &&
+      event.offsetY < height + top + 8 &&
+      event.offsetX > left - 8 &&
+      event.offsetX < width + left + 8
     ) {
       return true;
     } else {
@@ -416,25 +432,52 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private resizeAuxComponent(event: MouseEvent): void {
-    const { top, left, referenceWidth, referenceHeight } = this.shapeContainer;
+  private resizeShapeComponent(event: MouseEvent): void {
+    const { referenceLeft, referenceTop, referenceWidth, referenceHeight } =
+      this.shapeContainer;
     const { offsetX, offsetY } = event;
-
     //calculate value from mousedown to offset
     const dX = offsetX - this.mouseDownPosition.x;
     const dY = offsetY - this.mouseDownPosition.y;
-
     //calculate new width and height from original width and height
     const newWidth = referenceWidth - dX;
     const newHeight = referenceHeight - dY;
-
     //set new values to aux component
-
     if (newWidth > 0 && newHeight > 0) {
-      this.shapeContainer.left = offsetX;
-      this.shapeContainer.top = offsetY;
+      this.shapeContainer.left = referenceLeft + dX;
+      this.shapeContainer.top = referenceTop + dY;
       this.shapeContainer.width = newWidth;
       this.shapeContainer.height = newHeight;
+    }
+
+    //en cada rredimension actualizar el ancho y alto de referencia al ultimo valor dado por la ultima redimension
+  }
+
+  private setDeltaXY(offsetX: number, offsetY: number): void {
+    this.XY = {
+      x: Math.abs(this.shapeContainer.left - offsetX),
+      y: Math.abs(this.shapeContainer.top - offsetY),
+    };
+  }
+
+  private setShapeContainerImage(): void {
+    if (this.selectedImage != undefined) {
+      this.imageDataService.setImage(this.selectedImage);
+    }
+  }
+
+  private selectImageArea(): void {
+    const { width, height, top, left } = this.shapeContainer;
+    if (!this.resize) {
+      this.selectedImage = this.ctx.getImageData(left, top, width, height);
+      this.isSelectDrawn = true; // a new rectangle select
+    }
+  }
+
+  private clearSelectedArea() {
+    const { width, height, top, left } = this.shapeContainer;
+    if (!this.resize) {
+      this.ctx.clearRect(left, top, width, height);
     }
   }
 
@@ -465,30 +508,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
       this.ctx.fillStyle = this.color;
     }
-  }
-
-  private setDeltaXY(offsetX: number, offsetY: number): void {
-    this.XY = {
-      x: Math.abs(this.shapeContainer.left - offsetX),
-      y: Math.abs(this.shapeContainer.top - offsetY),
-    };
-  }
-
-  private setAuxDivImage(): void {
-    if (this.selectedImage != undefined) {
-      this.imageDataService.setImage(this.selectedImage);
-    }
-  }
-
-  private selectImageArea(): void {
-    const { width, height, top, left } = this.shapeContainer;
-    this.selectedImage = this.ctx.getImageData(left, top, width, height);
-    this.isSelectDrawn = true; // a new rectangle select
-  }
-
-  private clearSelectedArea() {
-    const { width, height, top, left } = this.shapeContainer;
-    this.ctx.clearRect(left, top, width, height);
   }
 
   //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
@@ -536,6 +555,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       height: newHeight,
       background: this.toolName == ToolName.Select ? 'transparent' : this.color,
       componentClass: '',
+      referenceLeft: 0,
+      referenceTop: 0,
       referenceWidth: newWidth,
       referenceHeight: newHeight,
     };
@@ -545,6 +566,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         ...this.shapeContainer,
         top: event.offsetY,
         left: this.mouseDownPosition.x,
+        referenceTop: event.offsetY,
+        referenceLeft: this.mouseDownPosition.x,
       };
     }
     // Quadrant 2
@@ -553,6 +576,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         ...this.shapeContainer,
         top: event.offsetY,
         left: event.offsetX,
+        referenceTop: event.offsetY,
+        referenceLeft: event.offsetX,
       };
     }
     // Quadrant 3
@@ -561,6 +586,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         ...this.shapeContainer,
         top: this.mouseDownPosition.y,
         left: event.offsetX,
+        referenceTop: this.mouseDownPosition.y,
+        referenceLeft: event.offsetY,
       };
     }
     //Quadrant 4
@@ -569,6 +596,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         ...this.shapeContainer,
         top: this.mouseDownPosition.y,
         left: this.mouseDownPosition.x,
+        referenceTop: this.mouseDownPosition.y,
+        referenceLeft: this.mouseDownPosition.x,
       };
     }
   }

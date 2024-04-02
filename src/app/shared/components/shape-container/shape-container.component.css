@@ -26,6 +26,7 @@
 }
 #btn2 {
   top: 50%;
+  transform: translateY(-50%);
   left: -1em;
 }
 #btn3 {
@@ -35,6 +36,7 @@
 #btn4 {
   bottom: -1em;
   left: 50%;
+  transform: translateX(-50%);
 }
 #btn5 {
   bottom: -1em;
@@ -43,6 +45,7 @@
 #btn6 {
   right: -1em;
   top: 50%;
+  transform: translateY(-50%);
 }
 #btn7 {
   right: -1em;
@@ -51,6 +54,7 @@
 #btn8 {
   top: -1em;
   left: 50%;
+  transform: translateX(-50%);
 }
 
 /* shape clases */

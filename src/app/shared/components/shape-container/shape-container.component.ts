@@ -37,6 +37,8 @@ export class ShapeContainerComponent
     height: 0,
     background: '',
     componentClass: '',
+    referenceTop: 0,
+    referenceLeft: 0,
     referenceWidth: 0,
     referenceHeight: 0,
   };
