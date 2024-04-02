@@ -85,17 +85,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ////ON INIT
   ngOnInit(): void {
     this.initCanvasDimensions();
-    this.initAuxDynamicComponent();
+    this.initShapeContainer();
   }
 
   private initCanvasDimensions(): void {
-    // this.canvas.nativeElement.width = this.canvasDimensions.width;
-    // this.canvas.nativeElement.height = this.canvasDimensions.height;
-
     this.canvas.nativeElement.width = this.containerWidth;
     this.canvas.nativeElement.height = this.containerHeight;
-    // console.log(this.containerWidth, this.containerHeight);
-
     this.statusBarService.setCanvasDimensions({
       width: this.containerWidth,
       height: this.containerHeight,
@@ -176,7 +171,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.componentClass = '';
   }
 
-  private initAuxDynamicComponent(): void {
+  private initShapeContainer(): void {
     this.shapeContainerService
       .getShapeContainer()
       .subscribe((currentShapeContainer) => {
@@ -184,17 +179,17 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  ///                     MOUSE EVENTS
+  //MOUSE EVENTS
   public mouseDown(event: MouseEvent): void {
     this.mouseDownPosition.x = event.offsetX;
     this.mouseDownPosition.y = event.offsetY;
+    //console.log('top left corner');
     if (this.onResizeButton) {
-      //console.log('top left corner');
-      this.onClickResizeButton = true;
       this.resize = true;
+      this.onClickResizeButton = true;
     } else {
-      this.isDrawing = true;
       this.resize = false;
+      this.isDrawing = true;
       this.imageDataService.setImage(undefined);
 
       switch (this.toolName) {
@@ -206,18 +201,15 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         case ToolName.Star:
         case ToolName.Rhombus:
           this.createComponent();
-
           break;
 
         case ToolName.Select:
           this.deleteComponent();
 
           this.createComponent();
-          this.auxComponent = this.componentRef.location.nativeElement
-            .firstChild as HTMLCanvasElement;
 
           this.paintSelectedArea();
-
+          this.initAuxCanvas();
           this.renderer.removeAttribute(this.resizedImage, 'src');
           this.checkSelectBackground();
           break;
@@ -230,13 +222,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
       }
     }
-
     this.canvasStateService.setResetValue(true);
   }
 
   public mouseMove(event: MouseEvent): void {
     if (this.isDrawing) {
-      //SHAPE SELECTION
       switch (this.toolName) {
         case ToolName.Line:
           this.drawLine(event);
@@ -340,22 +330,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         default:
           break;
       }
-
       //instantly delete dynamic component when selected tool is a shape
       if (this.toolName != ToolName.Select && this.toolName != ToolName.Move) {
         this.deleteComponent();
       }
-      //get new aux component image when resizing it
+      //if corner button pressed
       if (this.onResizeButton) {
-        //if corner button pressed
-        const auxComponentUrl = this.auxComponent.toDataURL();
-        //this.resizedImage.src = this.auxComponentUrl;
-        this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
-
-        this.shapeContainer.referenceTop = this.shapeContainer.top;
-        this.shapeContainer.referenceLeft = this.shapeContainer.left;
-        this.shapeContainer.referenceWidth = this.shapeContainer.width;
-        this.shapeContainer.referenceHeight = this.shapeContainer.height;
+        this.setResizedImage();
+        this.setShapeContainerReferenceProps();
       }
 
       //set dimensions of aux component when mouse is up
@@ -415,8 +397,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.toolName = toolName; //Avoid nested select
   }
 
+  private initAuxCanvas() {
+    this.auxComponent = this.componentRef.location.nativeElement
+      .firstChild as HTMLCanvasElement;
+  }
+
   private onResizeButtonClick(event: MouseEvent): void {
-    //detect all buttons only
     const { width, height, top, left } = this.shapeContainer;
     const { offsetX, offsetY } = event;
     if (
@@ -432,6 +418,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
+  //set reference properties
+  private setShapeContainerReferenceProps(): void {
+    this.shapeContainer.referenceTop = this.shapeContainer.top;
+    this.shapeContainer.referenceLeft = this.shapeContainer.left;
+    this.shapeContainer.referenceWidth = this.shapeContainer.width;
+    this.shapeContainer.referenceHeight = this.shapeContainer.height;
+  }
+
   private resizeShapeComponent(event: MouseEvent): void {
     const { referenceLeft, referenceTop, referenceWidth, referenceHeight } =
       this.shapeContainer;
@@ -439,18 +433,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //calculate value from mousedown to offset
     const dX = offsetX - this.mouseDownPosition.x;
     const dY = offsetY - this.mouseDownPosition.y;
-    //calculate new width and height from original width and height
+    //calculate new top, left, width and height from original width and height
+    const newTop = referenceTop + dY;
+    const newLeft = referenceLeft + dX;
     const newWidth = referenceWidth - dX;
     const newHeight = referenceHeight - dY;
-    //set new values to aux component
+    //set new values to shapeContainer if its new values are greather than zero
     if (newWidth > 0 && newHeight > 0) {
-      this.shapeContainer.left = referenceLeft + dX;
-      this.shapeContainer.top = referenceTop + dY;
+      this.shapeContainer.left = newLeft;
+      this.shapeContainer.top = newTop;
       this.shapeContainer.width = newWidth;
       this.shapeContainer.height = newHeight;
     }
-
-    //en cada rredimension actualizar el ancho y alto de referencia al ultimo valor dado por la ultima redimension
   }
 
   private setDeltaXY(offsetX: number, offsetY: number): void {
@@ -482,35 +476,24 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private paintSelectedArea(): void {
+    const { width, height, top, left } = this.shapeContainer;
+
     if (this.selectedImage != undefined && !this.resizedImage.src) {
-      this.ctx.putImageData(
-        this.selectedImage,
-        this.shapeContainer.left,
-        this.shapeContainer.top
-      );
+      this.ctx.putImageData(this.selectedImage, left, top);
     } else if (this.resizedImage.src) {
       //only if selection style is not transparent
       this.ctx.fillStyle = 'white';
-      this.ctx.fillRect(
-        this.shapeContainer.left,
-        this.shapeContainer.top,
-        this.shapeContainer.width,
-        this.shapeContainer.height
-      );
-
-      this.ctx.drawImage(
-        this.resizedImage,
-        this.shapeContainer.left,
-        this.shapeContainer.top,
-        this.shapeContainer.width,
-        this.shapeContainer.height
-      );
-
+      this.ctx.fillRect(left, top, width, height);
+      this.ctx.drawImage(this.resizedImage, left, top, width, height);
       this.ctx.fillStyle = this.color;
     }
   }
 
-  //esta funcion de abajo se ejecuta cada vez que se suelta el mouse
+  private setResizedImage(): void {
+    const auxComponentUrl = this.auxComponent.toDataURL();
+    this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
+  }
+
   private setCurrentCanvasImage(): void {
     this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
     this.currentCanvasImage.onload = () => {
@@ -538,7 +521,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  ///                     SHAPES
+  //SHAPES
 
   private drawShapeContainer(event: MouseEvent): void {
     const dX = event.offsetX - this.mouseDownPosition.x;
@@ -712,8 +695,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.fill();
   }
 
-  ///HACER QUE CADA FUNCION RETORNE LA FORMA QUE SE DIBUJA PARA LUEGO PASARLA POR EL SERVICIO AL COMPONENTE AUXILIAR Y COLOCARLA
-
   private drawRhombus() {
     const { width, height, top, left } = this.shapeContainer;
     const polygonCoords: Point[] = [
@@ -731,12 +712,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.fill();
   }
 
-  ///                     ERASE
+  //ERASE
   private erase(event: MouseEvent): void {
     this.ctx.clearRect(event.offsetX, event.offsetY, 10, 10);
   }
 
-  //    DINAMIC COMPONENT FUNCTIONS
+  //DINAMIC COMPONENT FUNCTIONS
   private createComponent(): void {
     this.componentRef = this.dynamicHost.createComponent(
       ShapeContainerComponent
