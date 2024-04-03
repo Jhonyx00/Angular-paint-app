@@ -74,6 +74,8 @@ export class ShapeContainerComponent
       });
   }
 
+  //aqui colocar otro servicio para obtener el objeto imagen, que tendria dos campos imageData y dataUrl
+
   ngOnDestroy(): void {
     this.image$?.unsubscribe();
     this.dynamicComponent$?.unsubscribe();

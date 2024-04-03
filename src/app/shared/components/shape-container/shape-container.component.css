@@ -11,9 +11,12 @@
 .resize-button {
   width: 1em;
   height: 1em;
-  border: 1px solid black;
   position: absolute;
-  background-color: rgb(204, 173, 221);
+  background-color: gray;
+  /* color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center; */
 }
 
 .resize-button:hover {
