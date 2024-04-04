@@ -152,7 +152,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         //reset values
         this.resetAuxComponent();
         this.resetObjectProperties();
-        this.dynamicHost.clear();
       }
     });
   }
@@ -270,8 +269,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
 
         case ToolName.Select:
-          //get the new selected area container
-          this.auxComponent = this.renderer.selectRootElement('canvas', false);
+          this.initAuxComponent();
           this.selectArea(); //get the fragment of canvas
           this.clearSelectedArea(); //remove fragment from selection
           this.setShapeContainerImage(); //set image to auxCanvas
@@ -583,6 +581,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
+  private initAuxComponent() {
+    //get the new selected area container
+    this.auxComponent = this.renderer.selectRootElement('canvas', false);
+  }
+
   private selectArea(): void {
     const { width, height, top, left } = this.shapeContainer;
     if (!this.isInsideSelectedArea) {
@@ -637,6 +640,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.selectedImage != undefined && this.toolName != ToolName.Move) {
       this.paintSelectedArea();
       this.isSelectDrawn = false;
+    } else {
+      this.dynamicHost.clear();
     }
   }
 
