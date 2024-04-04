@@ -1,4 +1,4 @@
-#drawing-div {
+#aux-canvas {
   position: absolute;
   z-index: 2 !important;
 }

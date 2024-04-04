@@ -1,4 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnDestroy,
+  OnInit,
+  Renderer2,
+} from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
 
 @Component({
@@ -6,15 +12,20 @@ import { ToolsService } from '../../services/tools.service';
   templateUrl: './color-palette.component.html',
   styleUrls: ['./color-palette.component.css'],
 })
-export class ColorPaletteComponent implements OnDestroy {
-  constructor(private toolsService: ToolsService) {}
+export class ColorPaletteComponent implements AfterViewInit {
+  constructor(
+    private toolsService: ToolsService,
+    private renderer: Renderer2
+  ) {}
 
   public colors = new Array<string>(9);
-  public input!: HTMLInputElement;
+  private input!: HTMLInputElement;
 
-  setColor(event: Event) {
-    this.input = event.target as HTMLInputElement;
+  ngAfterViewInit(): void {
+    this.input = this.renderer.selectRootElement('#color-chooser', false);
+  }
 
+  setColor() {
     if (this.input) {
       this.toolsService.changeColor(this.input.value);
       this.colors.unshift(this.input.value);
@@ -27,9 +38,5 @@ export class ColorPaletteComponent implements OnDestroy {
       this.input.value = color;
       this.toolsService.changeColor(color);
     }
-  }
-
-  ngOnDestroy(): void {
-    throw new Error('Method not implemented.');
   }
 }

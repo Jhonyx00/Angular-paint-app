@@ -583,7 +583,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initAuxComponent() {
     //get the new selected area container
-    this.auxComponent = this.renderer.selectRootElement('canvas', false);
+    this.auxComponent = this.renderer.selectRootElement('#aux-canvas', false);
+    console.log(this.auxComponent);
   }
 
   private selectArea(): void {
