@@ -150,8 +150,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private setInitialValues(): void {
     this.canvasStateService.getResetValue().subscribe((currentCanvasState) => {
       if (!currentCanvasState) {
-        console.log('leyendo');
-
         this.checkLastSelectedArea();
         //reset values
         this.resetAuxComponent();

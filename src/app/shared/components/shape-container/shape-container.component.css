@@ -3,11 +3,11 @@
   z-index: 2 !important;
 }
 
-.resize-button-container {
+.btn-container {
   position: absolute;
   z-index: 3; /* over aux component (2), under canvas-shield (4) */
 }
-.resize-button {
+.btn {
   width: 1em;
   height: 1em;
   position: absolute;
@@ -18,42 +18,42 @@
   outline: 2px dashed rgb(56, 56, 56);
 }
 
-.resize-button:hover {
+.btn:hover {
   cursor: pointer;
 }
 
-#btn1 {
+.btn1 {
   top: -1em;
   left: -1em;
 }
-#btn2 {
+.btn2 {
   top: 50%;
   transform: translateY(-50%);
   left: -1em;
 }
-#btn3 {
+.btn3 {
   bottom: -1em;
   left: -1em;
 }
-#btn4 {
+.btn4 {
   bottom: -1em;
   left: 50%;
   transform: translateX(-50%);
 }
-#btn5 {
+.btn5 {
   bottom: -1em;
   right: -1em;
 }
-#btn6 {
+.btn6 {
   right: -1em;
   top: 50%;
   transform: translateY(-50%);
 }
-#btn7 {
+.btn7 {
   right: -1em;
   top: -1em;
 }
-#btn8 {
+.btn8 {
   top: -1em;
   left: 50%;
   transform: translateX(-50%);
