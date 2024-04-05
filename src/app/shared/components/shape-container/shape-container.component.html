@@ -13,11 +13,8 @@
 </canvas>
 
 <div
-  *ngIf="
-    auxComponent.componentClass == 'Select' ||
-    auxComponent.componentClass == 'Move'
-  "
-  class="resize-button-container"
+  *ngIf="auxComponent.isRendered"
+  class="resize-button-container selected-tool"
   [ngStyle]="{
   top: auxComponent.top + 'px',
   left: auxComponent.left + 'px',

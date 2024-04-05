@@ -2,26 +2,38 @@
   <tool-component
     [toolItems]="fileItems"
     [toolGroupName]="files"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="actionItems"
     [toolGroupName]="actions"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="shapeItems"
     [toolGroupName]="shapes"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="pencilItems"
     [toolGroupName]="pencils"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="selectionItems"
     [toolGroupName]="selection"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <tool-component
     [toolItems]="eraserItems"
     [toolGroupName]="erasers"
+    [selectedTool]="selectedTool"
+    (onPropertiesSent)="setSelectedTool($event)"
   ></tool-component>
   <color-palette-component></color-palette-component>
 </div>

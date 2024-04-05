@@ -41,6 +41,7 @@ export class ShapeContainerComponent
     referenceLeft: 0,
     referenceWidth: 0,
     referenceHeight: 0,
+    isRendered: false,
   };
 
   ngOnInit(): void {
@@ -73,9 +74,6 @@ export class ShapeContainerComponent
         this.auxComponent = currentAuxComponent;
       });
   }
-
-  //aqui colocar otro servicio para obtener el objeto imagen, que tendria dos campos imageData y dataUrl
-
   ngOnDestroy(): void {
     this.image$?.unsubscribe();
     this.dynamicComponent$?.unsubscribe();

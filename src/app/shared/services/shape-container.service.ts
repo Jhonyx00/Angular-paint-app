@@ -19,6 +19,7 @@ export class ShapeContainerService {
     referenceLeft: 0,
     referenceWidth: 0,
     referenceHeight: 0,
+    isRendered: false,
   });
 
   setShapeContainerPropesties(newShapeContainerDimension: ShapeContainer) {

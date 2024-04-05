@@ -9,4 +9,5 @@ export interface ShapeContainer {
   referenceHeight: number;
   background: string;
   componentClass: string;
+  isRendered: boolean;
 }

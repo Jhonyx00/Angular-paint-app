@@ -3,7 +3,6 @@
   z-index: 2 !important;
 }
 
-/* hacer las clases de las figuras css aqui */
 .resize-button-container {
   position: absolute;
   z-index: 3; /* over aux component (2), under canvas-shield (4) */
@@ -13,10 +12,10 @@
   height: 1em;
   position: absolute;
   background-color: gray;
-  /* color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center; */
+}
+
+.selected-tool {
+  outline: 2px dashed rgb(56, 56, 56);
 }
 
 .resize-button:hover {

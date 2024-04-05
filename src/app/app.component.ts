@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   protected containerWidth = 0;
   protected containerHeight = 0;
 
-  @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef;
+  @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef; //cambiar por renderer2
 
   ngOnInit(): void {
     this.containerWidth = this.canvasContainer.nativeElement.offsetWidth;
