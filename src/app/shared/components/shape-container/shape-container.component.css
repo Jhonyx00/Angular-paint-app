@@ -2,61 +2,80 @@
   position: absolute;
   z-index: 2 !important;
 }
-
-.btn-container {
+/*  */
+.btn-container-shield {
   position: absolute;
   z-index: 3; /* over aux component (2), under canvas-shield (4) */
 }
+.btn-container {
+  position: relative;
+  z-index: 3; /* over aux component (2), under canvas-shield (4) */
+
+  width: 100%;
+  height: 100%;
+}
 .btn {
-  width: 1em;
-  height: 1em;
+  width: 0.4em;
+  height: 0.4em;
+  border: 2px solid gray;
+  z-index: 3;
   position: absolute;
-  background-color: gray;
-}
-
-.selected-tool {
-  outline: 2px dashed rgb(56, 56, 56);
-}
-
-.btn:hover {
-  cursor: pointer;
 }
 
 .btn1 {
-  top: -1em;
-  left: -1em;
+  top: 0;
+  left: 0;
+  transform: translate(-100%, -100%);
 }
+
 .btn2 {
   top: 50%;
-  transform: translateY(-50%);
-  left: -1em;
+  left: 0;
+  transform: translate(-100%, -50%);
 }
+
 .btn3 {
-  bottom: -1em;
-  left: -1em;
+  bottom: 0;
+  left: 0;
+  transform: translate(-100%, 100%);
 }
+
 .btn4 {
-  bottom: -1em;
+  bottom: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 100%);
 }
+
 .btn5 {
-  bottom: -1em;
-  right: -1em;
+  right: 0;
+  bottom: 0;
+  transform: translate(100%, 100%);
 }
+
 .btn6 {
-  right: -1em;
+  right: 0;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(100%, -50%);
 }
+
 .btn7 {
-  right: -1em;
-  top: -1em;
+  right: 0;
+  top: 0;
+  transform: translate(100%, -100%);
 }
+
 .btn8 {
-  top: -1em;
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -100%);
+}
+
+/*  */
+
+.selected-tool,
+.Select,
+.Move {
+  outline: 2px dashed gray;
 }
 
 /* shape clases */
@@ -106,12 +125,4 @@
 
 .Redo {
   clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
-}
-
-.Select {
-  outline: 2px dashed rgb(56, 56, 56);
-}
-
-.Move {
-  outline: 2px dashed rgb(56, 56, 56);
 }

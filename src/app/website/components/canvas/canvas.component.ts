@@ -319,7 +319,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private moveShapeContainer(event: MouseEvent): void {
-    if (this.resizeButtonId == 9) {
+    if (this.resizeButtonId === 9) {
       this.shapeContainer.top = event.offsetY - this.XY.y;
       this.shapeContainer.left = event.offsetX - this.XY.x;
       this.shapeContainer.referenceTop = event.offsetY - this.XY.y;
@@ -332,18 +332,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const { offsetX, offsetY } = event;
 
     const buttonWidth = 16;
-    const halfButtonWidth = buttonWidth * 0.5;
-
-    const dxLeft = left - buttonWidth;
-    const dyTop = top - buttonWidth;
     const totalHeight = top + height;
     const totalWidth = left + width;
-    const dxTotalHeight = top + height + buttonWidth;
-    const dxTotalWidth = left + width + buttonWidth;
-    const dy1 = top + height * 0.5 - halfButtonWidth;
-    const dy2 = top + height * 0.5 + halfButtonWidth;
-    const dx1 = left + width * 0.5 - halfButtonWidth;
-    const dx2 = left + width * 0.5 + halfButtonWidth;
+    const dxLeft = left - buttonWidth * 2;
+    const dyTop = top - buttonWidth * 2;
+    const dy1 = top + height * 0.5 - buttonWidth * 2;
+    const dy2 = top + height * 0.5 + buttonWidth * 2;
+    const dx1 = left + width * 0.5 - buttonWidth * 2;
+    const dx2 = left + width * 0.5 + buttonWidth * 2;
+    const dxTotalHeight = top + height + buttonWidth * 2;
+    const dxTotalWidth = left + width + buttonWidth * 2;
 
     if (
       offsetX < left &&
@@ -383,7 +381,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     } else if (
       offsetY > dy1 &&
       offsetY < dy2 &&
-      offsetX > left + width &&
+      offsetX > totalWidth &&
       offsetX < dxTotalWidth
     ) {
       return 6;
