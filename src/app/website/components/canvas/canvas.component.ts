@@ -501,6 +501,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.shapeContainer.top = newTop;
           this.shapeContainer.width = newWidth;
           this.shapeContainer.height = newHeight;
+        } else if (newWidth < 0 && newHeight > 0) {
+          this.shapeContainer.top = newTop;
+          this.shapeContainer.height = newHeight;
+        } else if (newHeight < 0 && newWidth > 0) {
+          this.shapeContainer.left = newLeft;
+          this.shapeContainer.width = newWidth;
         }
         break;
 
@@ -516,6 +522,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.shapeContainer.left = newLeft;
           this.shapeContainer.width = newWidth;
           this.shapeContainer.height = newInverseHeight;
+        } else if (newWidth < 0 && newInverseHeight > 0) {
+          this.shapeContainer.height = newInverseHeight;
+        } else if (newInverseHeight < 0 && newWidth > 0) {
+          this.shapeContainer.left = newLeft;
+          this.shapeContainer.width = newWidth;
         }
         break;
 
@@ -529,6 +540,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         if (newInverseWidth > 0 && newInverseHeight > 0) {
           this.shapeContainer.width = newInverseWidth;
           this.shapeContainer.height = newInverseHeight;
+        } else if (newInverseWidth < 0 && newInverseHeight > 0) {
+          this.shapeContainer.height = newInverseHeight;
+        } else if (newInverseWidth > 0 && newInverseHeight < 0) {
+          this.shapeContainer.width = newInverseWidth;
         }
         break;
 
@@ -543,6 +558,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.shapeContainer.top = newTop;
           this.shapeContainer.width = newInverseWidth;
           this.shapeContainer.height = newHeight;
+        } else if (newHeight > 0 && newInverseWidth < 0) {
+          this.shapeContainer.top = newTop;
+          this.shapeContainer.height = newHeight;
+        } else if (newHeight < 0 && newInverseWidth > 0) {
+          this.shapeContainer.width = newInverseWidth;
         }
         break;
 
