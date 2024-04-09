@@ -1,7 +1,7 @@
 .toolbar-container {
-  overflow-y: scroll;
+  overflow: auto;
   height: 100%;
-  scrollbar-width: none;
+  scrollbar-width: thin;
   display: flex;
   flex-direction: column;
   background-color: rgb(239, 239, 239);

@@ -42,6 +42,7 @@ export class ShapeContainerComponent
     referenceWidth: 0,
     referenceHeight: 0,
     isRendered: false,
+    rotation: 0,
   };
 
   ngOnInit(): void {
@@ -74,6 +75,7 @@ export class ShapeContainerComponent
         this.auxComponent = currentAuxComponent;
       });
   }
+
   ngOnDestroy(): void {
     this.image$?.unsubscribe();
     this.dynamicComponent$?.unsubscribe();

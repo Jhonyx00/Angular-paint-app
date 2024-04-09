@@ -1,83 +1,111 @@
-#aux-canvas {
+.aux-canvas-container {
   position: absolute;
   z-index: 2 !important;
 }
-/*  */
-.btn-container-shield {
-  position: absolute;
-  z-index: 3; /* over aux component (2), under canvas-shield (4) */
-}
-.btn-container {
-  position: relative;
-  z-index: 3; /* over aux component (2), under canvas-shield (4) */
 
+.btn-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* over aux component (2), under canvas-shield (4) */
+  /* z-index: 3;  */
   width: 100%;
   height: 100%;
+  transform: rotate();
 }
+
+.selected-tool,
+.Select {
+  outline: 2px dashed gray;
+  /* animation: frame 100ms ease-in 1; */
+}
+
 .btn {
-  width: 0.4em;
-  height: 0.4em;
-  border: 2px solid gray;
-  z-index: 3;
+  width: 0.5em;
+  height: 0.5em;
+  /* border: 2px solid gray; */
+  background-color: gray;
+  z-index: 2;
   position: absolute;
+}
+
+.btn-rotate {
+  width: 1em;
+  height: 1em;
+  /* z-index: 2; */
+  border: 2px solid gray;
+  border-radius: 50%;
+  position: absolute;
+  top: -2em;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
+.btn-rotate::after {
+  content: "";
+  color: gray;
+  position: absolute;
+  bottom: -100%;
+  width: 2px;
+  height: 1.5em;
+  /* z-index: 2; */
+  background-color: rgb(36, 234, 125);
+  left: 50%;
+  transform: translate(-50%, 57.8%);
 }
 
 .btn1 {
-  top: 0;
-  left: 0;
+  top: -0.1px;
+  left: -0.1px;
   transform: translate(-100%, -100%);
 }
 
 .btn2 {
   top: 50%;
-  left: 0;
+  left: -0.1px;
   transform: translate(-100%, -50%);
 }
 
 .btn3 {
-  bottom: 0;
-  left: 0;
+  bottom: -0.1px;
+  left: -0.1px;
   transform: translate(-100%, 100%);
 }
 
 .btn4 {
-  bottom: 0;
+  bottom: -0.1px;
   left: 50%;
   transform: translate(-50%, 100%);
 }
 
 .btn5 {
-  right: 0;
-  bottom: 0;
+  right: -0.1px;
+  bottom: -0.1px;
   transform: translate(100%, 100%);
 }
 
 .btn6 {
-  right: 0;
+  right: -0.1px;
   top: 50%;
   transform: translate(100%, -50%);
 }
 
 .btn7 {
-  right: 0;
-  top: 0;
+  right: -0.1px;
+  top: -0.1px;
   transform: translate(100%, -100%);
 }
 
 .btn8 {
-  top: 0;
+  top: -0.1px;
   left: 50%;
   transform: translate(-50%, -100%);
 }
 
-/*  */
-
-.selected-tool,
-.Select,
 .Move {
-  outline: 2px dashed gray;
+  background-color: aqua;
+  outline: none;
 }
-
 /* shape clases */
 
 .Pentagon {
@@ -125,4 +153,13 @@
 
 .Redo {
   clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+}
+
+@keyframes frame {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
