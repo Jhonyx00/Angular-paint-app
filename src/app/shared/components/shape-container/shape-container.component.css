@@ -24,7 +24,7 @@
   width: 0.5em;
   height: 0.5em;
   /* border: 2px solid gray; */
-  background-color: gray;
+  background-color: rgb(228, 214, 214);
   z-index: 2;
   position: absolute;
 }

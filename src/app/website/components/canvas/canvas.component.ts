@@ -46,7 +46,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ShapeContainerComponent>;
-
   private isDrawing: boolean = false;
   private isShapeDrawn: boolean = false;
   private resizeButtonClicked: boolean = false;
@@ -59,7 +58,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private initialAngle = 0;
-  private angle = 0;
   private color: string = '';
   private toolName!: ToolName;
 
@@ -211,7 +209,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       }
       if (this.toolName == ToolName.Select) {
         this.paintSelectedArea();
-        this.removeResizedImageSrc();
+        this.removeShapeContainerImg();
         this.checkSelectBackground();
       }
     } else if (this.shapeContainerButtonId === 10) {
@@ -221,6 +219,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         this.setDeltaXY(event.offsetX, event.offsetY);
       }
     } else {
+      this.isOnShapeContainer = true; //get fragment of image when resizing
       this.rotateButtonClicked = true;
     }
     //get the canvas image and push it to images list
@@ -281,7 +280,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.clearSelectedArea(); //remove fragment from selection
           this.setShapeContainerImage(); //set image to auxCanvas
           this.checkSelectBackground(); //check if selection background is white
-          this.setResizedImage();
           this.setShapeContainerReferenceProps();
           break;
 
@@ -605,6 +603,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const angleDiff = fixedAngle - this.initialAngle;
     this.shapeContainer.rotation = -(angleDiff * 180) / Math.PI;
+
     this.initialAngle = movingAngle;
   }
 
@@ -619,10 +618,29 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (this.selectedImage != undefined) {
       this.imageDataService.setImage(this.selectedImage);
     }
+    //no need to get image when rotating shapeContainer (button 9)
+    if (this.shapeContainerButtonId != 9) {
+      const auxComponentUrl = this.auxComponent.toDataURL();
+      this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
+    }
   }
+
+  private checkSelectBackground() {
+    if (this.isDrawing) {
+      this.shapeContainer.background = 'transparent';
+    } else {
+      this.shapeContainer.background = 'white';
+    }
+  }
+
   //get the new selected area container
   private initAuxComponent() {
     this.auxComponent = this.renderer.selectRootElement('#aux-canvas', false);
+  }
+
+  private setShapeDrawnValues(value: boolean) {
+    this.isShapeDrawn = value;
+    this.shapeContainer.isRendered = value;
   }
 
   private selectArea(): void {
@@ -630,11 +648,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (!this.isOnShapeContainer) {
       this.selectedImage = this.ctx.getImageData(left, top, width, height);
     }
-  }
-
-  private setShapeDrawnValues(value: boolean) {
-    this.isShapeDrawn = value;
-    this.shapeContainer.isRendered = value;
   }
 
   private clearSelectedArea() {
@@ -645,17 +658,21 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private paintSelectedArea(): void {
-    const { width, height, top, left } = this.shapeContainer;
+    const { width, height, top, left, rotation } = this.shapeContainer;
 
-    if (this.selectedImage != undefined && !this.resizedImage.src) {
-      this.ctx.putImageData(this.selectedImage, left, top);
-    } else if (this.resizedImage.src) {
+    if (rotation) {
+      this.rotateShapeContainer();
+    }
+
+    if (this.resizedImage.src) {
       //if image resized
       this.ctx.fillStyle = 'white'; //only if selection style is not transparent
       this.ctx.fillRect(left, top, width, height);
       this.ctx.drawImage(this.resizedImage, left, top, width, height);
       this.ctx.fillStyle = this.color;
     }
+
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
   private paintShape(toolName: ToolName) {
@@ -696,14 +713,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private setResizedImage(): void {
-    if (this.shapeContainerButtonId >= 1 && this.shapeContainerButtonId <= 8) {
-      const auxComponentUrl = this.auxComponent.toDataURL();
-      this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
-    }
-  }
-
-  private removeResizedImageSrc(): void {
+  private removeShapeContainerImg(): void {
     if (this.auxComponent) {
       this.renderer.removeAttribute(this.resizedImage, 'src');
     }
@@ -727,15 +737,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.setShapeDrawnValues(false);
   }
 
-  private checkSelectBackground() {
-    if (this.isDrawing) {
-      this.shapeContainer.background = 'transparent';
-    } else {
-      this.shapeContainer.background = 'white';
-    }
-  }
-
-  private rotateShape() {
+  private rotateShapeContainer() {
     const { width, height, top, left, rotation } = this.shapeContainer;
     const rotationAngle = (rotation * Math.PI) / 180;
     this.ctx.translate(left + width * 0.5, top + height * 0.5);
@@ -812,7 +814,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const { width, height, top, left, rotation } = this.shapeContainer;
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.fillRect(left, top, width, height);
@@ -823,7 +825,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const endAngle = 2 * Math.PI;
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.beginPath();
@@ -848,7 +850,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
     this.ctx.beginPath();
     for (let i = 0; i < polygonCoords.length; i++) {
@@ -874,7 +876,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.beginPath();
@@ -896,7 +898,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.beginPath();
@@ -923,7 +925,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.beginPath();
@@ -944,7 +946,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     if (rotation) {
-      this.rotateShape();
+      this.rotateShapeContainer();
     }
 
     this.ctx.beginPath();
