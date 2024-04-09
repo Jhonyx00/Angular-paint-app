@@ -751,59 +751,51 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const newWidth = Math.abs(dX);
     const newHeight = Math.abs(dY);
 
-    this.shapeContainer = {
-      top: 0,
-      left: 0,
-      width: newWidth,
-      height: newHeight,
-      background: this.toolName == ToolName.Select ? 'transparent' : this.color,
-      componentClass: toolName,
-      referenceLeft: 0,
-      referenceTop: 0,
-      referenceWidth: newWidth,
-      referenceHeight: newHeight,
-      isRendered: false,
-      rotation: 0,
-    };
+    //rotation
+    this.shapeContainer.rotation = 0;
+
+    //dimension
+    this.shapeContainer.width = newWidth;
+    this.shapeContainer.height = newHeight;
+    this.shapeContainer.referenceWidth = newWidth;
+    this.shapeContainer.referenceHeight = newHeight;
+
+    //class
+    this.shapeContainer.componentClass = toolName;
+
+    //background
+    if (this.toolName === ToolName.Select) {
+      this.shapeContainer.background = 'transparent';
+    } else {
+      this.shapeContainer.background = this.color;
+    }
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
-      this.shapeContainer = {
-        ...this.shapeContainer,
-        top: event.offsetY,
-        left: this.mouseDownPosition.x,
-        referenceTop: event.offsetY,
-        referenceLeft: this.mouseDownPosition.x,
-      };
+      this.shapeContainer.top = event.offsetY;
+      this.shapeContainer.left = this.mouseDownPosition.x;
+      this.shapeContainer.referenceTop = event.offsetY;
+      this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
     // Quadrant 2
     else if (rectangleWidth < 0 && rectangleHeight < 0) {
-      this.shapeContainer = {
-        ...this.shapeContainer,
-        top: event.offsetY,
-        left: event.offsetX,
-        referenceTop: event.offsetY,
-        referenceLeft: event.offsetX,
-      };
+      this.shapeContainer.top = event.offsetY;
+      this.shapeContainer.left = event.offsetX;
+      this.shapeContainer.referenceTop = event.offsetY;
+      this.shapeContainer.referenceLeft = event.offsetX;
     }
     // Quadrant 3
     else if (rectangleWidth < 0 && rectangleHeight > 0) {
-      this.shapeContainer = {
-        ...this.shapeContainer,
-        top: this.mouseDownPosition.y,
-        left: event.offsetX,
-        referenceTop: this.mouseDownPosition.y,
-        referenceLeft: event.offsetY,
-      };
+      this.shapeContainer.top = this.mouseDownPosition.y;
+      this.shapeContainer.left = event.offsetX;
+      this.shapeContainer.referenceTop = this.mouseDownPosition.y;
+      this.shapeContainer.referenceLeft = event.offsetX;
     }
     //Quadrant 4
     else {
-      this.shapeContainer = {
-        ...this.shapeContainer,
-        top: this.mouseDownPosition.y,
-        left: this.mouseDownPosition.x,
-        referenceTop: this.mouseDownPosition.y,
-        referenceLeft: this.mouseDownPosition.x,
-      };
+      this.shapeContainer.top = this.mouseDownPosition.y;
+      this.shapeContainer.left = this.mouseDownPosition.x;
+      this.shapeContainer.referenceTop = this.mouseDownPosition.y;
+      this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
   }
 
