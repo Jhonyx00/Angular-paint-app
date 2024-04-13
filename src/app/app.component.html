@@ -1,12 +1,9 @@
-<div class="main-container">
+<div class="main-container" #mainContainer>
   <div class="toolbar-canvas-container">
     <toolbar-component></toolbar-component>
 
     <div class="canvas-main-container" #canvasContainer>
-      <canvas-component
-        [containerWidth]="containerWidth"
-        [containerHeight]="containerHeight"
-      ></canvas-component>
+      <canvas-component></canvas-component>
     </div>
   </div>
 

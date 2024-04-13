@@ -1,32 +1,49 @@
 <div
-  class="aux-canvas-container"
+  #mainContainer
+  class="main-container"
+  (mousemove)="mainContainerMouseMove($event)"
+  (mousedown)="mainContainerMouseDown($event)"
+  (mouseup)="onShapeContainerMouseUp()"
+  (mouseleave)="mouseLeave()"
+  (mouseenter)="mouseEnter()"
   [ngStyle]="{
-    top: auxComponent.top + 'px',
-    left: auxComponent.left + 'px',
-    width: auxComponent.width + 'px',
-    height: auxComponent.height + 'px',
-    transform: 'rotate(' + auxComponent.rotation + 'deg)'
+    zIndex: shapeContainer.zIndex
   }"
 >
-  <canvas
-    #auxCanvas
-    id="aux-canvas"
-    [ngClass]="auxComponent.componentClass"
+  <div
+    class="canvas-button-container selected-tool"
     [ngStyle]="{
-      background: auxComponent.background
-    }"
+        top: shapeContainer.top + 'px',
+        left: shapeContainer.left + 'px',
+        width: shapeContainer.width + 'px',
+        height: shapeContainer.height + 'px',
+        transform: 'rotate(' + shapeContainer.rotation + 'deg)',
+      }"
   >
-  </canvas>
+    <div
+      class="aux-canvas-container"
+      (mousedown)="onShapeContainerMouseDown($event)"
+      (mouseup)="onShapeContainerMouseUp()"
+    >
+      <canvas
+        #auxCanvas
+        id="aux-canvas"
+        [ngClass]="shapeContainer.componentClass"
+        [style.background]="shapeContainer.background"
+      >
+      </canvas>
+    </div>
 
-  <div class="btn-container selected-tool" *ngIf="auxComponent.isRendered">
-    <div class="btn btn1"></div>
-    <div class="btn btn2"></div>
-    <div class="btn btn3"></div>
-    <div class="btn btn4"></div>
-    <div class="btn btn5"></div>
-    <div class="btn btn6"></div>
-    <div class="btn btn7"></div>
-    <div class="btn btn8"></div>
-    <div class="btn-rotate"></div>
+    <div class="btn-container" *ngIf="shapeContainer.isRendered">
+      <button
+        *ngFor="let button of buttons"
+        [ngClass]="button.class"
+        [style.cursor]="button.name"
+        (mousedown)="btnMouseDown(button.id)"
+        (mouseup)="btnMouseUp()"
+        (mouseover)="onMouseHover()"
+        (mouseout)="onMouseOut()"
+      ></button>
+    </div>
   </div>
 </div>

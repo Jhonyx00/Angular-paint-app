@@ -6,6 +6,7 @@ import {
   Renderer2,
 } from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
+import { ToolName } from '../../enums/tool-name.enum';
 
 @Component({
   selector: 'color-palette-component',

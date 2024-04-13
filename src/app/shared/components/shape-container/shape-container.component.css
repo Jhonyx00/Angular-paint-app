@@ -1,105 +1,182 @@
-.aux-canvas-container {
-  position: absolute;
-  z-index: 2 !important;
-}
-#aux-canvas {
-  width: inherit;
-  height: inherit;
-}
 .btn-container {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate();
+  --position-unit: -0.1px;
 }
 
-.selected-tool,
-.Select {
+.main-container {
+  position: absolute;
+  width: calc(100%-66px);
+  height: 100%;
+  inset: 0;
+
+  /* z-index: 5 !important; */
+  .canvas-button-container {
+    position: inherit;
+    z-index: inherit;
+    /* z-index: 2 !important; */
+    /* transform: rotate(46deg); */
+    .aux-canvas-container {
+      width: inherit;
+      height: inherit;
+      position: relative;
+      z-index: 5;
+      overflow: hidden; /*important*/
+
+      #aux-canvas {
+        width: inherit;
+        height: inherit;
+        position: relative;
+        z-index: 5;
+      }
+    }
+    /* hover */
+    .aux-canvas-container:hover {
+      cursor: move;
+    }
+    /*  */
+  }
+}
+
+.main-container:hover {
+  cursor: crosshair;
+}
+
+.selected-tool {
   outline: 2px dashed gray;
   animation: frame 100ms ease-in 1;
 }
 
-.btn {
-  width: 0.5em;
-  height: 0.5em;
-  border: 2px solid gray;
-  z-index: 2;
+/* btn container */
+.btn-container {
   position: absolute;
+  width: 100%;
+  height: 100%;
+  inset: 0;
+  /* z-index: 0; */
+  button {
+    width: 2em;
+    height: 2em;
+    position: inherit;
+    border: none;
+    background-color: transparent;
+  }
+
+  .btn1::before,
+  .btn2::before,
+  .btn3::before,
+  .btn4::before,
+  .btn5::before,
+  .btn6::before,
+  .btn7::before,
+  .btn8::before {
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    border: 2px solid gray;
+    position: absolute;
+  }
+
+  .btn9::before {
+    content: "";
+    width: 2em;
+    height: 2em;
+    border: 2px solid gray;
+    position: absolute;
+    border-radius: 50%;
+  }
+
+  .btn1 {
+    top: var(--position-unit);
+    left: var(--position-unit);
+    transform: translate(-100%, -100%);
+  }
+  .btn1::before {
+    bottom: 0;
+    right: 0;
+  }
+
+  .btn2 {
+    top: 50%;
+    left: var(--position-unit);
+    transform: translate(-100%, -50%);
+  }
+  .btn2::before {
+    transform: translateY(-50%);
+    right: 0;
+  }
+
+  .btn3 {
+    bottom: var(--position-unit);
+    left: var(--position-unit);
+    transform: translate(-100%, 100%);
+  }
+
+  .btn3::before {
+    top: 0;
+    right: 0;
+  }
+
+  .btn4 {
+    bottom: var(--position-unit);
+    left: 50%;
+    transform: translate(-50%, 100%);
+  }
+  .btn4::before {
+    top: 0;
+    transform: translateX(-50%);
+  }
+
+  .btn5 {
+    right: var(--position-unit);
+    bottom: var(--position-unit);
+    transform: translate(100%, 100%);
+  }
+  .btn5::before {
+    top: 0;
+    left: 0;
+  }
+
+  .btn6 {
+    right: var(--position-unit);
+    top: 50%;
+    transform: translate(100%, -50%);
+  }
+  .btn6::before {
+    left: 0;
+    transform: translateY(-50%);
+  }
+
+  .btn7 {
+    right: var(--position-unit);
+    top: var(--position-unit);
+    transform: translate(100%, -100%);
+  }
+  .btn7::before {
+    left: 0;
+    bottom: 0;
+  }
+
+  .btn8 {
+    top: var(--position-unit);
+    left: 50%;
+    transform: translate(-50%, -100%);
+  }
+  .btn8::before {
+    bottom: 0;
+    transform: translateX(-50%);
+  }
+  .btn9 {
+    top: -2em;
+    left: 50%;
+    transform: translate(-50%, -100%);
+  }
+  .btn9::before {
+    bottom: 0;
+    transform: translateX(-50%);
+  }
 }
 
-.btn-rotate {
-  width: 1em;
-  height: 1em;
-  /* z-index: 2; */
-  border: 2px solid gray;
-  border-radius: 50%;
-  position: absolute;
-  top: -2em;
-  left: 50%;
-  transform: translate(-50%, -100%);
-}
-
-.btn-rotate::after {
-  content: "";
-  color: gray;
-  position: absolute;
-  bottom: -100%;
-  width: 2px;
-  height: 1.5em;
-  /* z-index: 2; */
-  background-color: rgb(36, 234, 125);
-  left: 50%;
-  transform: translate(-50%, 57.8%);
-}
-
-.btn1 {
-  top: -0.1px;
-  left: -0.1px;
-  transform: translate(-100%, -100%);
-}
-
-.btn2 {
-  top: 50%;
-  left: -0.1px;
-  transform: translate(-100%, -50%);
-}
-
-.btn3 {
-  bottom: -0.1px;
-  left: -0.1px;
-  transform: translate(-100%, 100%);
-}
-
-.btn4 {
-  bottom: -0.1px;
-  left: 50%;
-  transform: translate(-50%, 100%);
-}
-
-.btn5 {
-  right: -0.1px;
-  bottom: -0.1px;
-  transform: translate(100%, 100%);
-}
-
-.btn6 {
-  right: -0.1px;
-  top: 50%;
-  transform: translate(100%, -50%);
-}
-
-.btn7 {
-  right: -0.1px;
-  top: -0.1px;
-  transform: translate(100%, -100%);
-}
-
-.btn8 {
-  top: -0.1px;
-  left: 50%;
-  transform: translate(-50%, -100%);
+.aux-canvas-container:active ~ .btn-container {
+  display: none;
 }
 
 .Move {
@@ -107,6 +184,18 @@
   outline: none;
 }
 /* shape clases */
+
+/* .Select {
+ 
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  border: 5px solid red;
+  outline: 10px solid dodgerblue inset;
+} */
+
+.Select::after {
+  content: "jsjsj";
+  color: blue;
+}
 
 .Pentagon {
   clip-path: polygon(50% 0%, 0% 38%, 18% 100%, 82% 100%, 100% 38%);
@@ -145,14 +234,6 @@
 
 .Rhombus {
   clip-path: polygon(50% 0%, 0% 50%, 50% 100%, 100% 50%);
-}
-
-.Undo {
-  clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
-}
-
-.Redo {
-  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
 }
 
 @keyframes frame {
