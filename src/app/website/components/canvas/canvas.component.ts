@@ -191,14 +191,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         this.shapeContainer = currentShapeContainer;
       });
   }
-  ///
+
   private initDynamicComponentCursorPos() {
     this.dynamicComponentService
       .getMouseDownPosition()
       .subscribe((currentPosition) => {
         this.mouseDownPosition = currentPosition;
         if (this.mouseDownPosition.x != 0 || this.mouseDownPosition.y != 0) {
-          this.performMouseDownAction(this.mouseDownPosition);
+          this.mouseDown(this.mouseDownPosition);
         }
       });
   }
@@ -222,7 +222,22 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  private performMouseDownAction(mouseDownPosition: Point) {
+  private setShapeContainerMouseDownPosition(mouseDownPosition: Point) {
+    this.mouseDownPosition = {
+      x: mouseDownPosition.x,
+      y: mouseDownPosition.y,
+    };
+  }
+
+  private setPencilContainerMouseDownPosition(mouseDownPosition: Point) {
+    this.mouseDownPosition = {
+      x: mouseDownPosition.x - this.canvasBoundingClientRect.left,
+      y: mouseDownPosition.y - this.canvasBoundingClientRect.top,
+    };
+  }
+  //MOUSE EVENTS
+  public mouseDown(mouseDownPosition: Point): void {
+    this.shapeContainer.zIndex = 2;
     if (this.shapeContainerButtonId === 0) {
       this.isDrawing = true;
       this.imageDataService.setImage(undefined);
@@ -253,25 +268,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
     this.canvasStateService.setResetValue(true);
-  }
-
-  private setShapeContainerMouseDownPosition(mouseDownPosition: Point) {
-    this.mouseDownPosition = {
-      x: mouseDownPosition.x,
-      y: mouseDownPosition.y,
-    };
-  }
-
-  private setPencilContainerMouseDownPosition(mouseDownPosition: Point) {
-    this.mouseDownPosition = {
-      x: mouseDownPosition.x - this.canvasBoundingClientRect.left,
-      y: mouseDownPosition.y - this.canvasBoundingClientRect.top,
-    };
-  }
-  //MOUSE EVENTS
-  public mouseDown(event: MouseEvent): void {
-    this.shapeContainer.zIndex = 2;
-    this.performMouseDownAction(event);
   }
 
   public mouseMove(mouseMovePosition: Point): void {
