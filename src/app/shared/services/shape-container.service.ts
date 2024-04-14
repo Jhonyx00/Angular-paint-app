@@ -24,7 +24,7 @@ export class ShapeContainerService {
     zIndex: 0,
   });
 
-  setShapeContainerPropesties(newShapeContainerDimension: ShapeContainer) {
+  setShapeContainerProperties(newShapeContainerDimension: ShapeContainer) {
     this.shapeContainer.next(newShapeContainerDimension);
   }
 

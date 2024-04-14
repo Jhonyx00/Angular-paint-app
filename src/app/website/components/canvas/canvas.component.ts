@@ -97,6 +97,20 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.initCanvasDimensions();
     this.initShapeContainer();
+    this.initDynamicComponentCursorPos();
+    this.initDynamicComponentMovingPos();
+    this.initShapeContainerButtonId();
+    this.initSelectionImage();
+  }
+
+  initSelectionImage() {
+    this.imageDataService.getImageDataUrl().subscribe((imageDatUrl) => {
+      console.log(this.resizedImage);
+
+      if (imageDatUrl) {
+        this.resizedImage.src = imageDatUrl;
+      }
+    });
   }
 
   private initCanvasDimensions(): void {
@@ -115,9 +129,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.initTool();
     this.updateCanvasValue();
     this.setInitialValues();
-    this.initDynamicComponentCursorPos();
-    this.initDynamicComponentMovingPos();
-    this.initShapeContainerButtonId();
     this.initBoundingClientRect();
   }
 
@@ -238,18 +249,21 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   //MOUSE EVENTS
   public mouseDown(mouseDownPosition: Point): void {
     this.shapeContainer.zIndex = 2;
+    console.log('down canvas');
+
     if (this.shapeContainerButtonId === 0) {
       this.isDrawing = true;
-      this.imageDataService.setImage(undefined);
       switch (this.toolName) {
-        case ToolName.Select:
-          this.paintSelectedArea();
-          this.removeShapeContainerImg();
-          this.checkSelectBackground();
-          break;
-
         case ToolName.Line:
           this.setPencilContainerMouseDownPosition(mouseDownPosition);
+          break;
+
+        case ToolName.Select:
+          this.deleteComponent();
+          this.createComponent();
+          this.paintSelectedArea();
+          this.removeShapeContainerImg();
+          this.setShapeContainerMouseDownPosition(mouseDownPosition);
           break;
 
         default:
@@ -260,14 +274,17 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.paintShape(this.toolName, this.color);
           break;
       }
-    } else if (this.shapeContainerButtonId === 10) {
-      this.isDrawing = true;
     }
     // this.color = this.auxColor;
     this.lastSelectedColor = this.color;
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
     this.canvasStateService.setResetValue(true);
+  }
+
+  private removeShapeContainerImg(): void {
+    this.renderer.removeAttribute(this.resizedImage, 'src');
+    console.log('ya sin nada', this.resizedImage);
   }
 
   public mouseMove(mouseMovePosition: Point): void {
@@ -295,16 +312,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   public mouseUp(): void {
     this.isDrawing = false;
     this.shapeContainer.zIndex = 5;
+    console.log('up canvas');
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
       switch (this.toolName) {
         case ToolName.Select:
-          this.initAuxComponent();
-          this.selectArea(); //get the fragment of canvas
-          this.setShapeDrawnValues(true); //
-          this.clearSelectedArea(); //remove fragment from selection
-          this.setShapeContainerImage(); //set image to auxCanvas
-          this.checkSelectBackground(); //check if selection background is white
+          this.setShapeDrawnValues(true);
+
           break;
 
         default:
@@ -335,50 +349,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private setToolName(buttonId: number) {
-    if (buttonId === 10) {
-      this.toolName = ToolName.Move;
-    } else if (buttonId === 0) {
+    if (buttonId === 0) {
       this.toolName = this.auxToolName; //toolName now is last tool selected
       this.lastSelectedShape = this.toolName;
     }
   }
 
-  private setShapeContainerImage(): void {
-    if (this.selectedImage != undefined) {
-      this.imageDataService.setImage(this.selectedImage);
-    }
-    //no need to get image when rotating shapeContainer (button 9)
-    if (this.shapeContainerButtonId != 9) {
-      const auxComponentUrl = this.auxComponent.toDataURL();
-      this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
-    }
-  }
-
-  private checkSelectBackground() {
-    if (this.isDrawing) {
-      this.shapeContainer.background = 'transparent';
-    } else {
-      this.shapeContainer.background = 'white';
-    }
-  }
-
-  //get the new selected area container
-  private initAuxComponent() {
-    this.auxComponent = this.renderer.selectRootElement('#aux-canvas', false);
-  }
-
   private setShapeDrawnValues(value: boolean) {
     this.shapeContainer.isRendered = value;
-  }
-
-  private selectArea(): void {
-    const { width, height, top, left } = this.shapeContainer;
-    this.selectedImage = this.ctx.getImageData(left, top, width, height);
-  }
-
-  private clearSelectedArea() {
-    const { width, height, top, left } = this.shapeContainer;
-    this.ctx.clearRect(left, top, width, height);
   }
 
   private paintSelectedArea(): void {
@@ -388,7 +366,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.rotateShapeContainer();
     }
 
-    if (this.resizedImage.src) {
+    if (this.resizedImage.src && this.shapeContainerButtonId === 0) {
+      console.log('pinto el area de todos modos');
+
       this.ctx.fillStyle = 'white'; //only if selection style is not transparent
       this.ctx.fillRect(left, top, width, height);
       this.ctx.drawImage(this.resizedImage, left, top, width, height);
@@ -443,12 +423,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (this.shapeContainer.rotation) {
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    }
-  }
-
-  private removeShapeContainerImg(): void {
-    if (this.auxComponent) {
-      this.renderer.removeAttribute(this.resizedImage, 'src');
     }
   }
 

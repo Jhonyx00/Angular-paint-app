@@ -9,7 +9,6 @@ export enum ToolName {
   Rhombus = 'Rhombus',
 
   //Move
-  Move = 'Move',
 
   //Pencils
   Line = 'Line',

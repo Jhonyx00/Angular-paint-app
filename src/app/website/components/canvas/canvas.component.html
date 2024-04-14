@@ -1,7 +1,12 @@
 <div class="canvas-container">
   <ng-template shapeContainer></ng-template>
 
-  <canvas #canvas [width]="canvasWidth" [height]="canvasHeight"></canvas>
+  <canvas
+    class="canvas"
+    #canvas
+    [width]="canvasWidth"
+    [height]="canvasHeight"
+  ></canvas>
 
   <div
     #canvasShield
