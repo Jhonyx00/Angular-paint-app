@@ -205,7 +205,9 @@ export class ShapeContainerComponent
     }
 
     this.mouseMovePosition = { x: Math.round(x), y: Math.round(y) };
+
     this.dynamicComponentService.setMouseMovePosition(this.mouseMovePosition);
+
     this.statusBarService.setCursorPosition(this.mouseMovePosition);
   }
 
@@ -256,7 +258,6 @@ export class ShapeContainerComponent
   public onMouseOut() {
     this.isOverButton = false;
   }
-  /////////////////////
 
   private moveShapeContainer(x: number, y: number): void {
     this.shapeContainer.top = y - this.XY.y;
@@ -271,9 +272,7 @@ export class ShapeContainerComponent
       y: Math.abs(this.shapeContainer.top - offsetY),
     };
   }
-  /////////////////////
 
-  /////
   private resizeShapeContainer(x: number, y: number): void {
     const { referenceLeft, referenceTop, referenceWidth, referenceHeight } =
       this.shapeContainer;
@@ -369,7 +368,6 @@ export class ShapeContainerComponent
 
       case 9:
         this.setRotationValues(x, y);
-        this.shapeContainer.rotation = -(this.angleDiff * 180) / Math.PI;
 
         break;
       default:
@@ -387,11 +385,11 @@ export class ShapeContainerComponent
       this.mouseDownPosition.y - halfHeight,
       this.mouseDownPosition.x - halfWidth
     );
-
     //console.log(-(this.fixedAngle * 180) / Math.PI);
-
     this.angleDiff = this.fixedAngle - this.initialAngle;
     this.initialAngle = this.movingAngle;
+
+    this.shapeContainer.rotation = -(this.angleDiff * 180) / Math.PI;
   }
 
   private setShapeContainerReferenceProps(): void {
