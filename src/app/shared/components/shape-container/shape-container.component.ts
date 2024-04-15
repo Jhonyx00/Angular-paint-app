@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { ShapeContainer } from '../../interfaces/shape.interface';
 import { ShapeContainerService } from '../../services/shape-container.service';
-import { ImageDataService } from 'src/app/shared/services/image-data.service';
+import { ImageDataService } from 'src/app/shared/services/image.service';
 import { Subscription } from 'rxjs';
 import { DynamicComponentService } from '../../services/dynamic-component.service';
 import { Point } from 'src/app/website/interfaces/point.interface';
@@ -242,7 +242,7 @@ export class ShapeContainerComponent
       this.shapeContainer.zIndex = 2;
 
       this.imageDataService.setImage(undefined);
-      //this.imageDataService.setImageDataUrl(undefined);
+
       this.isAreaSelected = false;
 
       this.dynamicComponentService.setMouseDownPosition({

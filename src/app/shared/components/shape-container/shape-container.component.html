@@ -9,9 +9,8 @@
     zIndex: shapeContainer.zIndex
   }"
 >
-  <!-- corregir que sean funciones diferentes lo de mouseup -->
   <div
-    class="canvas-button-container selected-tool"
+    class="canvas-button-container"
     [ngStyle]="{
         top: shapeContainer.top + 'px',
         left: shapeContainer.left + 'px',
@@ -24,6 +23,9 @@
       class="aux-canvas-container"
       (mousedown)="onShapeContainerMouseDown($event)"
       (mouseup)="onShapeContainerMouseUp()"
+      [ngClass]="{
+        selected: this.shapeContainer.componentClass == 'Select'
+      }"
     >
       <canvas
         #auxCanvas
@@ -34,7 +36,13 @@
       </canvas>
     </div>
 
-    <div class="btn-container" *ngIf="shapeContainer.isRendered">
+    <div
+      class="btn-container"
+      [ngClass]="{
+        selected: this.shapeContainer.componentClass != 'Select'
+      }"
+      *ngIf="shapeContainer.isRendered"
+    >
       <button
         *ngFor="let button of buttons"
         [ngClass]="button.class"

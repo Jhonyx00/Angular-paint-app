@@ -4,7 +4,6 @@
 
 .main-container {
   position: absolute;
-  width: calc(100%-66px);
   height: 100%;
   inset: 0;
 
@@ -13,13 +12,12 @@
     position: inherit;
     z-index: inherit;
     /* z-index: 2 !important; */
-    /* transform: rotate(46deg); */
     .aux-canvas-container {
       width: inherit;
       height: inherit;
       position: relative;
       z-index: 5;
-      overflow: hidden; /*important*/
+      overflow: hidden;
 
       #aux-canvas {
         width: inherit;
@@ -40,9 +38,17 @@
   cursor: crosshair;
 }
 
-.selected-tool {
+.selected {
   outline: 2px dashed gray;
   animation: frame 100ms ease-in 1;
+}
+
+.aux-canvas-container:active ~ .btn-container {
+  display: none;
+}
+
+.aux-canvas-container:active {
+  outline: none;
 }
 
 /* btn container */
@@ -175,27 +181,7 @@
   }
 }
 
-.aux-canvas-container:active ~ .btn-container {
-  display: none;
-}
-
-.Move {
-  background-color: aqua;
-  outline: none;
-}
 /* shape clases */
-
-/* .Select {
- 
-  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
-  border: 5px solid red;
-  outline: 10px solid dodgerblue inset;
-} */
-
-.Select::after {
-  content: "jsjsj";
-  color: blue;
-}
 
 .Pentagon {
   clip-path: polygon(50% 0%, 0% 38%, 18% 100%, 82% 100%, 100% 38%);

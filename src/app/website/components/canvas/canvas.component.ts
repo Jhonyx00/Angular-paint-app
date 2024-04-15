@@ -15,7 +15,7 @@ import { ShapeContainerComponent } from '../../../shared/components/shape-contai
 import { ShapeContainerService } from 'src/app/shared/services/shape-container.service';
 import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
 import { Point } from 'src/app/website/interfaces/point.interface';
-import { ImageDataService } from '../../../shared/services/image-data.service';
+import { ImageDataService } from '../../../shared/services/image.service';
 import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { Box } from 'src/app/shared/interfaces/box';
@@ -44,8 +44,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
-
-  private selectedImage: ImageData | undefined;
 
   protected canvasWidth = 0;
   protected canvasHeight = 0;
@@ -178,8 +176,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private removeShapeContainerImage() {
-    this.selectedImage = undefined;
-    this.imageDataService.setImage(this.selectedImage);
+    //this.selectedImage = undefined;
+    this.imageDataService.setImage(undefined);
   }
 
   private resetShapeCotainerProps() {
@@ -259,14 +257,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
 
         case ToolName.Select:
-          this.deleteComponent();
-          this.createComponent();
           this.paintSelectedArea();
+          this.deleteComponent();
           this.removeShapeContainerImg();
+          this.createComponent();
           this.setShapeContainerMouseDownPosition(mouseDownPosition);
+          this.setShapeDrawnValues(false);
           break;
 
         default:
+          this.removeShapeContainerImg();
           this.setShapeContainerMouseDownPosition(mouseDownPosition);
           this.deleteComponent();
           this.createComponent();
@@ -364,7 +364,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.rotateShapeContainer();
     }
 
-    if (this.resizedImage.src && this.shapeContainerButtonId === 0) {
+    if (this.resizedImage.src) {
       this.ctx.fillStyle = 'white'; //only if selection style is not transparent
       this.ctx.fillRect(left, top, width, height);
       this.ctx.drawImage(this.resizedImage, left, top, width, height);
@@ -431,7 +431,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private checkLastSelectedArea(): void {
-    if (this.selectedImage != undefined) {
+    if (this.resizedImage.src) {
       this.paintSelectedArea();
     } else {
       this.paintShape(this.lastSelectedShape, this.lastSelectedColor);
@@ -468,6 +468,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.referenceHeight = newHeight;
 
     //class
+
     this.shapeContainer.componentClass = toolName;
 
     //background

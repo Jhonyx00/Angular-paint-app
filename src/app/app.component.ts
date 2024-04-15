@@ -44,14 +44,21 @@ export class AppComponent implements OnInit {
   }
 
   @HostListener('window:resize', ['$event']) onResize(event: UIEvent) {
-    const rect = this.mainContainer.nativeElement.getBoundingClientRect();
-    // this.dynamicComponentService.setWindowRect({
-    //   x: rect.x,
-    //   y: rect.y,
-    //   width: rect.width,
-    //   height: rect.height,
-    // });
-    this.resetDimension();
-    //console.log((event.target as Window).innerWidth);
+    //this.resetDimension();
+
+    const toolbar = this.renderer.selectRootElement('.toolbar-container', true);
+
+    //console.log(event.target);
+
+    const pixelRatio = (event.target as Window).devicePixelRatio;
+    console.log(pixelRatio);
+
+    const max = 7.5;
+    const min = 0.375;
+
+    this.renderer.setStyle(toolbar, 'zoom', `${pixelRatio - (pixelRatio - 1)}`);
+    console.log('new', pixelRatio - (pixelRatio - 1));
+
+    //que el zoom vaya incrementando o disminuyendo a mediante el evento de window resize
   }
 }
