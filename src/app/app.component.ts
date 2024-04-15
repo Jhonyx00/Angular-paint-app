@@ -6,7 +6,6 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
-import { DynamicComponentService } from './shared/services/dynamic-component.service';
 import { StatusBarService } from './website/services/statusbar.service';
 
 @Component({
@@ -17,7 +16,6 @@ import { StatusBarService } from './website/services/statusbar.service';
 export class AppComponent implements OnInit {
   constructor(
     private renderer: Renderer2,
-    private dynamicComponentService: DynamicComponentService,
     private statusBarService: StatusBarService
   ) {}
 
