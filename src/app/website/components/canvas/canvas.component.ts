@@ -169,29 +169,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.canvasStateService.getResetValue().subscribe((currentCanvasState) => {
       if (!currentCanvasState) {
         this.checkLastSelectedArea();
-        this.removeShapeContainerImage();
+        this.setUndefinedImage();
+        this.removeShapeContainerImg();
         this.resetShapeCotainerProps();
       }
     });
-  }
-
-  private removeShapeContainerImage() {
-    //this.selectedImage = undefined;
-    this.imageDataService.setImage(undefined);
-  }
-
-  private resetShapeCotainerProps() {
-    this.shapeContainer.top = 0;
-    this.shapeContainer.left = 0;
-    this.shapeContainer.width = 0;
-    this.shapeContainer.height = 0;
-    this.shapeContainer.referenceTop = 0;
-    this.shapeContainer.referenceLeft = 0;
-    this.shapeContainer.referenceWidth = 0;
-    this.shapeContainer.referenceHeight = 0;
-    this.shapeContainer.background = '';
-    this.shapeContainer.componentClass = '';
-    this.shapeContainer.isRendered = false;
   }
 
   private initShapeContainer(): void {
@@ -266,7 +248,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           break;
 
         default:
-          this.removeShapeContainerImg();
           this.setShapeContainerMouseDownPosition(mouseDownPosition);
           this.deleteComponent();
           this.createComponent();
@@ -353,10 +334,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.isRendered = value;
   }
 
-  private removeShapeContainerImg(): void {
-    this.renderer.removeAttribute(this.resizedImage, 'src');
-  }
-
   private paintSelectedArea(): void {
     const { width, height, top, left, rotation } = this.shapeContainer;
 
@@ -374,6 +351,28 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (rotation) {
       this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     }
+  }
+
+  private setUndefinedImage() {
+    this.imageDataService.setImage(undefined);
+  }
+
+  private removeShapeContainerImg(): void {
+    this.renderer.removeAttribute(this.resizedImage, 'src');
+  }
+
+  private resetShapeCotainerProps() {
+    this.shapeContainer.top = 0;
+    this.shapeContainer.left = 0;
+    this.shapeContainer.width = 0;
+    this.shapeContainer.height = 0;
+    this.shapeContainer.referenceTop = 0;
+    this.shapeContainer.referenceLeft = 0;
+    this.shapeContainer.referenceWidth = 0;
+    this.shapeContainer.referenceHeight = 0;
+    this.shapeContainer.background = '';
+    this.shapeContainer.componentClass = '';
+    this.shapeContainer.isRendered = false;
   }
 
   private paintShape(toolName: ToolName, color: string) {
