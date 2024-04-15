@@ -2,7 +2,6 @@ import {
   AfterViewInit,
   Component,
   ComponentRef,
-  ElementRef,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -13,7 +12,6 @@ import { StatusBarService } from '../../services/statusbar.service';
 import { CanvasStateService } from '../../services/canvas-state.service';
 import { ToolsService } from '../../services/tools.service';
 import { ShapeContainerComponent } from '../../../shared/components/shape-container/shape-container.component';
-import { DynamicHostDirective } from '../../../shared/directives/dynamic-host.directive';
 import { ShapeContainerService } from 'src/app/shared/services/shape-container.service';
 import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
 import { Point } from 'src/app/website/interfaces/point.interface';
@@ -38,16 +36,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     private dynamicComponentService: DynamicComponentService
   ) {}
 
-  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
-
   //Dynamic component
-  @ViewChild(DynamicHostDirective, { read: ViewContainerRef })
+  @ViewChild('shapeContainer', { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ShapeContainerComponent>;
   private isDrawing: boolean = false;
 
+  private canvas!: HTMLCanvasElement;
+  private ctx!: CanvasRenderingContext2D;
+
   private selectedImage: ImageData | undefined;
-  private auxComponent!: HTMLCanvasElement;
 
   protected canvasWidth = 0;
   protected canvasHeight = 0;
@@ -59,7 +57,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private auxToolName!: ToolName;
 
   private canvasBoundingClientRect: Box = { left: 0, top: 0 };
-  private ctx!: CanvasRenderingContext2D;
   private imagesArray: string[] = [];
   private shapeContainerButtonId: number = 0;
 
@@ -105,8 +102,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   initSelectionImage() {
     this.imageDataService.getImageDataUrl().subscribe((imageDatUrl) => {
-      console.log(this.resizedImage);
-
       if (imageDatUrl) {
         this.resizedImage.src = imageDatUrl;
       }
@@ -124,6 +119,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ////AFTER INIT
   //when canvas is absolutely available
   ngAfterViewInit(): void {
+    this.initCanvas();
     this.initContext();
     this.initColor();
     this.initTool();
@@ -136,17 +132,22 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     const { left, top } = this.renderer
       .selectRootElement('.canvas-container', true)
       .getBoundingClientRect();
-
     this.canvasBoundingClientRect = { left, top };
   }
 
+  initCanvas() {
+    this.canvas = this.renderer.selectRootElement('.canvas', true);
+  }
+
   private initContext() {
-    this.ctx = this.canvas.nativeElement.getContext('2d', {
-      willReadFrequently: true,
-    });
+    this.ctx = this.renderer
+      .selectRootElement('.canvas', true)
+      .getContext('2d', {
+        willReadFrequently: true,
+      });
     this.ctx.imageSmoothingEnabled = true;
   }
-  ///                     AFTER VIEW INIT FUNCTIONS
+  ///AFTER VIEW INIT FUNCTIONS
   private initColor(): void {
     this.toolsService.getSelectedColor().subscribe((currentColor) => {
       this.color = currentColor;
@@ -249,7 +250,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   //MOUSE EVENTS
   public mouseDown(mouseDownPosition: Point): void {
     this.shapeContainer.zIndex = 2;
-    console.log('down canvas');
 
     if (this.shapeContainerButtonId === 0) {
       this.isDrawing = true;
@@ -278,13 +278,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     // this.color = this.auxColor;
     this.lastSelectedColor = this.color;
     //get the canvas image and push it to images list
-    this.imagesArray.push(this.canvas.nativeElement.toDataURL());
+    this.imagesArray.push(this.canvas.toDataURL());
     this.canvasStateService.setResetValue(true);
-  }
-
-  private removeShapeContainerImg(): void {
-    this.renderer.removeAttribute(this.resizedImage, 'src');
-    console.log('ya sin nada', this.resizedImage);
   }
 
   public mouseMove(mouseMovePosition: Point): void {
@@ -312,7 +307,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   public mouseUp(): void {
     this.isDrawing = false;
     this.shapeContainer.zIndex = 5;
-    console.log('up canvas');
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
       switch (this.toolName) {
@@ -359,6 +353,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.isRendered = value;
   }
 
+  private removeShapeContainerImg(): void {
+    this.renderer.removeAttribute(this.resizedImage, 'src');
+  }
+
   private paintSelectedArea(): void {
     const { width, height, top, left, rotation } = this.shapeContainer;
 
@@ -367,8 +365,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.resizedImage.src && this.shapeContainerButtonId === 0) {
-      console.log('pinto el area de todos modos');
-
       this.ctx.fillStyle = 'white'; //only if selection style is not transparent
       this.ctx.fillRect(left, top, width, height);
       this.ctx.drawImage(this.resizedImage, left, top, width, height);

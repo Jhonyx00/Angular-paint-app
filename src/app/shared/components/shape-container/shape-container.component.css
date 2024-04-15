@@ -69,16 +69,16 @@
   .btn7::before,
   .btn8::before {
     content: "";
-    width: 0.5em;
-    height: 0.5em;
+    width: 0.3em;
+    height: 0.3em;
     border: 2px solid gray;
     position: absolute;
   }
 
   .btn9::before {
     content: "";
-    width: 2em;
-    height: 2em;
+    width: 1em;
+    height: 1em;
     border: 2px solid gray;
     position: absolute;
     border-radius: 50%;
