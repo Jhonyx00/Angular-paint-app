@@ -5,7 +5,9 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow: hidden;
+}
 body {
   user-select: none;
-  zoom: 100%;
 }

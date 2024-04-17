@@ -14,6 +14,8 @@ import { StatusBarService } from './website/services/statusbar.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent implements OnInit {
+  canvasContainer: any;
+  canvasMainContainer: any;
   constructor(
     private renderer: Renderer2,
     private statusBarService: StatusBarService
@@ -22,41 +24,56 @@ export class AppComponent implements OnInit {
   title = 'PaintXD';
   private containerWidth = 0;
   private containerHeight = 0;
+  toolbarWidth = 0;
+  toolbar: any;
 
-  @ViewChild('mainContainer', { static: true }) mainContainer!: ElementRef; //cambiar por renderer2
-  @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef; //cambiar por renderer2
+  // @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef; //cambiar por renderer2
 
   ngOnInit(): void {
+    this.initComponents();
     this.resetDimension();
     //console.log(this.containerWidth, this.containerHeight);
   }
 
+  private initComponents() {
+    this.canvasMainContainer = this.renderer.selectRootElement(
+      '.canvas-main-container',
+      true
+    );
+
+    this.canvasContainer = this.renderer.selectRootElement(
+      '.canvas-container',
+      true
+    );
+  }
+
   private resetDimension() {
-    this.containerWidth = this.canvasContainer.nativeElement.offsetWidth;
-    this.containerHeight = this.canvasContainer.nativeElement.offsetHeight;
+    const canvasWidth = this.canvasMainContainer.getBoundingClientRect().width;
+    const canvasHeight =
+      this.canvasMainContainer.getBoundingClientRect().height;
+
+    this.renderer.setStyle(this.canvasContainer, 'width', canvasWidth + 'px');
+    this.renderer.setStyle(this.canvasContainer, 'height', canvasHeight + 'px');
 
     this.statusBarService.setCanvasDimensions({
-      width: this.containerWidth,
-      height: this.containerHeight,
+      width: canvasWidth,
+      height: canvasHeight,
     });
   }
 
-  @HostListener('window:resize', ['$event']) onResize(event: UIEvent) {
-    //this.resetDimension();
+  @HostListener('window:resize') onResize() {
+    // const pixelRatio = (event.target as Window).devicePixelRatio;
+    this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
 
-    const toolbar = this.renderer.selectRootElement('.toolbar-container', true);
+    const defaultvalue = 1.5;
 
-    //console.log(event.target);
+    this.renderer.setStyle(
+      this.toolbar,
+      'width',
+      (66 * defaultvalue) / devicePixelRatio + 'px'
+    );
 
-    const pixelRatio = (event.target as Window).devicePixelRatio;
-    console.log(pixelRatio);
-
-    const max = 7.5;
-    const min = 0.375;
-
-    this.renderer.setStyle(toolbar, 'zoom', `${pixelRatio - (pixelRatio - 1)}`);
-    console.log('new', pixelRatio - (pixelRatio - 1));
-
-    //que el zoom vaya incrementando o disminuyendo a mediante el evento de window resize
+    ///hacer un servicio que le envie el boundingClientRect cada vez que se redimensiona
+    //canvasBoundingClientRect
   }
 }

@@ -18,7 +18,6 @@ import { Point } from 'src/app/website/interfaces/point.interface';
 import { ImageDataService } from '../../../shared/services/image.service';
 import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
-import { Box } from 'src/app/shared/interfaces/box';
 
 @Component({
   selector: 'canvas-component',
@@ -54,7 +53,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private toolName!: ToolName;
   private auxToolName!: ToolName;
 
-  private canvasBoundingClientRect: Box = { left: 0, top: 0 };
   private imagesArray: string[] = [];
   private shapeContainerButtonId: number = 0;
 
@@ -123,14 +121,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.initTool();
     this.updateCanvasValue();
     this.setInitialValues();
-    this.initBoundingClientRect();
-  }
-
-  private initBoundingClientRect() {
-    const { left, top } = this.renderer
-      .selectRootElement('.canvas-container', true)
-      .getBoundingClientRect();
-    this.canvasBoundingClientRect = { left, top };
   }
 
   initCanvas() {
@@ -214,28 +204,24 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  private setShapeContainerMouseDownPosition(mouseDownPosition: Point) {
+  private setMouseDownPosition(mouseDownPosition: Point) {
     this.mouseDownPosition = {
       x: mouseDownPosition.x,
       y: mouseDownPosition.y,
     };
   }
 
-  private setPencilContainerMouseDownPosition(mouseDownPosition: Point) {
-    this.mouseDownPosition = {
-      x: mouseDownPosition.x - this.canvasBoundingClientRect.left,
-      y: mouseDownPosition.y - this.canvasBoundingClientRect.top,
-    };
-  }
   //MOUSE EVENTS
   public mouseDown(mouseDownPosition: Point): void {
     this.shapeContainer.zIndex = 2;
 
     if (this.shapeContainerButtonId === 0) {
       this.isDrawing = true;
+
+      this.setMouseDownPosition(mouseDownPosition);
+
       switch (this.toolName) {
         case ToolName.Line:
-          this.setPencilContainerMouseDownPosition(mouseDownPosition);
           break;
 
         case ToolName.Select:
@@ -243,12 +229,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
           this.deleteComponent();
           this.removeShapeContainerImg();
           this.createComponent();
-          this.setShapeContainerMouseDownPosition(mouseDownPosition);
           this.setShapeDrawnValues(false);
           break;
 
         default:
-          this.setShapeContainerMouseDownPosition(mouseDownPosition);
           this.deleteComponent();
           this.createComponent();
           this.setShapeDrawnValues(false);
@@ -449,9 +433,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   //SHAPES
   private drawShapeContainer({ x, y }: Point, toolName: ToolName): void {
-    const toolbarWidth = this.canvasBoundingClientRect.left;
-    const toolbarHeight = this.canvasBoundingClientRect.top;
-
     let rectangleWidth = x - this.mouseDownPosition.x;
     let rectangleHeight = y - this.mouseDownPosition.y;
     let newWidth = Math.abs(rectangleWidth);
@@ -478,49 +459,42 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
-      this.shapeContainer.top = y - toolbarHeight;
-      this.shapeContainer.left = this.mouseDownPosition.x - toolbarWidth;
-      this.shapeContainer.referenceTop = y - toolbarHeight;
-      this.shapeContainer.referenceLeft =
-        this.mouseDownPosition.x - toolbarWidth;
+      this.shapeContainer.top = y;
+      this.shapeContainer.left = this.mouseDownPosition.x;
+      this.shapeContainer.referenceTop = y;
+      this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
     // Quadrant 2
     else if (rectangleWidth < 0 && rectangleHeight < 0) {
-      this.shapeContainer.top = y - toolbarHeight;
-      this.shapeContainer.left = x - toolbarWidth;
-      this.shapeContainer.referenceTop = y - toolbarHeight;
-      this.shapeContainer.referenceLeft = x - toolbarWidth;
+      this.shapeContainer.top = y;
+      this.shapeContainer.left = x;
+      this.shapeContainer.referenceTop = y;
+      this.shapeContainer.referenceLeft = x;
     }
     // Quadrant 3
     else if (rectangleWidth < 0 && rectangleHeight > 0) {
-      this.shapeContainer.top = this.mouseDownPosition.y - toolbarHeight;
-      this.shapeContainer.left = x - toolbarWidth;
-      this.shapeContainer.referenceTop =
-        this.mouseDownPosition.y - toolbarHeight;
-      this.shapeContainer.referenceLeft = x - toolbarWidth;
+      this.shapeContainer.top = this.mouseDownPosition.y;
+      this.shapeContainer.left = x;
+      this.shapeContainer.referenceTop = this.mouseDownPosition.y;
+      this.shapeContainer.referenceLeft = x;
     }
     //Quadrant 4
     else {
-      this.shapeContainer.top = this.mouseDownPosition.y - toolbarHeight;
-      this.shapeContainer.left = this.mouseDownPosition.x - toolbarWidth;
-      this.shapeContainer.referenceTop =
-        this.mouseDownPosition.y - toolbarHeight;
-      this.shapeContainer.referenceLeft =
-        this.mouseDownPosition.x - toolbarWidth;
+      this.shapeContainer.top = this.mouseDownPosition.y;
+      this.shapeContainer.left = this.mouseDownPosition.x;
+      this.shapeContainer.referenceTop = this.mouseDownPosition.y;
+      this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
   }
 
   private drawLine({ x, y }: Point): void {
-    const toolbarWidth = this.canvasBoundingClientRect.left;
-    const toolbarHeight = this.canvasBoundingClientRect.top;
-
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
-    this.ctx.lineTo(x - toolbarWidth, y - toolbarHeight);
+    this.ctx.lineTo(x, y);
     this.ctx.stroke();
 
-    this.mouseDownPosition.x = x - toolbarWidth;
-    this.mouseDownPosition.y = y - toolbarHeight;
+    this.mouseDownPosition.x = x;
+    this.mouseDownPosition.y = y;
   }
 
   private drawRectangle(): void {
@@ -643,9 +617,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
   //ERASE
   private erase({ x, y }: Point): void {
-    const toolbarWidth = this.canvasBoundingClientRect.left;
-    const toolbarHeight = this.canvasBoundingClientRect.top;
-    this.ctx.clearRect(x - toolbarWidth, y - toolbarHeight, 20, 20);
+    this.ctx.clearRect(x, y, 20, 20);
   }
   //DINAMIC COMPONENT FUNCTIONS
   private createComponent(): void {

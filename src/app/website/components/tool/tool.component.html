@@ -6,7 +6,7 @@
       [ngClass]="item.toolName === selectedTool ? 'selected-tool' : ''"
       (click)="sendToolName(item.toolName)"
     >
-      <img src="{{ item.iconUrl }}" alt="" />
+      <img class="icon" src="{{ item.iconUrl }}" alt="" />
     </button>
   </div>
 </div>

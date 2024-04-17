@@ -183,7 +183,7 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   private saveWork(): void {
-    const base64ImageData = this.imagesList[this.imagesList.length - 1]; //esto es igual a la ultima imagen del arreglo compartido
+    const base64ImageData = this.imagesList[this.imagesList.length - 1];
     let imageName = prompt('Enter image name');
     const downloadLink = document.createElement('a');
     downloadLink.href = base64ImageData;
