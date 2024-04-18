@@ -26,7 +26,7 @@ export class AppComponent implements OnInit {
   private containerHeight = 0;
   toolbarWidth = 0;
   toolbar: any;
-
+  private toolbarFixedWidth = 100;
   // @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef; //cambiar por renderer2
 
   ngOnInit(): void {
@@ -45,6 +45,7 @@ export class AppComponent implements OnInit {
       '.canvas-container',
       true
     );
+    this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
   }
 
   private resetDimension() {
@@ -63,14 +64,13 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:resize') onResize() {
     // const pixelRatio = (event.target as Window).devicePixelRatio;
-    this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
 
     const defaultvalue = 1.5;
 
     this.renderer.setStyle(
       this.toolbar,
       'width',
-      (66 * defaultvalue) / devicePixelRatio + 'px'
+      (this.toolbarFixedWidth * defaultvalue) / devicePixelRatio + 'px'
     );
 
     ///hacer un servicio que le envie el boundingClientRect cada vez que se redimensiona

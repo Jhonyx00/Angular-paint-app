@@ -1,7 +1,7 @@
 button {
   background-color: transparent;
   border: none;
-  width: 100%;
+  width: 1.8em;
   height: 1.8em;
   border-radius: 0.4em;
   padding: 0.2em;
@@ -19,24 +19,45 @@ button:hover:not(.selected-tool) {
 
 .tool-item-container {
   display: grid;
+  place-items: center;
   grid-row-gap: 5px;
   grid-column-gap: 5px;
   padding: 5px;
-  /* border-bottom: 1px solid rgb(128, 128, 128); */
 }
 
 .tool-item-container span.tool-group {
-  font-size: 12px;
+  font-size: 14px;
+  width: 100%;
+  padding: 0.4em;
   text-align: center;
 }
 
 .tool {
   display: grid;
   place-items: center;
+}
+
+.Actions,
+.Select,
+.Pencils,
+.Erasers {
   grid-template-columns: repeat(2, 1fr);
   grid-row-gap: 2px;
   grid-column-gap: 2px;
   padding: 2px;
+}
+
+.Shapes {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-row-gap: 2px;
+  grid-column-gap: 2px;
+  padding: 2px;
+  width: 100%;
+}
+
+.File {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .selected-tool {

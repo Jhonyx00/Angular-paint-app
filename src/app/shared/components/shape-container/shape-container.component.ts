@@ -211,8 +211,8 @@ export class ShapeContainerComponent
   }
 
   public mainContainerMouseMove(event: MouseEvent) {
-    const x = event.clientX - this.shapeContainerBoundingClientRect.left;
-    const y = event.clientY - this.shapeContainerBoundingClientRect.top;
+    const x = event.pageX - this.shapeContainerBoundingClientRect.left;
+    const y = event.pageY - this.shapeContainerBoundingClientRect.top;
 
     if (this.isOnShapeContainer) {
       this.moveShapeContainer(x, y);
@@ -228,8 +228,8 @@ export class ShapeContainerComponent
   }
 
   public mainContainerMouseDown(event: MouseEvent) {
-    const x = event.clientX - this.shapeContainerBoundingClientRect.left;
-    const y = event.clientY - this.shapeContainerBoundingClientRect.top;
+    const x = event.pageX - this.shapeContainerBoundingClientRect.left;
+    const y = event.pageY - this.shapeContainerBoundingClientRect.top;
 
     this.mouseDownPosition = { x: x, y: y };
     this.dynamicComponentService.setResizeButtonId(0);

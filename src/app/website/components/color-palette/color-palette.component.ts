@@ -1,12 +1,5 @@
-import {
-  AfterViewInit,
-  Component,
-  OnDestroy,
-  OnInit,
-  Renderer2,
-} from '@angular/core';
+import { AfterViewInit, Component, Renderer2 } from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
-import { ToolName } from '../../enums/tool-name.enum';
 
 @Component({
   selector: 'color-palette-component',
@@ -19,7 +12,7 @@ export class ColorPaletteComponent implements AfterViewInit {
     private renderer: Renderer2
   ) {}
 
-  public colors = new Array<string>(9);
+  public colors = new Array<string>(12);
   private input!: HTMLInputElement;
 
   ngAfterViewInit(): void {

@@ -1,6 +1,6 @@
 <div class="tool-item-container">
   <span class="tool-group">{{ toolGroupName }}</span>
-  <div class="tool">
+  <div class="tool" [ngClass]="toolGroupName">
     <button
       *ngFor="let item of toolItems"
       [ngClass]="item.toolName === selectedTool ? 'selected-tool' : ''"
