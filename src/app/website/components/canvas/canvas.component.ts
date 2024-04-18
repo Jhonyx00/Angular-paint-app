@@ -213,33 +213,33 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   //MOUSE EVENTS
   public mouseDown(mouseDownPosition: Point): void {
+    this.isDrawing = true;
     this.shapeContainer.zIndex = 2;
 
-    if (this.shapeContainerButtonId === 0) {
-      this.isDrawing = true;
+    this.setMouseDownPosition(mouseDownPosition);
 
-      this.setMouseDownPosition(mouseDownPosition);
+    switch (this.toolName) {
+      case ToolName.Line:
+        break;
 
-      switch (this.toolName) {
-        case ToolName.Line:
-          break;
+      case ToolName.Select:
+        this.paintSelectedArea();
+        this.deleteComponent();
+        this.createComponent();
+        this.removeShapeContainerImg();
+        this.setShapeDrawnValues(false);
+        break;
 
-        case ToolName.Select:
-          this.paintSelectedArea();
-          this.deleteComponent();
-          this.removeShapeContainerImg();
-          this.createComponent();
-          this.setShapeDrawnValues(false);
-          break;
-
-        default:
-          this.deleteComponent();
-          this.createComponent();
-          this.setShapeDrawnValues(false);
-          this.paintShape(this.toolName, this.color);
-          break;
-      }
+      default:
+        this.paintShape(this.toolName, this.color);
+        this.deleteComponent();
+        this.createComponent();
+        this.setShapeDrawnValues(false);
+        break;
     }
+
+    this.resetShapeCotainerProps();
+
     // this.color = this.auxColor;
     this.lastSelectedColor = this.color;
     //get the canvas image and push it to images list

@@ -48,7 +48,6 @@ export class ShapeContainerComponent
 
   private isAreaSelected = false;
   private angleDiff = 0;
-  private movingAngle = 0;
   private initialAngle = 0;
 
   public shapeContainer: ShapeContainer = {
@@ -437,14 +436,12 @@ export class ShapeContainerComponent
     const { width, height, left, top } = this.shapeContainer;
     const halfHeight = top + height * 0.5;
     const halfWidth = left + width * 0.5;
-    this.movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
+    const movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
 
-    this.angleDiff += ((this.movingAngle - this.initialAngle) * 180) / Math.PI;
+    this.angleDiff += ((movingAngle - this.initialAngle) * 180) / Math.PI;
 
-    this.initialAngle = this.movingAngle;
+    this.initialAngle = movingAngle;
     this.shapeContainer.rotation = this.angleDiff + 90;
-
-    console.log(this.angleDiff);
   }
 
   private setShapeContainerReferenceProps(): void {
