@@ -439,9 +439,7 @@ export class ShapeContainerComponent
     const halfWidth = left + width * 0.5;
     this.movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
 
-    this.angleDiff += Math.round(
-      ((this.movingAngle - this.initialAngle) * 180) / Math.PI
-    );
+    this.angleDiff += ((this.movingAngle - this.initialAngle) * 180) / Math.PI;
 
     this.initialAngle = this.movingAngle;
     this.shapeContainer.rotation = this.angleDiff + 90;
