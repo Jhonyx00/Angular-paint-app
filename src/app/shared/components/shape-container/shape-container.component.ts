@@ -47,8 +47,9 @@ export class ShapeContainerComponent
   private auxComponent!: HTMLCanvasElement;
 
   private isAreaSelected = false;
-  private angleDiff = 67.5;
+  private angleDiff = 0;
   private movingAngle = 0;
+  private initialAngle = 0;
 
   public shapeContainer: ShapeContainer = {
     top: 0,
@@ -65,9 +66,6 @@ export class ShapeContainerComponent
     rotation: 0,
     zIndex: 0,
   };
-
-  // private initialAngle = 130;
-  private initialAngle = 0;
 
   private XY: Point = {
     x: 0,
@@ -441,28 +439,13 @@ export class ShapeContainerComponent
     const halfWidth = left + width * 0.5;
     this.movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
 
-    //al inicio rota bien de -15 a 15 grados
-
-    //-60
     this.angleDiff += Math.round(
       ((this.movingAngle - this.initialAngle) * 180) / Math.PI
     );
 
-    //241.5
     this.initialAngle = this.movingAngle;
+    this.shapeContainer.rotation = this.angleDiff + 90;
 
-    this.shapeContainer.rotation = this.angleDiff;
-
-    // if (this.angleDiff > 360) {
-    //   this.angleDiff = 1;
-    // } else if (this.angleDiff < -360) {
-    //   this.angleDiff = -1;
-    // }
-
-    //40.5, 77.5
-    ///de -68.5 a 58.5
-
-    //-76.5 a
     console.log(this.angleDiff);
   }
 
