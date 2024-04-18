@@ -50,6 +50,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private color: string = '';
+  private auxColor: string = '';
   private toolName!: ToolName;
   private auxToolName!: ToolName;
 
@@ -139,7 +140,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private initColor(): void {
     this.toolsService.getSelectedColor().subscribe((currentColor) => {
       this.color = currentColor;
-
+      this.auxColor = this.color;
       this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.color;
       this.ctx.lineWidth = 2;
@@ -241,7 +242,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.resetShapeCotainerProps();
 
     // this.color = this.auxColor;
-    this.lastSelectedColor = this.color;
+
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.toDataURL());
     this.canvasStateService.setResetValue(true);
@@ -310,7 +311,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private setToolName(buttonId: number) {
     if (buttonId === 0) {
       this.toolName = this.auxToolName; //toolName now is last tool selected
+      this.color = this.auxColor;
       this.lastSelectedShape = this.toolName;
+      this.lastSelectedColor = this.color;
     }
   }
 
