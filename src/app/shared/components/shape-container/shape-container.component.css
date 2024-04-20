@@ -43,6 +43,10 @@
   animation: frame 100ms ease-in 1;
 }
 
+.selected2 {
+  outline: 2px dashed blue;
+  animation: frame 100ms ease-in 1;
+}
 .aux-canvas-container:active ~ .btn-container {
   display: none;
 }

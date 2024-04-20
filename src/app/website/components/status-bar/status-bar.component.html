@@ -1,18 +1,36 @@
-<div class="status-bar" id="s">
+<div class="status-bar">
   <div class="pixels-container">
-    <span class="size"
-      >Size: {{ canvasDimensions.width }},
-      {{ canvasDimensions.height }}pixels</span
-    >
-    <span class="position" *ngIf="!isOutside"
-      >position: {{ cursosrPosition.x }}, {{ cursosrPosition.y }}pixels</span
-    >
+    <ul>
+      <li>
+        <span class="size"
+          >Size: {{ canvasDimensions.width }},
+          {{ canvasDimensions.height }}pixels</span
+        >
+      </li>
+      <li>
+        <span
+          *ngIf="
+            shapeContainerDimension.height > 0 ||
+            shapeContainerDimension.width > 0
+          "
+        >
+          Dimension: {{ shapeContainerDimension.width }} x
+          {{ shapeContainerDimension.height }}
+        </span>
+      </li>
+      <li>
+        <span class="position" *ngIf="!isOutside"
+          >position: {{ cursosrPosition.x }},
+          {{ cursosrPosition.y }}pixels</span
+        >
+      </li>
+    </ul>
   </div>
 
   <!-- <div class="zoom-container">
     <span>100%</span>
     <button></button>
-    <input type="range" min="10" max="1000" />
+    <input type="range" min="25" max="500" />
     <button></button>
   </div> -->
 </div>

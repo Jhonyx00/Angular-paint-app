@@ -20,6 +20,7 @@ import { ImageDataService } from '../../../shared/services/image.service';
 import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { IconTool, Tool } from '../../interfaces/tool.interface';
+import { Dimension } from '../../interfaces/dimension.interface';
 
 @Component({
   selector: 'canvas-component',
@@ -49,6 +50,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   protected canvasWidth = 0;
   protected canvasHeight = 0;
+
+  protected canvasDimension: Dimension = {
+    width: 0,
+    height: 0,
+  };
 
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
@@ -126,19 +132,21 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       '.canvas-container',
       true
     );
-    const canvasWidth = canvasMainContainer.getBoundingClientRect().width;
-    const canvasHeight = canvasMainContainer.getBoundingClientRect().height;
+
+    const canvasWidth: number =
+      canvasMainContainer.getBoundingClientRect().width;
+    const canvasHeight: number =
+      canvasMainContainer.getBoundingClientRect().height;
 
     this.renderer.setStyle(canvasContainer, 'width', canvasWidth + 'px');
     this.renderer.setStyle(canvasContainer, 'height', canvasHeight + 'px');
 
-    this.canvasWidth = canvasWidth;
-    this.canvasHeight = canvasHeight;
-
-    this.statusBarService.setCanvasDimensions({
+    this.canvasDimension = {
       width: canvasWidth,
       height: canvasHeight,
-    });
+    };
+
+    this.statusBarService.setCanvasDimensions(this.canvasDimension);
   }
 
   ngAfterViewInit(): void {
@@ -280,6 +288,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     this.statusBarService.setCursorPosition(mouseMovePosition);
+    this.statusBarService.setshapeContainerDimension({
+      width: this.shapeContainer.width,
+      height: this.shapeContainer.height,
+    });
   }
 
   public mouseUp(): void {
@@ -458,7 +470,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.componentClass = toolName;
 
     //background
-    if (this.toolName.name === ToolName.Select) {
+    if (this.toolName.id === 2) {
       this.shapeContainer.background = 'transparent';
     } else {
       this.shapeContainer.background = this.color;

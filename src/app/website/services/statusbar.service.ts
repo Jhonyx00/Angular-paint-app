@@ -10,6 +10,11 @@ export class StatusBarService {
   constructor() {}
 
   private cursorPosition = new BehaviorSubject<Point>({ x: 0, y: 0 });
+
+  private shapeContainerDimension = new BehaviorSubject<Dimension>({
+    width: 0,
+    height: 0,
+  });
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
   private canvasDimensions = new BehaviorSubject<Dimension>({
     width: 0,
@@ -28,6 +33,10 @@ export class StatusBarService {
     this.canvasDimensions.next(size);
   }
 
+  setshapeContainerDimension(dimension: Dimension) {
+    this.shapeContainerDimension.next(dimension);
+  }
+
   public getCursorPosition(): Observable<Point> {
     return this.cursorPosition.asObservable();
   }
@@ -38,5 +47,9 @@ export class StatusBarService {
 
   public getCanvasDimensions(): Observable<Dimension> {
     return this.canvasDimensions.asObservable();
+  }
+
+  public getshapeContainerDimension(): Observable<Dimension> {
+    return this.shapeContainerDimension.asObservable();
   }
 }

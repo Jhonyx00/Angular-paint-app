@@ -24,7 +24,8 @@
       (mousedown)="onShapeContainerMouseDown($event)"
       (mouseup)="onShapeContainerMouseUp()"
       [ngClass]="{
-        selected: this.shapeContainer.componentClass == 'Select'
+        selected: this.shapeContainer.componentClass == 'Select',
+        selected2: this.shapeContainer.componentClass == 'Select2'
       }"
     >
       <canvas

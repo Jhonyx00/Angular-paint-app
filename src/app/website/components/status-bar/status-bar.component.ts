@@ -21,12 +21,18 @@ export class StatusBarComponent implements OnInit {
     height: 0,
   };
 
+  public shapeContainerDimension: Dimension = {
+    width: 0,
+    height: 0,
+  };
+
   isOutside: boolean = false;
 
   ngOnInit(): void {
     this.updateCursorPosition();
     this.updateCursorState();
     this.displayCanvasDimensions();
+    this.displayShapeContainerDimension();
   }
 
   private updateCursorPosition() {
@@ -46,6 +52,14 @@ export class StatusBarComponent implements OnInit {
       .getCanvasDimensions()
       .subscribe((currentCanvasDimensions) => {
         this.canvasDimensions = currentCanvasDimensions;
+      });
+  }
+
+  private displayShapeContainerDimension() {
+    this.statusBarService
+      .getshapeContainerDimension()
+      .subscribe((currentDimension) => {
+        this.shapeContainerDimension = currentDimension;
       });
   }
 }
