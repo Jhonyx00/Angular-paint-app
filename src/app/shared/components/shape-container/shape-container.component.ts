@@ -12,7 +12,6 @@ import { Subscription } from 'rxjs';
 import { DynamicComponentService } from '../../services/dynamic-component.service';
 import { Point } from 'src/app/website/interfaces/point.interface';
 import { StatusBarService } from 'src/app/website/services/statusbar.service';
-import { Box } from '../../interfaces/box';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
 
 @Component({
@@ -44,7 +43,7 @@ export class ShapeContainerComponent
   private isOnResizeButton: boolean = false;
   private selectedImage: ImageData | undefined;
   private resizedImage = new Image();
-  private auxComponent!: HTMLCanvasElement;
+  private auxCanvas!: HTMLCanvasElement;
 
   private isAreaSelected = false;
   private angleDiff = 0;
@@ -80,8 +79,6 @@ export class ShapeContainerComponent
     x: 0,
     y: 0,
   };
-
-  private shapeContainerBoundingClientRect: Box = { left: 0, top: 0 };
 
   protected buttons = [
     {
@@ -133,7 +130,6 @@ export class ShapeContainerComponent
 
   ngOnInit(): void {
     this.initAuxComponentDimensions();
-    this.initShapeContainerBoundingClientRect();
   }
 
   ngAfterViewInit(): void {
@@ -144,7 +140,7 @@ export class ShapeContainerComponent
   }
 
   initAuxCanvas() {
-    this.auxComponent = this.renderer.selectRootElement('#aux-canvas', false);
+    this.auxCanvas = this.renderer.selectRootElement('#aux-canvas', false);
   }
 
   initMainCanvasContext() {
@@ -162,8 +158,8 @@ export class ShapeContainerComponent
   private initImage() {
     this.image$ = this.imageDataService.getImage().subscribe((image) => {
       if (image != undefined) {
-        this.auxComponent.width = image?.width;
-        this.auxComponent.height = image?.height;
+        this.auxCanvas.width = image?.width;
+        this.auxCanvas.height = image?.height;
         this.ctxAux.putImageData(image, 0, 0);
       }
     });
@@ -175,13 +171,6 @@ export class ShapeContainerComponent
       .subscribe((currentAuxComponent: ShapeContainer) => {
         this.shapeContainer = currentAuxComponent;
       });
-  }
-
-  private initShapeContainerBoundingClientRect() {
-    const { left, top } = this.renderer
-      .selectRootElement('.main-container', true)
-      .getBoundingClientRect();
-    this.shapeContainerBoundingClientRect = { left, top };
   }
 
   public mouseEnter(): void {
@@ -199,17 +188,14 @@ export class ShapeContainerComponent
   }
 
   public btnMouseUp() {
-    //this.isOnResizeButton = false;
-    // this.shapeContainer.zIndex = 5;
     this.isOverButton = false;
     this.isOnResizeButton = false;
-
     this.setShapeContainerReferenceProps();
   }
 
   public mainContainerMouseMove(event: MouseEvent) {
-    const x = event.pageX - this.shapeContainerBoundingClientRect.left;
-    const y = event.pageY - this.shapeContainerBoundingClientRect.top;
+    const x = event.clientX;
+    const y = event.clientY;
 
     if (this.isOnShapeContainer) {
       this.moveShapeContainer(x, y);
@@ -217,7 +203,7 @@ export class ShapeContainerComponent
       this.resizeShapeContainer(x, y);
     }
 
-    this.mouseMovePosition = { x: Math.round(x), y: Math.round(y) };
+    this.mouseMovePosition = { x: x, y: y };
 
     this.dynamicComponentService.setMouseMovePosition(this.mouseMovePosition);
 
@@ -225,8 +211,8 @@ export class ShapeContainerComponent
   }
 
   public mainContainerMouseDown(event: MouseEvent) {
-    const x = event.pageX - this.shapeContainerBoundingClientRect.left;
-    const y = event.pageY - this.shapeContainerBoundingClientRect.top;
+    const x = event.clientX;
+    const y = event.clientY;
 
     this.mouseDownPosition = { x: x, y: y };
     this.dynamicComponentService.setResizeButtonId(0);
@@ -278,7 +264,7 @@ export class ShapeContainerComponent
   private setShapeContainerImage(): void {
     if (this.selectedImage != undefined) {
       this.imageDataService.setImage(this.selectedImage);
-      const auxComponentUrl = this.auxComponent.toDataURL();
+      const auxComponentUrl = this.auxCanvas.toDataURL();
       this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
       this.imageDataService.setImageDataUrl(auxComponentUrl);
     }
@@ -293,10 +279,7 @@ export class ShapeContainerComponent
     this.isOnShapeContainer = true;
     this.isOnResizeButton = true;
 
-    this.setDeltaXY(
-      event.clientX - this.shapeContainerBoundingClientRect.left,
-      event.clientY - this.shapeContainerBoundingClientRect.top
-    );
+    this.setDeltaXY(event.clientX, event.clientY);
   }
 
   public onShapeContainerMouseUp() {

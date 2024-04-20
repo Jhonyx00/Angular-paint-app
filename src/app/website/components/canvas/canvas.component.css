@@ -1,7 +1,6 @@
 .canvas-container {
   position: relative !important;
   overflow: hidden;
-  background-color: red;
 }
 
 canvas {

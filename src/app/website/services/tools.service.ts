@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ToolName } from '../enums/tool-name.enum';
+import { IconTool } from '../interfaces/tool.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -9,13 +10,17 @@ export class ToolsService {
   constructor() {}
 
   //  selected button
-  private selectedButton = new BehaviorSubject<ToolName>(ToolName.Line);
+  private selectedButton = new BehaviorSubject<IconTool>({
+    id: 3,
+    name: ToolName.Line,
+    icon: '',
+  });
 
-  public setSelectedButton(selectedShape: ToolName): void {
-    this.selectedButton.next(selectedShape);
+  public setSelectedButton(selectedButton: IconTool): void {
+    this.selectedButton.next(selectedButton);
   }
 
-  public getSelectedButton(): Observable<ToolName> {
+  public getSelectedButton(): Observable<IconTool> {
     return this.selectedButton.asObservable();
   }
 

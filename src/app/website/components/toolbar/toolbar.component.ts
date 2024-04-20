@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
 import { CanvasStateService } from 'src/app/website/services/canvas-state.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
-import { Tool } from 'src/app/website/interfaces/tool.interface';
+import { IconTool } from '../../interfaces/tool.interface';
 
 @Component({
   selector: 'toolbar-component',
@@ -15,8 +15,8 @@ export class ToolbarComponent implements OnDestroy {
     private canvasStateService: CanvasStateService
   ) {}
 
-  public selectedTool!: ToolName;
-  public selectedFileTool!: ToolName;
+  public selectedTool!: IconTool;
+  public selectedFileTool!: IconTool;
 
   public shapes = 'Shapes';
   public selection = 'Select';
@@ -29,95 +29,101 @@ export class ToolbarComponent implements OnDestroy {
   private imagesListAux = new Array();
 
   ////Tool arrays
-  public shapeItems: Tool[] = [
+  public shapeItems: IconTool[] = [
     {
-      toolName: ToolName.Rectangle,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 1,
+      name: ToolName.Rectangle,
+      icon: '../../../../assets/svg/rectangle.svg',
     },
     {
-      toolName: ToolName.Ellipse,
-      iconUrl: '../../../../assets/svg/oval.svg',
+      id: 1,
+      name: ToolName.Ellipse,
+      icon: '../../../../assets/svg/oval.svg',
     },
     {
-      toolName: ToolName.Hexagon,
-      iconUrl: '../../../../assets/svg/hexagon.svg',
+      id: 1,
+      name: ToolName.Hexagon,
+      icon: '../../../../assets/svg/hexagon.svg',
     },
     {
-      toolName: ToolName.Triangle,
-      iconUrl: '../../../../assets/svg/triangle.svg',
+      id: 1,
+      name: ToolName.Triangle,
+      icon: '../../../../assets/svg/triangle.svg',
     },
     {
-      toolName: ToolName.Pentagon,
-      iconUrl: '../../../../assets/svg/pentagon.svg',
+      id: 1,
+      name: ToolName.Pentagon,
+      icon: '../../../../assets/svg/pentagon.svg',
     },
     {
-      toolName: ToolName.Star,
-      iconUrl: '../../../../assets/svg/star.svg',
+      id: 1,
+      name: ToolName.Star,
+      icon: '../../../../assets/svg/star.svg',
     },
 
     {
-      toolName: ToolName.Rhombus,
-      iconUrl: '../../../../assets/svg/rhombus.svg',
+      id: 1,
+      name: ToolName.Rhombus,
+      icon: '../../../../assets/svg/rhombus.svg',
     },
   ];
 
-  public selectionItems: Tool[] = [
+  public selectionItems: IconTool[] = [
     {
-      toolName: ToolName.Select,
-      iconUrl: '../../../../assets/svg/select.svg',
+      id: 2,
+      name: ToolName.Select,
+      icon: '../../../../assets/svg/select.svg',
     },
     {
-      toolName: ToolName.Select2,
-      iconUrl: '../../../../assets/svg/star.svg',
-    },
-  ];
-
-  public pencilItems: Tool[] = [
-    {
-      toolName: ToolName.Line,
-      iconUrl: '../../../../assets/svg/pencil.svg',
-    },
-    {
-      toolName: ToolName.Pencil,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
+      id: 2,
+      name: ToolName.Select2,
+      icon: '../../../../assets/svg/star.svg',
     },
   ];
 
-  public eraserItems: Tool[] = [
+  public pencilItems: IconTool[] = [
     {
-      toolName: ToolName.Eraser,
-      iconUrl: '../../../../assets/svg/eraser.svg',
+      id: 3,
+      name: ToolName.Line,
+      icon: '../../../../assets/svg/pencil.svg',
     },
     {
-      toolName: ToolName.Eraser2,
-      iconUrl: '../../../../assets/svg/oval.svg',
-    },
-  ];
-
-  public fileItems: Tool[] = [
-    {
-      toolName: ToolName.Save,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
-    },
-    {
-      toolName: ToolName.Open,
-      iconUrl: '../../../../assets/svg/rectangle.svg',
-    },
-    {
-      toolName: ToolName.File,
-      iconUrl: '../../../../assets/svg/undo.svg',
+      id: 3,
+      name: ToolName.Pencil,
+      icon: '../../../../assets/svg/rectangle.svg',
     },
   ];
 
-  public actionItems: Tool[] = [
+  public eraserItems: IconTool[] = [
     {
-      toolName: ToolName.Undo,
-      iconUrl: '../../../../assets/svg/undo.svg',
+      id: 4,
+      name: ToolName.Eraser,
+      icon: '../../../../assets/svg/eraser.svg',
     },
     {
-      toolName: ToolName.Redo,
-      iconUrl: '../../../../assets/svg/redo.svg',
+      id: 4,
+      name: ToolName.Eraser2,
+      icon: '../../../../assets/svg/oval.svg',
     },
+  ];
+
+  public fileItems: IconTool[] = [
+    {
+      id: 5,
+      name: ToolName.Save,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    {
+      id: 5,
+      name: ToolName.Open,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    { id: 5, name: ToolName.File, icon: '../../../../assets/svg/undo.svg' },
+  ];
+
+  public actionItems: IconTool[] = [
+    { id: 6, name: ToolName.Undo, icon: '../../../../assets/svg/undo.svg' },
+    { id: 6, name: ToolName.Redo, icon: '../../../../assets/svg/redo.svg' },
   ];
   //
 
@@ -131,10 +137,14 @@ export class ToolbarComponent implements OnDestroy {
     });
   }
 
-  setSelectedTool(toolName: ToolName) {
-    if (toolName == 'Undo' || toolName == 'Redo' || toolName == 'Save') {
+  setSelectedTool(toolName: IconTool) {
+    if (
+      toolName.name == 'Undo' ||
+      toolName.name == 'Redo' ||
+      toolName.name == 'Save'
+    ) {
       this.selectedFileTool = toolName;
-      switch (this.selectedFileTool) {
+      switch (this.selectedFileTool.name) {
         case 'Undo':
           this.undo();
           break;

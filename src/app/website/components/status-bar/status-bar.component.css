@@ -10,9 +10,6 @@
   font-size: 12px;
   text-align: center;
 }
-.status-bar span:first-child {
-  /* border-right: 5px solid gray; */
-}
 
 .status-up {
   animation: status-up 400ms ease-in 1;

@@ -1,11 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  OnInit,
-  Renderer2,
-  ViewChild,
-} from '@angular/core';
+import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
 import { StatusBarService } from './website/services/statusbar.service';
 
 @Component({
@@ -16,64 +9,34 @@ import { StatusBarService } from './website/services/statusbar.service';
 export class AppComponent implements OnInit {
   canvasContainer: any;
   canvasMainContainer: any;
-  constructor(
-    private renderer: Renderer2,
-    private statusBarService: StatusBarService
-  ) {}
+  constructor(private renderer: Renderer2) {}
 
   title = 'PaintXD';
-  private containerWidth = 0;
-  private containerHeight = 0;
+
   toolbarWidth = 0;
   toolbar: any;
+
   private toolbarFixedWidth = 100;
-  // @ViewChild('canvasContainer', { static: true }) canvasContainer!: ElementRef; //cambiar por renderer2
+  private defaultvalue = 1.5;
 
   ngOnInit(): void {
     this.initComponents();
     this.resetDimension();
-    //console.log(this.containerWidth, this.containerHeight);
   }
 
   private initComponents() {
-    this.canvasMainContainer = this.renderer.selectRootElement(
-      '.canvas-main-container',
-      true
-    );
-
-    this.canvasContainer = this.renderer.selectRootElement(
-      '.canvas-container',
-      true
-    );
-    this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
+    // this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
   }
 
-  private resetDimension() {
-    const canvasWidth = this.canvasMainContainer.getBoundingClientRect().width;
-    const canvasHeight =
-      this.canvasMainContainer.getBoundingClientRect().height;
+  private resetDimension() {}
 
-    this.renderer.setStyle(this.canvasContainer, 'width', canvasWidth + 'px');
-    this.renderer.setStyle(this.canvasContainer, 'height', canvasHeight + 'px');
+  // @HostListener('window:resize') onResize() {
+  //   // const pixelRatio = (event.target as Window).devicePixelRatio;
 
-    this.statusBarService.setCanvasDimensions({
-      width: canvasWidth,
-      height: canvasHeight,
-    });
-  }
-
-  @HostListener('window:resize') onResize() {
-    // const pixelRatio = (event.target as Window).devicePixelRatio;
-
-    const defaultvalue = 1.5;
-
-    this.renderer.setStyle(
-      this.toolbar,
-      'width',
-      (this.toolbarFixedWidth * defaultvalue) / devicePixelRatio + 'px'
-    );
-
-    ///hacer un servicio que le envie el boundingClientRect cada vez que se redimensiona
-    //canvasBoundingClientRect
-  }
+  //   this.renderer.setStyle(
+  //     this.toolbar,
+  //     'width',
+  //     (this.toolbarFixedWidth * this.defaultvalue) / devicePixelRatio + 'px'
+  //   );
+  // }
 }

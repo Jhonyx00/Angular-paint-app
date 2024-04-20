@@ -2,6 +2,7 @@ import {
   AfterViewInit,
   Component,
   ComponentRef,
+  ElementRef,
   OnDestroy,
   OnInit,
   Renderer2,
@@ -18,6 +19,7 @@ import { Point } from 'src/app/website/interfaces/point.interface';
 import { ImageDataService } from '../../../shared/services/image.service';
 import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
+import { IconTool, Tool } from '../../interfaces/tool.interface';
 
 @Component({
   selector: 'canvas-component',
@@ -36,12 +38,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ) {}
 
   //Dynamic component
+  @ViewChild('canvas', { static: true }) canvas!: ElementRef;
   @ViewChild('shapeContainer', { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ShapeContainerComponent>;
   private isDrawing: boolean = false;
 
-  private canvas!: HTMLCanvasElement;
+  //private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
 
   protected canvasWidth = 0;
@@ -51,8 +54,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private currentCanvasImage = new Image();
   private color: string = '';
   private auxColor: string = '';
-  private toolName!: ToolName;
-  private auxToolName!: ToolName;
+
+  private toolName: Tool = {
+    id: 0,
+    name: ToolName.Line,
+  };
+
+  private auxToolName: Tool = {
+    id: 0,
+    name: ToolName.Line,
+  };
 
   private imagesArray: string[] = [];
   private shapeContainerButtonId: number = 0;
@@ -105,18 +116,32 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  private initCanvasDimensions(): void {
-    this.statusBarService
-      .getCanvasDimensions()
-      .subscribe((currentCanvasDimension) => {
-        this.canvasWidth = currentCanvasDimension.width;
-        this.canvasHeight = currentCanvasDimension.height;
-      });
+  private initCanvasDimensions() {
+    const canvasMainContainer = this.renderer.selectRootElement(
+      '.canvas-main-container',
+      true
+    );
+
+    const canvasContainer = this.renderer.selectRootElement(
+      '.canvas-container',
+      true
+    );
+    const canvasWidth = canvasMainContainer.getBoundingClientRect().width;
+    const canvasHeight = canvasMainContainer.getBoundingClientRect().height;
+
+    this.renderer.setStyle(canvasContainer, 'width', canvasWidth + 'px');
+    this.renderer.setStyle(canvasContainer, 'height', canvasHeight + 'px');
+
+    this.canvasWidth = canvasWidth;
+    this.canvasHeight = canvasHeight;
+
+    this.statusBarService.setCanvasDimensions({
+      width: canvasWidth,
+      height: canvasHeight,
+    });
   }
-  ////AFTER INIT
-  //when canvas is absolutely available
+
   ngAfterViewInit(): void {
-    this.initCanvas();
     this.initContext();
     this.initColor();
     this.initTool();
@@ -124,19 +149,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.setInitialValues();
   }
 
-  initCanvas() {
-    this.canvas = this.renderer.selectRootElement('.canvas', true);
-  }
-
   private initContext() {
-    this.ctx = this.renderer
-      .selectRootElement('.canvas', true)
-      .getContext('2d', {
-        willReadFrequently: true,
-      });
+    this.ctx = this.canvas.nativeElement.getContext('2d', {
+      willReadFrequently: true,
+    });
     this.ctx.imageSmoothingEnabled = true;
   }
-  ///AFTER VIEW INIT FUNCTIONS
+
   private initColor(): void {
     this.toolsService.getSelectedColor().subscribe((currentColor) => {
       this.color = currentColor;
@@ -149,9 +168,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private initTool(): void {
-    this.toolsService.getSelectedButton().subscribe((currentTool: ToolName) => {
-      this.toolName = currentTool;
-      this.auxToolName = currentTool;
+    this.toolsService.getSelectedButton().subscribe((currentTool: IconTool) => {
+      const id = currentTool.id;
+      const name = currentTool.name;
+      this.toolName = { id: id, name: name };
+      this.auxToolName = { id: id, name: name };
       this.canvasStateService.setResetValue(false);
     });
   }
@@ -205,62 +226,53 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  private setMouseDownPosition(mouseDownPosition: Point) {
+  //MOUSE EVENTS
+  public mouseDown(mouseDownPosition: Point | MouseEvent): void {
+    this.isDrawing = true;
+    this.shapeContainer.zIndex = 2;
+
     this.mouseDownPosition = {
       x: mouseDownPosition.x,
       y: mouseDownPosition.y,
     };
-  }
 
-  //MOUSE EVENTS
-  public mouseDown(mouseDownPosition: Point): void {
-    this.isDrawing = true;
-    this.shapeContainer.zIndex = 2;
-
-    this.setMouseDownPosition(mouseDownPosition);
-
-    switch (this.toolName) {
-      case ToolName.Line:
-        break;
-
-      case ToolName.Select:
-        this.paintSelectedArea();
-        this.deleteComponent();
-        this.createComponent();
-        this.removeShapeContainerImg();
-        this.setShapeDrawnValues(false);
-        break;
-
-      default:
-        this.paintShape(this.toolName, this.color);
-        this.deleteComponent();
-        this.createComponent();
-        this.setShapeDrawnValues(false);
-        break;
+    if (this.toolName.id === 2) {
+      this.paintSelectedArea();
+      this.deleteComponent();
+      this.createComponent();
+      this.removeShapeContainerImg();
+      this.setShapeDrawnValues(false);
+    } else if (this.toolName.id === 1) {
+      this.paintShape(this.toolName.name, this.color);
+      this.deleteComponent();
+      this.createComponent();
+      this.setShapeDrawnValues(false);
     }
 
     this.resetShapeCotainerProps();
 
-    // this.color = this.auxColor;
-
     //get the canvas image and push it to images list
-    this.imagesArray.push(this.canvas.toDataURL());
+    this.imagesArray.push(this.canvas.nativeElement.toDataURL());
     this.canvasStateService.setResetValue(true);
   }
 
-  public mouseMove(mouseMovePosition: Point): void {
+  public mouseMove(mouseMovePosition: Point | MouseEvent): void {
     if (this.isDrawing) {
-      switch (this.toolName) {
-        case ToolName.Line:
+      switch (this.toolName.id) {
+        case 1:
+        case 2:
+          this.drawShapeContainer(mouseMovePosition, this.toolName.name);
+          break;
+
+        case 3:
           this.drawLine(mouseMovePosition);
           break;
 
-        case ToolName.Eraser:
+        case 4:
           this.erase(mouseMovePosition);
           break;
 
         default:
-          this.drawShapeContainer(mouseMovePosition, this.toolName);
           break;
       }
     } else {
@@ -272,18 +284,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public mouseUp(): void {
     this.isDrawing = false;
-    this.shapeContainer.zIndex = 5;
+    this.shapeContainer.zIndex = 4;
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
-      switch (this.toolName) {
-        case ToolName.Select:
-          this.setShapeDrawnValues(true);
-
-          break;
-
-        default:
-          this.setShapeDrawnValues(true);
-          break;
+      if (this.toolName.id == 1 || this.toolName.id == 2) {
+        this.setShapeDrawnValues(true);
       }
     }
   }
@@ -312,7 +317,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     if (buttonId === 0) {
       this.toolName = this.auxToolName; //toolName now is last tool selected
       this.color = this.auxColor;
-      this.lastSelectedShape = this.toolName;
+      this.lastSelectedShape = this.toolName.name;
       this.lastSelectedColor = this.color;
     }
   }
@@ -396,7 +401,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
       case ToolName.Rhombus:
         this.drawRhombus();
-
         break;
 
       default:
@@ -451,11 +455,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.referenceHeight = newHeight;
 
     //class
-
     this.shapeContainer.componentClass = toolName;
 
     //background
-    if (this.toolName === ToolName.Select) {
+    if (this.toolName.name === ToolName.Select) {
       this.shapeContainer.background = 'transparent';
     } else {
       this.shapeContainer.background = this.color;

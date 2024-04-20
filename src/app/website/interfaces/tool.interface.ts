@@ -1,6 +1,10 @@
 import { ToolName } from '../enums/tool-name.enum';
 
 export interface Tool {
-  toolName: ToolName;
-  iconUrl: string;
+  id: number;
+  name: ToolName;
+}
+
+export interface IconTool extends Tool {
+  icon: string;
 }
