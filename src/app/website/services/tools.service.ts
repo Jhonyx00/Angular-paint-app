@@ -11,7 +11,7 @@ export class ToolsService {
 
   //  selected button
   private selectedButton = new BehaviorSubject<IconTool>({
-    id: 3,
+    id: 0,
     name: ToolName.Line,
     icon: '',
   });

@@ -47,7 +47,7 @@
         *ngFor="let button of buttons"
         [ngClass]="button.class"
         [style.cursor]="button.name"
-        (mousedown)="btnMouseDown(button.id)"
+        (mousedown)="btnMouseDown(button.id, $event)"
         (mouseup)="btnMouseUp()"
         (mouseover)="onMouseHover()"
         (mouseout)="onMouseOut()"

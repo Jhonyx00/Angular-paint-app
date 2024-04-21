@@ -181,10 +181,14 @@ export class ShapeContainerComponent
     this.statusBarService.setOutsideCanvas(true);
   }
 
-  public btnMouseDown(id: number) {
+  public btnMouseDown(id: number, event: MouseEvent) {
     this.isOverButton = true;
     this.isOnResizeButton = true;
     this.resizeButtonId = id;
+
+    // console.log(event.clientX, event.clientY);
+
+    this.setDeltaXY(event.clientX, event.clientY);
   }
 
   public btnMouseUp() {

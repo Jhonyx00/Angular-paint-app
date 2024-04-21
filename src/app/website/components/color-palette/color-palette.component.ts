@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, Renderer2 } from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
+import { CanvasStateService } from '../../services/canvas-state.service';
 
 @Component({
   selector: 'color-palette-component',

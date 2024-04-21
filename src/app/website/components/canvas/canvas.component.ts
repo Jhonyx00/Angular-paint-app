@@ -181,7 +181,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       const name = currentTool.name;
       this.toolName = { id: id, name: name };
       this.auxToolName = { id: id, name: name };
-      this.canvasStateService.setResetValue(false);
     });
   }
 
@@ -261,7 +260,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
-    this.canvasStateService.setResetValue(true);
   }
 
   public mouseMove(mouseMovePosition: Point | MouseEvent): void {
