@@ -142,8 +142,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.renderer.setStyle(canvasContainer, 'height', canvasHeight + 'px');
 
     this.canvasDimension = {
-      width: canvasWidth,
-      height: canvasHeight,
+      width: Math.round(canvasWidth),
+      height: Math.round(canvasHeight),
     };
 
     this.statusBarService.setCanvasDimensions(this.canvasDimension);

@@ -308,8 +308,8 @@ export class ShapeContainerComponent
 
   private setDeltaXY(offsetX: number, offsetY: number): void {
     this.XY = {
-      x: Math.abs(this.shapeContainer.left - offsetX),
-      y: Math.abs(this.shapeContainer.top - offsetY),
+      x: offsetX - this.shapeContainer.left,
+      y: offsetY - this.shapeContainer.top,
     };
   }
 
