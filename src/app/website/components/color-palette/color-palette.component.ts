@@ -25,6 +25,8 @@ export class ColorPaletteComponent implements AfterViewInit {
       this.toolsService.changeColor(this.input.value);
       this.colors.unshift(this.input.value);
       this.colors.pop();
+      // this.colors.push(this.input.value);
+      // this.colors.shift();
     }
   }
 

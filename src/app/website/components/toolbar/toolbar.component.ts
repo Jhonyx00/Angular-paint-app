@@ -75,7 +75,7 @@ export class ToolbarComponent implements OnDestroy {
       icon: '../../../../assets/svg/select.svg',
     },
     {
-      id: 2,
+      id: 10,
       name: ToolName.Select2,
       icon: '../../../../assets/svg/star.svg',
     },

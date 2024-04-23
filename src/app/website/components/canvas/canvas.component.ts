@@ -21,6 +21,7 @@ import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { IconTool, Tool } from '../../interfaces/tool.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
+import { max } from 'rxjs';
 
 @Component({
   selector: 'canvas-component',
@@ -44,6 +45,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ShapeContainerComponent>;
   private isDrawing: boolean = false;
+
+  private freeSelectPoints: Point[] = [];
 
   //private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
@@ -254,10 +257,20 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.deleteComponent();
       this.createComponent();
       this.setShapeDrawnValues(false);
+    } else if (this.toolName.id == 10) {
+      this.paintSelectedArea();
+      this.deleteComponent();
+      this.createComponent();
+      this.removeShapeContainerImg();
+
+      this.setShapeDrawnValues(false);
     }
 
     this.resetShapeCotainerProps();
 
+    if (this.freeSelectPoints.length > 0) {
+      this.freeSelectPoints = [];
+    }
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
   }
@@ -276,6 +289,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
         case 4:
           this.erase(mouseMovePosition);
+          break;
+
+        case 10:
+          this.drawFreeSelect(mouseMovePosition);
           break;
 
         default:
@@ -300,6 +317,11 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       if (this.toolName.id == 1 || this.toolName.id == 2) {
         this.setShapeDrawnValues(true);
       }
+    }
+
+    if (this.toolName.id === 10) {
+      this.setFreeSelectDimensions();
+      this.setShapeDrawnValues(true);
     }
   }
 
@@ -344,10 +366,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.resizedImage.src) {
-      this.ctx.fillStyle = 'white'; //only if selection style is not transparent
-      this.ctx.fillRect(left, top, width, height);
-      this.ctx.drawImage(this.resizedImage, left, top, width, height);
-      this.ctx.fillStyle = this.color;
+      if (this.toolName.id === 10) {
+        this.ctx.drawImage(this.resizedImage, left, top, width, height);
+      } else {
+        this.ctx.fillStyle = 'white'; //only if selection style is not transparent
+        this.ctx.fillRect(left, top, width, height);
+        this.ctx.drawImage(this.resizedImage, left, top, width, height);
+        this.ctx.fillStyle = this.color;
+      }
     }
 
     if (rotation) {
@@ -361,6 +387,71 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private removeShapeContainerImg(): void {
     this.renderer.removeAttribute(this.resizedImage, 'src');
+  }
+
+  private setFreeSelectDimensions() {
+    const lastPointX =
+      this.freeSelectPoints[this.freeSelectPoints.length - 1].x;
+    const lastPointY =
+      this.freeSelectPoints[this.freeSelectPoints.length - 1].y;
+
+    const firstPointX = this.freeSelectPoints[0].x;
+    const firstPointY = this.freeSelectPoints[0].y;
+
+    let minX = this.freeSelectPoints[0].x;
+    let maxY = this.freeSelectPoints[0].y;
+    let minY = this.freeSelectPoints[0].y;
+    let maxX = this.freeSelectPoints[0].x;
+
+    //min x
+    for (const point of this.freeSelectPoints) {
+      if (point.x < minX) {
+        minX = point.x;
+      }
+    }
+
+    //max x
+    for (const point of this.freeSelectPoints) {
+      if (point.x > maxX) {
+        maxX = point.x;
+      }
+    }
+
+    //max y
+    for (const point of this.freeSelectPoints) {
+      if (point.y > maxY) {
+        maxY = point.y;
+      }
+    }
+
+    //min y
+    for (const point of this.freeSelectPoints) {
+      if (point.y < minY) {
+        minY = point.y;
+      }
+    }
+
+    const rectangleWidth = maxX - minX;
+    const rectangleHeight = maxY - minY;
+
+    this.ctx.strokeStyle = 'blue';
+    this.ctx.lineWidth = 0.5;
+    this.ctx.beginPath();
+    this.ctx.moveTo(lastPointX, lastPointY);
+    this.ctx.lineTo(firstPointX, firstPointY);
+    this.ctx.stroke();
+
+    this.shapeContainer.left = minX;
+    this.shapeContainer.top = minY;
+    this.shapeContainer.width = rectangleWidth;
+    this.shapeContainer.height = rectangleHeight;
+    this.shapeContainer.componentClass = 'Select2';
+    this.shapeContainer.rotation = 0;
+
+    //this.ctx.strokeStyle = this.color;
+
+    this.imageDataService.setPath(this.freeSelectPoints);
+    this.imageDataService.setPoints({ minX, minY, maxX, maxY });
   }
 
   private resetShapeCotainerProps() {
@@ -511,6 +602,18 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     this.mouseDownPosition.x = x;
     this.mouseDownPosition.y = y;
+  }
+
+  private drawFreeSelect({ x, y }: Point): void {
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
+    this.ctx.lineTo(x, y);
+    this.ctx.stroke();
+
+    this.mouseDownPosition.x = x;
+    this.mouseDownPosition.y = y;
+
+    this.freeSelectPoints.push({ x, y });
   }
 
   private drawRectangle(): void {

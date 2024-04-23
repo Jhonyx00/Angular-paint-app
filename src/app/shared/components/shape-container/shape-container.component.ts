@@ -13,6 +13,7 @@ import { DynamicComponentService } from '../../services/dynamic-component.servic
 import { Point } from 'src/app/website/interfaces/point.interface';
 import { StatusBarService } from 'src/app/website/services/statusbar.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
+import { Bounding } from '../../interfaces/bounding.interface';
 
 @Component({
   selector: 'shape-container',
@@ -65,6 +66,8 @@ export class ShapeContainerComponent
     zIndex: 0,
   };
 
+  private path: Point[] = [];
+
   private XY: Point = {
     x: 0,
     y: 0,
@@ -78,6 +81,13 @@ export class ShapeContainerComponent
   private mouseMovePosition: Point = {
     x: 0,
     y: 0,
+  };
+
+  private bounding: Bounding = {
+    minX: 0,
+    minY: 0,
+    maxX: 0,
+    maxY: 0,
   };
 
   protected buttons = [
@@ -137,8 +147,23 @@ export class ShapeContainerComponent
     this.initImage();
     this.initMainCanvasContext();
     this.initAuxCanvas();
+    this.initPath();
+    this.initFreeSelectBounding();
   }
 
+  initPath() {
+    this.imageDataService.getPath().subscribe((currentPath) => {
+      this.path = currentPath;
+      console.log(this.path);
+    });
+  }
+
+  initFreeSelectBounding() {
+    this.imageDataService.getPoints().subscribe((currentPoints) => {
+      console.log(currentPoints);
+      this.bounding = currentPoints;
+    });
+  }
   initAuxCanvas() {
     this.auxCanvas = this.renderer.selectRootElement('#aux-canvas', false);
   }
@@ -243,6 +268,13 @@ export class ShapeContainerComponent
       this.selectArea(); //get the fragment of canvas
       this.setShapeContainerImage(); //set image to auxCanvas
       this.setSelectBackground(); //check if selection background is white
+    } else if (
+      (this.isOnShapeContainer || this.isOnResizeButton) &&
+      this.shapeContainer.componentClass == ToolName.Select2
+    ) {
+      this.selectArea();
+      this.setFreeSelectedArea();
+      this.setFreeSelectBackground();
     }
   }
 
@@ -274,8 +306,51 @@ export class ShapeContainerComponent
     }
   }
 
+  private setFreeSelectedArea() {
+    if (this.selectedImage != undefined) {
+      this.imageDataService.setImage(this.selectedImage);
+      const img = new Image();
+      img.src = this.auxCanvas.toDataURL();
+      img.onload = () => {
+        this.ctxAux.clearRect(
+          0,
+          0,
+          this.shapeContainer.width,
+          this.shapeContainer.height
+        );
+
+        const path = new Path2D(); //this path must be free select shape
+
+        path.moveTo(
+          this.path[0].x - this.bounding.minX,
+          this.path[0].y - this.bounding.minY
+        );
+
+        for (let i = 0; i < this.path.length; i++) {
+          path.lineTo(
+            this.path[i].x - this.bounding.minX,
+            this.path[i].y - this.bounding.minY
+          );
+        }
+
+        path.closePath();
+
+        this.ctxAux.clip(path);
+        this.ctxAux.drawImage(img, 0, 0);
+        const freeSelectedImage = this.auxCanvas.toDataURL();
+
+        this.renderer.setAttribute(this.resizedImage, 'src', freeSelectedImage);
+        this.imageDataService.setImageDataUrl(freeSelectedImage);
+      };
+    }
+  }
+
   private setSelectBackground() {
     this.shapeContainer.background = 'white';
+  }
+
+  private setFreeSelectBackground() {
+    this.shapeContainer.background = 'transparent';
   }
 
   public onShapeContainerMouseDown(event: MouseEvent) {
@@ -443,3 +518,5 @@ export class ShapeContainerComponent
     this.dynamicComponent$?.unsubscribe();
   }
 }
+
+//todo podria funcionar si dejamos las dimensiones originales del contenedor y ninca se cambian para tener siemre la misma referencia para el porcentaje de cada punto

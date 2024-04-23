@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { Point } from 'src/app/website/interfaces/point.interface';
+import { Bounding } from '../interfaces/bounding.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -25,5 +27,30 @@ export class ImageDataService {
 
   public getImageDataUrl(): Observable<string> {
     return this.imageDataUrl.asObservable();
+  }
+
+  private path = new BehaviorSubject<Point[]>([]);
+
+  public setPath(path: Point[]) {
+    this.path.next(path);
+  }
+
+  public getPath() {
+    return this.path.asObservable();
+  }
+
+  private points = new BehaviorSubject<Bounding>({
+    minX: 0,
+    minY: 0,
+    maxX: 0,
+    maxY: 0,
+  });
+
+  public setPoints(points: Bounding) {
+    this.points.next(points);
+  }
+
+  public getPoints() {
+    return this.points.asObservable();
   }
 }
