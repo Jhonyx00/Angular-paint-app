@@ -38,7 +38,7 @@ export class ShapeContainerComponent
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
 
-  private isOverButton: boolean = false;
+  // private isOverButton: boolean = false;
   private isOnShapeContainer: boolean = false;
 
   private isOnResizeButton: boolean = false;
@@ -47,6 +47,8 @@ export class ShapeContainerComponent
   private auxCanvas!: HTMLCanvasElement;
 
   private isAreaSelected = false;
+
+  private isImagePlaced = false;
   private angleDiff = 0;
   private initialAngle = 0;
 
@@ -67,6 +69,8 @@ export class ShapeContainerComponent
   };
 
   private path: Point[] = [];
+
+  private path2D = new Path2D();
 
   private XY: Point = {
     x: 0,
@@ -154,13 +158,11 @@ export class ShapeContainerComponent
   initPath() {
     this.imageDataService.getPath().subscribe((currentPath) => {
       this.path = currentPath;
-      console.log(this.path);
     });
   }
 
   initFreeSelectBounding() {
     this.imageDataService.getPoints().subscribe((currentPoints) => {
-      console.log(currentPoints);
       this.bounding = currentPoints;
     });
   }
@@ -207,17 +209,13 @@ export class ShapeContainerComponent
   }
 
   public btnMouseDown(id: number, event: MouseEvent) {
-    this.isOverButton = true;
     this.isOnResizeButton = true;
     this.resizeButtonId = id;
-
-    // console.log(event.clientX, event.clientY);
 
     this.setDeltaXY(event.clientX, event.clientY);
   }
 
   public btnMouseUp() {
-    this.isOverButton = false;
     this.isOnResizeButton = false;
     this.setShapeContainerReferenceProps();
   }
@@ -246,11 +244,7 @@ export class ShapeContainerComponent
     this.mouseDownPosition = { x: x, y: y };
     this.dynamicComponentService.setResizeButtonId(0);
 
-    if (
-      !this.isOverButton &&
-      !this.isOnResizeButton &&
-      !this.isOnShapeContainer
-    ) {
+    if (!this.isOnResizeButton && !this.isOnShapeContainer) {
       this.shapeContainer.zIndex = 2;
 
       this.imageDataService.setImage(undefined);
@@ -261,24 +255,20 @@ export class ShapeContainerComponent
         x: x,
         y: y,
       });
-    } else if (
-      (this.isOnShapeContainer || this.isOnResizeButton) &&
-      this.shapeContainer.componentClass == ToolName.Select
-    ) {
-      this.selectArea(); //get the fragment of canvas
-      this.setShapeContainerImage(); //set image to auxCanvas
-      this.setSelectBackground(); //check if selection background is white
-    } else if (
-      (this.isOnShapeContainer || this.isOnResizeButton) &&
-      this.shapeContainer.componentClass == ToolName.Select2
-    ) {
-      this.selectArea();
-      this.setFreeSelectedArea();
-      this.setFreeSelectBackground();
+    } else {
+      if (this.shapeContainer.componentClass == ToolName.Select) {
+        this.selectArea(ToolName.Select); //get the fragment of canvas
+        this.setShapeContainerImage(); //set image to auxCanvas
+        this.setSelectBackground('white');
+      } else if (this.shapeContainer.componentClass == ToolName.Select2) {
+        this.selectArea(ToolName.Select2);
+        this.setFreeSelectedArea();
+        this.setSelectBackground('transparent');
+      }
     }
   }
 
-  private selectArea(): void {
+  private selectArea(select: ToolName): void {
     if (!this.isAreaSelected) {
       const { width, height, top, left } = this.shapeContainer;
       this.selectedImage = this.ctxMainCanvas.getImageData(
@@ -287,8 +277,12 @@ export class ShapeContainerComponent
         width,
         height
       );
-      this.clearSelectedArea();
+
+      select === ToolName.Select
+        ? this.clearSelectedArea()
+        : this.clearFreeSelectedArea();
     }
+
     this.isAreaSelected = true;
   }
 
@@ -297,20 +291,32 @@ export class ShapeContainerComponent
     this.ctxMainCanvas.clearRect(left, top, width, height);
   }
 
+  private clearFreeSelectedArea() {
+    this.resizedImage.onload = () => {
+      this.ctxMainCanvas.translate(this.bounding.minX, this.bounding.minY);
+      this.ctxMainCanvas.fillStyle = 'white';
+      this.ctxMainCanvas.fill(this.path2D);
+      this.ctxMainCanvas.setTransform(1, 0, 0, 1, 0, 0);
+    };
+  }
+
   private setShapeContainerImage(): void {
-    if (this.selectedImage != undefined) {
+    if (this.selectedImage != undefined && !this.isImagePlaced) {
       this.imageDataService.setImage(this.selectedImage);
       const auxComponentUrl = this.auxCanvas.toDataURL();
       this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
       this.imageDataService.setImageDataUrl(auxComponentUrl);
     }
+    this.isImagePlaced = true;
   }
 
   private setFreeSelectedArea() {
-    if (this.selectedImage != undefined) {
+    if (this.selectedImage != undefined && !this.isImagePlaced) {
       this.imageDataService.setImage(this.selectedImage);
+
       const img = new Image();
       img.src = this.auxCanvas.toDataURL();
+
       img.onload = () => {
         this.ctxAux.clearRect(
           0,
@@ -319,42 +325,36 @@ export class ShapeContainerComponent
           this.shapeContainer.height
         );
 
-        const path = new Path2D(); //this path must be free select shape
-
-        path.moveTo(
+        this.path2D.moveTo(
           this.path[0].x - this.bounding.minX,
           this.path[0].y - this.bounding.minY
         );
 
         for (let i = 0; i < this.path.length; i++) {
-          path.lineTo(
+          this.path2D.lineTo(
             this.path[i].x - this.bounding.minX,
             this.path[i].y - this.bounding.minY
           );
         }
 
-        path.closePath();
+        this.path2D.closePath();
 
-        this.ctxAux.clip(path);
+        this.ctxAux.clip(this.path2D);
         this.ctxAux.drawImage(img, 0, 0);
         const freeSelectedImage = this.auxCanvas.toDataURL();
-
-        this.renderer.setAttribute(this.resizedImage, 'src', freeSelectedImage);
+        this.resizedImage.src = freeSelectedImage;
         this.imageDataService.setImageDataUrl(freeSelectedImage);
       };
     }
+    this.isImagePlaced = true;
   }
 
-  private setSelectBackground() {
-    this.shapeContainer.background = 'white';
-  }
-
-  private setFreeSelectBackground() {
-    this.shapeContainer.background = 'transparent';
+  private setSelectBackground(background: string) {
+    this.shapeContainer.background = background;
   }
 
   public onShapeContainerMouseDown(event: MouseEvent) {
-    this.isOverButton = true;
+    // this.isOverButton = true;
     this.isOnShapeContainer = true;
     this.isOnResizeButton = true;
 
@@ -362,20 +362,12 @@ export class ShapeContainerComponent
   }
 
   public onShapeContainerMouseUp() {
-    this.isOverButton = false;
+    // this.isOverButton = false;
     this.isOnShapeContainer = false;
     this.isOnResizeButton = false;
     this.dynamicComponentService.setResizeButtonId(0);
 
     this.setShapeContainerReferenceProps();
-  }
-
-  public onMouseHover() {
-    this.isOverButton = true;
-  }
-
-  public onMouseOut() {
-    this.isOverButton = false;
   }
 
   private moveShapeContainer(x: number, y: number): void {
