@@ -247,7 +247,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     };
 
     if (this.toolName.id === 2) {
-      this.paintSelectedArea();
+      this.paintSelectedArea(this.toolName.id);
       this.deleteComponent();
       this.createComponent();
       this.removeShapeContainerImg();
@@ -258,11 +258,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.createComponent();
       this.setShapeDrawnValues(false);
     } else if (this.toolName.id == 10) {
-      this.paintSelectedArea();
+      this.paintSelectedArea(this.toolName.id);
       this.deleteComponent();
       this.createComponent();
       this.removeShapeContainerImg();
-
       this.setShapeDrawnValues(false);
     }
 
@@ -358,7 +357,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.isRendered = value;
   }
 
-  private paintSelectedArea(): void {
+  private paintSelectedArea(selectId: number): void {
     const { width, height, top, left, rotation } = this.shapeContainer;
 
     if (rotation) {
@@ -366,9 +365,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.resizedImage.src) {
-      if (this.toolName.id === 10) {
+      if (selectId === 10) {
         this.ctx.drawImage(this.resizedImage, left, top, width, height);
-      } else {
+      } else if (selectId === 2) {
         this.ctx.fillStyle = 'white'; //only if selection style is not transparent
         this.ctx.fillRect(left, top, width, height);
         this.ctx.drawImage(this.resizedImage, left, top, width, height);
@@ -448,8 +447,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.componentClass = 'Select2';
     this.shapeContainer.rotation = 0;
 
-    //this.ctx.strokeStyle = this.color;
-
     this.imageDataService.setPath(this.freeSelectPoints);
     this.imageDataService.setPoints({ minX, minY, maxX, maxY });
   }
@@ -522,8 +519,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private checkLastSelectedArea(): void {
-    if (this.resizedImage.src) {
-      this.paintSelectedArea();
+    if (
+      this.resizedImage.src &&
+      this.shapeContainer.componentClass === ToolName.Select
+    ) {
+      this.paintSelectedArea(2);
+    } else if (
+      this.resizedImage.src &&
+      this.shapeContainer.componentClass === ToolName.Select2
+    ) {
+      this.paintSelectedArea(10);
     } else {
       this.paintShape(this.lastSelectedShape, this.lastSelectedColor);
     }

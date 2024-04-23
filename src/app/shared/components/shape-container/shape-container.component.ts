@@ -288,6 +288,7 @@ export class ShapeContainerComponent
 
   private clearSelectedArea() {
     const { width, height, top, left } = this.shapeContainer;
+
     this.ctxMainCanvas.clearRect(left, top, width, height);
   }
 
@@ -510,5 +511,3 @@ export class ShapeContainerComponent
     this.dynamicComponent$?.unsubscribe();
   }
 }
-
-//todo podria funcionar si dejamos las dimensiones originales del contenedor y ninca se cambian para tener siemre la misma referencia para el porcentaje de cada punto
