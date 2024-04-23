@@ -448,7 +448,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.rotation = 0;
 
     this.imageDataService.setPath(this.freeSelectPoints);
-    this.imageDataService.setPoints({ minX, minY, maxX, maxY });
   }
 
   private resetShapeCotainerProps() {

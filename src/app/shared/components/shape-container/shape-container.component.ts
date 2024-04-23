@@ -13,7 +13,6 @@ import { DynamicComponentService } from '../../services/dynamic-component.servic
 import { Point } from 'src/app/website/interfaces/point.interface';
 import { StatusBarService } from 'src/app/website/services/statusbar.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
-import { Bounding } from '../../interfaces/bounding.interface';
 
 @Component({
   selector: 'shape-container',
@@ -38,7 +37,6 @@ export class ShapeContainerComponent
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
 
-  // private isOverButton: boolean = false;
   private isOnShapeContainer: boolean = false;
 
   private isOnResizeButton: boolean = false;
@@ -47,9 +45,9 @@ export class ShapeContainerComponent
   private auxCanvas!: HTMLCanvasElement;
 
   private isAreaSelected = false;
-
   private isImagePlaced = false;
-  private angleDiff = 0;
+
+  private angle = 0;
   private initialAngle = 0;
 
   public shapeContainer: ShapeContainer = {
@@ -85,13 +83,6 @@ export class ShapeContainerComponent
   private mouseMovePosition: Point = {
     x: 0,
     y: 0,
-  };
-
-  private bounding: Bounding = {
-    minX: 0,
-    minY: 0,
-    maxX: 0,
-    maxY: 0,
   };
 
   protected buttons = [
@@ -152,7 +143,6 @@ export class ShapeContainerComponent
     this.initMainCanvasContext();
     this.initAuxCanvas();
     this.initPath();
-    this.initFreeSelectBounding();
   }
 
   initPath() {
@@ -161,11 +151,6 @@ export class ShapeContainerComponent
     });
   }
 
-  initFreeSelectBounding() {
-    this.imageDataService.getPoints().subscribe((currentPoints) => {
-      this.bounding = currentPoints;
-    });
-  }
   initAuxCanvas() {
     this.auxCanvas = this.renderer.selectRootElement('#aux-canvas', false);
   }
@@ -294,7 +279,10 @@ export class ShapeContainerComponent
 
   private clearFreeSelectedArea() {
     this.resizedImage.onload = () => {
-      this.ctxMainCanvas.translate(this.bounding.minX, this.bounding.minY);
+      this.ctxMainCanvas.translate(
+        this.shapeContainer.left,
+        this.shapeContainer.top
+      );
       this.ctxMainCanvas.fillStyle = 'white';
       this.ctxMainCanvas.fill(this.path2D);
       this.ctxMainCanvas.setTransform(1, 0, 0, 1, 0, 0);
@@ -327,14 +315,14 @@ export class ShapeContainerComponent
         );
 
         this.path2D.moveTo(
-          this.path[0].x - this.bounding.minX,
-          this.path[0].y - this.bounding.minY
+          this.path[0].x - this.shapeContainer.left,
+          this.path[0].y - this.shapeContainer.top
         );
 
         for (let i = 0; i < this.path.length; i++) {
           this.path2D.lineTo(
-            this.path[i].x - this.bounding.minX,
-            this.path[i].y - this.bounding.minY
+            this.path[i].x - this.shapeContainer.left,
+            this.path[i].y - this.shapeContainer.top
           );
         }
 
@@ -355,7 +343,6 @@ export class ShapeContainerComponent
   }
 
   public onShapeContainerMouseDown(event: MouseEvent) {
-    // this.isOverButton = true;
     this.isOnShapeContainer = true;
     this.isOnResizeButton = true;
 
@@ -363,7 +350,6 @@ export class ShapeContainerComponent
   }
 
   public onShapeContainerMouseUp() {
-    // this.isOverButton = false;
     this.isOnShapeContainer = false;
     this.isOnResizeButton = false;
     this.dynamicComponentService.setResizeButtonId(0);
@@ -493,10 +479,10 @@ export class ShapeContainerComponent
     const halfWidth = left + width * 0.5;
     const movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
 
-    this.angleDiff += ((movingAngle - this.initialAngle) * 180) / Math.PI;
+    this.angle += ((movingAngle - this.initialAngle) * 180) / Math.PI;
 
     this.initialAngle = movingAngle;
-    this.shapeContainer.rotation = this.angleDiff + 90;
+    this.shapeContainer.rotation = this.angle + 90;
   }
 
   private setShapeContainerReferenceProps(): void {
