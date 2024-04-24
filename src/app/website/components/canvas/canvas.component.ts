@@ -48,11 +48,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private freeSelectPoints: Point[] = [];
 
-  //private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
-
-  protected canvasWidth = 0;
-  protected canvasHeight = 0;
 
   protected canvasDimension: Dimension = {
     width: 0,
@@ -170,8 +166,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private initContext() {
     this.ctx = this.canvas.nativeElement.getContext('2d', {
       willReadFrequently: true,
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high',
     });
-    this.ctx.imageSmoothingEnabled = true;
   }
 
   private initColor(): void {
@@ -347,7 +344,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       if (this.imagesArray.length > 0) {
         this.setCurrentCanvasImage();
       } else {
-        this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+        this.ctx.clearRect(
+          0,
+          0,
+          this.canvasDimension.width,
+          this.canvasDimension.height
+        );
       }
     });
   }
@@ -378,6 +380,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       } else if (selectId === 2) {
         this.ctx.fillStyle = 'white'; //only if selection style is not transparent
         this.ctx.fillRect(left, top, width, height);
+
         this.ctx.drawImage(this.resizedImage, left, top, width, height);
         this.ctx.fillStyle = this.color;
       }
@@ -474,7 +477,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private setCurrentCanvasImage(): void {
     this.currentCanvasImage.src = this.imagesArray[this.imagesArray.length - 1];
     this.currentCanvasImage.onload = () => {
-      this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight);
+      this.ctx.clearRect(
+        0,
+        0,
+        this.canvasDimension.width,
+        this.canvasDimension.height
+      );
+
       this.ctx.drawImage(this.currentCanvasImage, 0, 0);
     };
   }

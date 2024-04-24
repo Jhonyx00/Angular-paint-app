@@ -143,21 +143,21 @@ export class ToolbarComponent implements OnDestroy {
 
   setSelectedTool(toolName: IconTool) {
     if (
-      toolName.name == 'Undo' ||
-      toolName.name == 'Redo' ||
-      toolName.name == 'Save'
+      toolName.name == ToolName.Undo ||
+      toolName.name == ToolName.Redo ||
+      toolName.name == ToolName.Save
     ) {
       this.selectedFileTool = toolName;
       switch (this.selectedFileTool.name) {
-        case 'Undo':
+        case ToolName.Undo:
           this.undo();
           break;
 
-        case 'Redo':
+        case ToolName.Redo:
           this.redo();
           break;
 
-        case 'Save':
+        case ToolName.Save:
           this.saveWork();
           break;
 
@@ -175,22 +175,20 @@ export class ToolbarComponent implements OnDestroy {
   }
 
   private undo(): void {
-    // if normal array contains images, then it is posible to undo an action
     if (this.imagesList.length > 0) {
       this.imagesListAux.push(this.imagesList.pop());
 
-      console.log('lista de undo', this.imagesList);
+      console.log('undo list', this.imagesList);
       this.canvasStateService.setImageList(this.imagesList);
     } else {
     }
   }
 
   private redo(): void {
-    // if aux array contains images, then it is porible to redo an action
     if (this.imagesListAux.length > 0) {
       this.imagesList.push(this.imagesListAux.pop());
 
-      console.log('lista de redo', this.imagesList);
+      console.log('redo list', this.imagesList);
       this.canvasStateService.setImageList(this.imagesList);
     } else {
     }

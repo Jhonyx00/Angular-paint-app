@@ -1,9 +1,11 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
   Renderer2,
+  ViewChild,
 } from '@angular/core';
 import { ShapeContainer } from '../../interfaces/shape.interface';
 import { ShapeContainerService } from '../../services/shape-container.service';
@@ -30,6 +32,7 @@ export class ShapeContainerComponent
     private statusBarService: StatusBarService
   ) {}
 
+  @ViewChild('auxCanvas') auxCanvas!: ElementRef;
   private ctxAux!: CanvasRenderingContext2D;
   private ctxMainCanvas!: CanvasRenderingContext2D;
 
@@ -42,7 +45,6 @@ export class ShapeContainerComponent
   private isOnResizeButton: boolean = false;
   private selectedImage: ImageData | undefined;
   private resizedImage = new Image();
-  private auxCanvas!: HTMLCanvasElement;
 
   private isAreaSelected = false;
   private isImagePlaced = false;
@@ -68,7 +70,7 @@ export class ShapeContainerComponent
 
   private path: Point[] = [];
 
-  private path2D = new Path2D();
+  private shapePath = new Path2D();
 
   private XY: Point = {
     x: 0,
@@ -170,8 +172,8 @@ export class ShapeContainerComponent
   private initImage() {
     this.image$ = this.imageDataService.getImage().subscribe((image) => {
       if (image != undefined) {
-        this.auxCanvas.width = image?.width;
-        this.auxCanvas.height = image?.height;
+        this.auxCanvas.nativeElement.width = image?.width;
+        this.auxCanvas.nativeElement.height = image?.height;
         this.ctxAux.putImageData(image, 0, 0);
       }
     });
@@ -284,7 +286,7 @@ export class ShapeContainerComponent
         this.shapeContainer.top
       );
       this.ctxMainCanvas.fillStyle = 'white';
-      this.ctxMainCanvas.fill(this.path2D);
+      this.ctxMainCanvas.fill(this.shapePath);
       this.ctxMainCanvas.setTransform(1, 0, 0, 1, 0, 0);
     };
   }
@@ -292,7 +294,7 @@ export class ShapeContainerComponent
   private setShapeContainerImage(): void {
     if (this.selectedImage != undefined && !this.isImagePlaced) {
       this.imageDataService.setImage(this.selectedImage);
-      const auxComponentUrl = this.auxCanvas.toDataURL();
+      const auxComponentUrl = this.auxCanvas.nativeElement.toDataURL();
       this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
       this.imageDataService.setImageDataUrl(auxComponentUrl);
       this.isImagePlaced = true;
@@ -304,7 +306,7 @@ export class ShapeContainerComponent
       this.imageDataService.setImage(this.selectedImage);
 
       const img = new Image();
-      img.src = this.auxCanvas.toDataURL();
+      img.src = this.auxCanvas.nativeElement.toDataURL();
 
       img.onload = () => {
         this.ctxAux.clearRect(
@@ -314,23 +316,24 @@ export class ShapeContainerComponent
           this.shapeContainer.height
         );
 
-        this.path2D.moveTo(
+        this.shapePath.moveTo(
           this.path[0].x - this.shapeContainer.left,
           this.path[0].y - this.shapeContainer.top
         );
 
         for (let i = 0; i < this.path.length; i++) {
-          this.path2D.lineTo(
+          this.shapePath.lineTo(
             this.path[i].x - this.shapeContainer.left,
             this.path[i].y - this.shapeContainer.top
           );
         }
 
-        this.path2D.closePath();
+        this.shapePath.closePath();
 
-        this.ctxAux.clip(this.path2D);
+        this.ctxAux.clip(this.shapePath);
+
         this.ctxAux.drawImage(img, 0, 0);
-        const freeSelectedImage = this.auxCanvas.toDataURL();
+        const freeSelectedImage = this.auxCanvas.nativeElement.toDataURL();
         this.resizedImage.src = freeSelectedImage;
         this.imageDataService.setImageDataUrl(freeSelectedImage);
       };
