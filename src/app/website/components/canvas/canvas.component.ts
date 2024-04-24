@@ -21,6 +21,7 @@ import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { IconTool, Tool } from '../../interfaces/tool.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
+import { Bounding } from '../../interfaces/bounding.interface';
 
 @Component({
   selector: 'canvas-component',
@@ -106,7 +107,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     y: 0,
   };
 
-  private bounding = {
+  private bounding: Bounding = {
     minX: 0,
     minY: 0,
     maxX: 0,
@@ -599,7 +600,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  public getMinMaxXY() {
+  public getMinMaxXY(): Bounding {
     return {
       minX: this.bounding.minX,
       minY: this.bounding.minY,
