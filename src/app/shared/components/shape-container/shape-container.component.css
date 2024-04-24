@@ -19,7 +19,7 @@
       z-index: 5;
       overflow: hidden;
 
-      #aux-canvas {
+      .aux-canvas {
         width: inherit;
         height: inherit;
         position: relative;

@@ -137,24 +137,19 @@ export class ShapeContainerComponent
 
   ngOnInit(): void {
     this.initAuxComponentDimensions();
+    this.initImage();
+    this.initPath();
   }
 
   ngAfterViewInit(): void {
     this.initAuxContext();
-    this.initImage();
     this.initMainCanvasContext();
-    this.initAuxCanvas();
-    this.initPath();
   }
 
   initPath() {
     this.imageDataService.getPath().subscribe((currentPath) => {
       this.path = currentPath;
     });
-  }
-
-  initAuxCanvas() {
-    this.auxCanvas = this.renderer.selectRootElement('#aux-canvas', false);
   }
 
   initMainCanvasContext() {
@@ -164,9 +159,10 @@ export class ShapeContainerComponent
   }
 
   private initAuxContext() {
-    this.ctxAux = this.renderer
-      .selectRootElement('#aux-canvas', false)
-      .getContext('2d');
+    this.ctxAux = this.auxCanvas.nativeElement.getContext('2d', {
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: 'high',
+    });
   }
 
   private initImage() {
