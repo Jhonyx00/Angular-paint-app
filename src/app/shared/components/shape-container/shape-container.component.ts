@@ -266,9 +266,9 @@ export class ShapeContainerComponent
       select === ToolName.Select
         ? this.clearSelectedArea()
         : this.clearFreeSelectedArea();
-    }
 
-    this.isAreaSelected = true;
+      this.isAreaSelected = true;
+    }
   }
 
   private clearSelectedArea() {
@@ -295,8 +295,8 @@ export class ShapeContainerComponent
       const auxComponentUrl = this.auxCanvas.toDataURL();
       this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
       this.imageDataService.setImageDataUrl(auxComponentUrl);
+      this.isImagePlaced = true;
     }
-    this.isImagePlaced = true;
   }
 
   private setFreeSelectedArea() {
@@ -334,8 +334,8 @@ export class ShapeContainerComponent
         this.resizedImage.src = freeSelectedImage;
         this.imageDataService.setImageDataUrl(freeSelectedImage);
       };
+      this.isImagePlaced = true;
     }
-    this.isImagePlaced = true;
   }
 
   private setSelectBackground(background: string) {

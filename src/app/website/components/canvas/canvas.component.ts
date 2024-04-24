@@ -21,7 +21,6 @@ import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';
 import { IconTool, Tool } from '../../interfaces/tool.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
-import { max } from 'rxjs';
 
 @Component({
   selector: 'canvas-component',
@@ -105,6 +104,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private mouseMovePosition: Point = {
     x: 0,
     y: 0,
+  };
+
+  private bounding = {
+    minX: 0,
+    minY: 0,
+    maxX: 0,
+    maxY: 0,
   };
 
   ////ON INIT
@@ -246,7 +252,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       y: mouseDownPosition.y,
     };
 
-    if (this.toolName.id === 2) {
+    this.bounding.minX = this.mouseDownPosition.x;
+    this.bounding.minY = this.mouseDownPosition.y;
+
+    if (this.toolName.id === 2 || this.toolName.id == 10) {
       this.paintSelectedArea(this.toolName.id);
       this.deleteComponent();
       this.createComponent();
@@ -257,19 +266,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.deleteComponent();
       this.createComponent();
       this.setShapeDrawnValues(false);
-    } else if (this.toolName.id == 10) {
-      this.paintSelectedArea(this.toolName.id);
-      this.deleteComponent();
-      this.createComponent();
-      this.removeShapeContainerImg();
-      this.setShapeDrawnValues(false);
     }
 
     this.resetShapeCotainerProps();
 
-    if (this.freeSelectPoints.length > 0) {
-      this.freeSelectPoints = [];
-    }
+    this.freeSelectPoints = [];
+
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
   }
@@ -319,8 +321,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.toolName.id === 10) {
-      this.setFreeSelectDimensions();
+      this.setFreeSelectProperties();
       this.setShapeDrawnValues(true);
+
+      this.bounding.minX = 0;
+      this.bounding.minY = 0;
+      this.bounding.maxX = 0;
+      this.bounding.maxY = 0;
     }
   }
 
@@ -388,60 +395,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.renderer.removeAttribute(this.resizedImage, 'src');
   }
 
-  private setFreeSelectDimensions() {
-    const lastPointX =
-      this.freeSelectPoints[this.freeSelectPoints.length - 1].x;
-    const lastPointY =
-      this.freeSelectPoints[this.freeSelectPoints.length - 1].y;
+  private setFreeSelectProperties() {
+    const boundingPoints = this.getMinMaxXY();
 
-    const firstPointX = this.freeSelectPoints[0].x;
-    const firstPointY = this.freeSelectPoints[0].y;
+    const rectangleWidth = boundingPoints.maxX - boundingPoints.minX;
+    const rectangleHeight = boundingPoints.maxY - boundingPoints.minY;
 
-    let minX = this.freeSelectPoints[0].x;
-    let maxY = this.freeSelectPoints[0].y;
-    let minY = this.freeSelectPoints[0].y;
-    let maxX = this.freeSelectPoints[0].x;
-
-    //min x
-    for (const point of this.freeSelectPoints) {
-      if (point.x < minX) {
-        minX = point.x;
-      }
-    }
-
-    //max x
-    for (const point of this.freeSelectPoints) {
-      if (point.x > maxX) {
-        maxX = point.x;
-      }
-    }
-
-    //max y
-    for (const point of this.freeSelectPoints) {
-      if (point.y > maxY) {
-        maxY = point.y;
-      }
-    }
-
-    //min y
-    for (const point of this.freeSelectPoints) {
-      if (point.y < minY) {
-        minY = point.y;
-      }
-    }
-
-    const rectangleWidth = maxX - minX;
-    const rectangleHeight = maxY - minY;
-
-    this.ctx.strokeStyle = 'blue';
-    this.ctx.lineWidth = 0.5;
-    this.ctx.beginPath();
-    this.ctx.moveTo(lastPointX, lastPointY);
-    this.ctx.lineTo(firstPointX, firstPointY);
-    this.ctx.stroke();
-
-    this.shapeContainer.left = minX;
-    this.shapeContainer.top = minY;
+    this.shapeContainer.left = boundingPoints.minX;
+    this.shapeContainer.top = boundingPoints.minY;
     this.shapeContainer.width = rectangleWidth;
     this.shapeContainer.height = rectangleHeight;
     this.shapeContainer.componentClass = 'Select2';
@@ -609,6 +570,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawFreeSelect({ x, y }: Point): void {
+    this.ctx.strokeStyle = 'blue'; //check more cases like this
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(x, y);
@@ -618,6 +580,32 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.mouseDownPosition.y = y;
 
     this.freeSelectPoints.push({ x, y });
+
+    this.setMinMaxXY(x, y);
+  }
+
+  public setMinMaxXY(x: number, y: number) {
+    if (x < this.bounding.minX) {
+      this.bounding.minX = x;
+    }
+    if (y < this.bounding.minY) {
+      this.bounding.minY = y;
+    }
+    if (x > this.bounding.maxX) {
+      this.bounding.maxX = x;
+    }
+    if (y > this.bounding.maxY) {
+      this.bounding.maxY = y;
+    }
+  }
+
+  public getMinMaxXY() {
+    return {
+      minX: this.bounding.minX,
+      minY: this.bounding.minY,
+      maxX: this.bounding.maxX,
+      maxY: this.bounding.maxY,
+    };
   }
 
   private drawRectangle(): void {
