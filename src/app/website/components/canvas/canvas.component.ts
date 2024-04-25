@@ -177,7 +177,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.auxColor = this.color;
       this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.color;
-      this.ctx.lineWidth = 2;
+      this.ctx.lineWidth = 1;
       this.ctx.lineCap = 'round';
     });
   }
@@ -319,6 +319,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
     if (this.toolName.id === 10) {
+      this.setCurrentCanvasImage();
+
       this.setFreeSelectProperties();
       this.setShapeDrawnValues(true);
 
@@ -326,6 +328,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.bounding.minY = 0;
       this.bounding.maxX = 0;
       this.bounding.maxY = 0;
+
+      this.ctx.globalCompositeOperation = 'source-over';
     }
   }
 
@@ -580,7 +584,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   private drawFreeSelect({ x, y }: Point): void {
-    this.ctx.strokeStyle = 'blue'; //check more cases like this
+    this.ctx.globalCompositeOperation = 'difference';
+    this.ctx.strokeStyle = 'white'; //check more cases like this
+    this.ctx.lineWidth = 1;
+
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(x, y);
