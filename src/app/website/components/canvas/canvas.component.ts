@@ -311,7 +311,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public mouseUp(): void {
     this.isDrawing = false;
-    //this.shapeContainer.zIndex = 4;
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
       if (this.toolName.id == 1 || this.toolName.id == 2) {

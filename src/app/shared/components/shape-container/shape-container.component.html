@@ -2,7 +2,7 @@
   class="main-container"
   (mousemove)="mainContainerMouseMove($event)"
   (mousedown)="mainContainerMouseDown($event)"
-  (mouseup)="onShapeContainerMouseUp()"
+  (mouseup)="onMainContainerMouseUp()"
   (mouseleave)="mouseLeave()"
   (mouseenter)="mouseEnter()"
   [ngStyle]="{
@@ -22,7 +22,6 @@
     <div
       class="aux-canvas-container"
       (mousedown)="onShapeContainerMouseDown($event)"
-      (mouseup)="onShapeContainerMouseUp()"
       [ngClass]="{
         selected: this.shapeContainer.componentClass == 'Select',
         selected2: this.shapeContainer.componentClass == 'Select2'

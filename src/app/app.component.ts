@@ -26,7 +26,6 @@ export class AppComponent {
 
   onMouseDown(event: MouseEvent) {
     this.isOnContainer = true;
-    // this.mouseEventService.setMoseUp(true);
     this.mouseEventService.setMouseDownPosition({
       x: event.offsetX,
       y: event.offsetY,
@@ -39,7 +38,6 @@ export class AppComponent {
         x: event.offsetX,
         y: event.offsetY,
       });
-      // console.log('app', event.offsetX, event.offsetY);
     }
   }
 
