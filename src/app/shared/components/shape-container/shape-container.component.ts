@@ -15,6 +15,7 @@ import { DynamicComponentService } from '../../services/dynamic-component.servic
 import { Point } from 'src/app/website/interfaces/point.interface';
 import { StatusBarService } from 'src/app/website/services/statusbar.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
+import { ZoomService } from 'src/app/website/services/zoom.service';
 
 @Component({
   selector: 'shape-container',
@@ -29,13 +30,15 @@ export class ShapeContainerComponent
     private imageDataService: ImageDataService,
     private dynamicComponentService: DynamicComponentService,
     private renderer: Renderer2,
-    private statusBarService: StatusBarService
+    private statusBarService: StatusBarService,
+    private zoomService: ZoomService
   ) {}
 
   @ViewChild('auxCanvas') auxCanvas!: ElementRef;
   private ctxAux!: CanvasRenderingContext2D;
   private ctxMainCanvas!: CanvasRenderingContext2D;
 
+  private zoomFactor = 0;
   private resizeButtonId: number = 0;
   private image$: Subscription | undefined;
   private dynamicComponent$: Subscription | undefined;
@@ -65,7 +68,6 @@ export class ShapeContainerComponent
     referenceHeight: 0,
     isRendered: false,
     rotation: 0,
-    zIndex: 0,
   };
 
   private path: Point[] = [];
@@ -139,6 +141,15 @@ export class ShapeContainerComponent
     this.initAuxComponentDimensions();
     this.initImage();
     this.initPath();
+
+    this.initZoomFactor();
+  }
+
+  initZoomFactor() {
+    this.zoomService.getZoomFactor().subscribe((currentZoomFactor) => {
+      this.zoomFactor = currentZoomFactor;
+      console.log(this.zoomFactor);
+    });
   }
 
   ngAfterViewInit(): void {
@@ -192,10 +203,12 @@ export class ShapeContainerComponent
   }
 
   public btnMouseDown(id: number, event: MouseEvent) {
+    const x = event.clientX / this.zoomFactor;
+    const y = event.clientY / this.zoomFactor;
     this.isOnResizeButton = true;
     this.resizeButtonId = id;
 
-    this.setDeltaXY(event.clientX, event.clientY);
+    this.setDeltaXY(x, y);
   }
 
   public btnMouseUp() {
@@ -204,8 +217,9 @@ export class ShapeContainerComponent
   }
 
   public mainContainerMouseMove(event: MouseEvent) {
-    const x = event.clientX;
-    const y = event.clientY;
+    const x = event.clientX / this.zoomFactor;
+    const y = event.clientY / this.zoomFactor;
+    this.mouseMovePosition = { x: x, y: y };
 
     if (this.isOnShapeContainer) {
       this.moveShapeContainer(x, y);
@@ -213,27 +227,31 @@ export class ShapeContainerComponent
       this.resizeShapeContainer(x, y);
     }
 
-    this.mouseMovePosition = { x: x, y: y };
-
     this.dynamicComponentService.setMouseMovePosition(this.mouseMovePosition);
-
     this.statusBarService.setCursorPosition(this.mouseMovePosition);
   }
 
   public mainContainerMouseDown(event: MouseEvent) {
     const x = event.clientX;
     const y = event.clientY;
+    const newX = event.clientX / this.zoomFactor;
+    const newY = event.clientY / this.zoomFactor;
 
-    this.mouseDownPosition = { x: x, y: y };
-    this.dynamicComponentService.setResizeButtonId(0);
+    this.mouseDownPosition = { x: newX, y: newY };
+
+    const { top, left, bottom, right } =
+      this.auxCanvas.nativeElement.getBoundingClientRect();
+
+    if (x < left - 32 || y < top - 32 || x > right + 32 || y > bottom + 32) {
+      this.dynamicComponentService.setResizeButtonId(0);
+    } else {
+      this.dynamicComponentService.setResizeButtonId(10);
+    }
 
     if (!this.isOnResizeButton && !this.isOnShapeContainer) {
-      this.shapeContainer.zIndex = 2;
-
+      // this.shapeContainer.zIndex = 2;
       this.imageDataService.setImage(undefined);
-
       this.isAreaSelected = false;
-
       this.dynamicComponentService.setMouseDownPosition({
         x: x,
         y: y,
@@ -342,18 +360,27 @@ export class ShapeContainerComponent
   }
 
   public onShapeContainerMouseDown(event: MouseEvent) {
+    const x = event.clientX / this.zoomFactor;
+    const y = event.clientY / this.zoomFactor;
     this.isOnShapeContainer = true;
     this.isOnResizeButton = true;
 
-    this.setDeltaXY(event.clientX, event.clientY);
+    //console.log(event.clientX, event.clientY);
+
+    this.setDeltaXY(x, y);
   }
 
   public onShapeContainerMouseUp() {
-    this.isOnShapeContainer = false;
-    this.isOnResizeButton = false;
+    //console.log(this.shapeContainer);
+
     this.dynamicComponentService.setResizeButtonId(0);
 
+    this.isOnShapeContainer = false;
+    this.isOnResizeButton = false;
+
     this.setShapeContainerReferenceProps();
+
+    // console.log('se solto');
   }
 
   private moveShapeContainer(x: number, y: number): void {

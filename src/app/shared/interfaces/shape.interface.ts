@@ -11,5 +11,4 @@ export interface ShapeContainer {
   componentClass: string;
   isRendered: boolean;
   rotation: number;
-  zIndex: number;
 }

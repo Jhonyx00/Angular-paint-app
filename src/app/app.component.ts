@@ -1,42 +1,49 @@
-import { Component, HostListener, OnInit, Renderer2 } from '@angular/core';
-import { StatusBarService } from './website/services/statusbar.service';
+import { Component } from '@angular/core';
+import { Point } from './website/interfaces/point.interface';
+import { MouseEventService } from './website/services/mouse-event.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit {
-  canvasContainer: any;
-  canvasMainContainer: any;
-  constructor(private renderer: Renderer2) {}
+export class AppComponent {
+  mouseDownPosition: Point = {
+    x: 0,
+    y: 0,
+  };
+  constructor(private mouseEventService: MouseEventService) {}
 
   title = 'PaintXD';
 
-  toolbarWidth = 0;
-  toolbar: any;
-
-  private toolbarFixedWidth = 100;
-  private defaultvalue = 1.5;
-
-  ngOnInit(): void {
-    this.initComponents();
-    this.resetDimension();
+  onWheel(event: WheelEvent, options: {}) {
+    if (event.ctrlKey) {
+      event.preventDefault();
+    }
   }
 
-  private initComponents() {
-    // this.toolbar = this.renderer.selectRootElement('.toolbar-container', true);
+  private isOnContainer = false;
+
+  onMouseDown(event: MouseEvent) {
+    this.isOnContainer = true;
+    // this.mouseEventService.setMoseUp(true);
+    this.mouseEventService.setMouseDownPosition({
+      x: event.offsetX,
+      y: event.offsetY,
+    });
   }
 
-  private resetDimension() {}
+  onMouseMove(event: MouseEvent) {
+    if (this.isOnContainer) {
+      this.mouseEventService.setMouseMovePosition({
+        x: event.offsetX,
+        y: event.offsetY,
+      });
+      // console.log('app', event.offsetX, event.offsetY);
+    }
+  }
 
-  // @HostListener('window:resize') onResize() {
-  //   // const pixelRatio = (event.target as Window).devicePixelRatio;
-
-  //   this.renderer.setStyle(
-  //     this.toolbar,
-  //     'width',
-  //     (this.toolbarFixedWidth * this.defaultvalue) / devicePixelRatio + 'px'
-  //   );
-  // }
+  onMouseUp() {
+    this.isOnContainer = false;
+  }
 }

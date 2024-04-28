@@ -6,7 +6,7 @@
   (mouseleave)="mouseLeave()"
   (mouseenter)="mouseEnter()"
   [ngStyle]="{
-    zIndex: shapeContainer.zIndex
+    zIndex: shapeContainer.isRendered ? 4 : 2
   }"
 >
   <div

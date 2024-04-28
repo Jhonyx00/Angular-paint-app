@@ -22,6 +22,7 @@ import { DynamicComponentService } from 'src/app/shared/services/dynamic-compone
 import { IconTool, Tool } from '../../interfaces/tool.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
 import { Bounding } from '../../interfaces/bounding.interface';
+import { MouseEventService } from '../../services/mouse-event.service';
 
 @Component({
   selector: 'canvas-component',
@@ -36,7 +37,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     private shapeContainerService: ShapeContainerService,
     private imageDataService: ImageDataService,
     private renderer: Renderer2,
-    private dynamicComponentService: DynamicComponentService
+    private dynamicComponentService: DynamicComponentService,
+    private mouseEventService: MouseEventService
   ) {}
 
   //Dynamic component
@@ -90,7 +92,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     referenceHeight: 0,
     isRendered: false,
     rotation: 0,
-    zIndex: 0,
   };
 
   private mouseDownPosition: Point = {
@@ -114,8 +115,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   ngOnInit(): void {
     this.initCanvasDimensions();
     this.initShapeContainer();
-    this.initDynamicComponentCursorPos();
-    this.initDynamicComponentMovingPos();
+    this.initMouseEvent();
+    this.initMouseMoveEvent();
     this.initShapeContainerButtonId();
     this.initSelectionImage();
   }
@@ -210,28 +211,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
-  private initDynamicComponentCursorPos() {
-    this.dynamicComponentService
-      .getMouseDownPosition()
-      .subscribe((currentPosition) => {
-        this.mouseDownPosition = currentPosition;
-        if (this.mouseDownPosition.x != 0 || this.mouseDownPosition.y != 0) {
-          this.mouseDown(this.mouseDownPosition);
-        }
-      });
-  }
-
-  private initDynamicComponentMovingPos() {
-    this.dynamicComponentService
-      .getMouseMovePosition()
-      .subscribe((currentMouseMove) => {
-        this.mouseMovePosition = currentMouseMove;
-        if (this.mouseMovePosition.x != 0 || this.mouseMovePosition.y != 0) {
-          this.mouseMove(this.mouseMovePosition);
-        }
-      });
-  }
-
   private initShapeContainerButtonId() {
     this.dynamicComponentService
       .getResizeButtonId()
@@ -240,15 +219,37 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
+  /////
+  initMouseEvent() {
+    this.mouseEventService
+      .getMouseDownPosition()
+      .subscribe((currentMouseDown) => {
+        if (this.shapeContainerButtonId === 0) {
+          this.mouseDown(currentMouseDown);
+        }
+      });
+  }
+
+  initMouseMoveEvent() {
+    this.mouseEventService
+      .getMouseMovePosition()
+      .subscribe((currentMouseMove) => {
+        this.mouseMovePosition = currentMouseMove;
+        this.mouseMove(this.mouseMovePosition);
+      });
+  }
+
   //MOUSE EVENTS
-  public mouseDown(mouseDownPosition: Point | MouseEvent): void {
+  public mouseDown(mouseDownPosition: Point): void {
     this.isDrawing = true;
-    this.shapeContainer.zIndex = 2;
+    // this.shapeContainer.zIndex = 2;
 
     this.mouseDownPosition = {
       x: mouseDownPosition.x,
       y: mouseDownPosition.y,
     };
+
+    //console.log('canvas component', mouseDownPosition.x, mouseDownPosition.y);
 
     this.bounding.minX = this.mouseDownPosition.x;
     this.bounding.minY = this.mouseDownPosition.y;
@@ -310,7 +311,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public mouseUp(): void {
     this.isDrawing = false;
-    this.shapeContainer.zIndex = 4;
+    //this.shapeContainer.zIndex = 4;
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
       if (this.toolName.id == 1 || this.toolName.id == 2) {
@@ -408,6 +409,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const rectangleWidth = boundingPoints.maxX - boundingPoints.minX;
     const rectangleHeight = boundingPoints.maxY - boundingPoints.minY;
+
+    console.log(boundingPoints);
 
     this.shapeContainer.left = boundingPoints.minX;
     this.shapeContainer.top = boundingPoints.minY;
@@ -578,14 +581,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
     this.ctx.lineTo(x, y);
     this.ctx.stroke();
-
     this.mouseDownPosition.x = x;
     this.mouseDownPosition.y = y;
   }
 
   private drawFreeSelect({ x, y }: Point): void {
-    this.ctx.globalCompositeOperation = 'difference';
-    this.ctx.strokeStyle = 'white'; //check more cases like this
+    //this.ctx.globalCompositeOperation = 'difference';
+    this.ctx.strokeStyle = 'blue'; //check more cases like this
     this.ctx.lineWidth = 1;
 
     this.ctx.beginPath();

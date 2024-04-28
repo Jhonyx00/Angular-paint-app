@@ -1,6 +1,9 @@
 .canvas-container {
   position: relative !important;
   overflow: hidden;
+
+  transition: transform 200ms ease;
+  transform-origin: top left;
 }
 
 canvas {

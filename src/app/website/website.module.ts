@@ -6,6 +6,7 @@ import { ColorPaletteComponent } from './components/color-palette/color-palette.
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
 import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { ToolComponent } from './components/tool/tool.component';
+import { ZoomDirective } from './directives/zoom.directive';
 
 @NgModule({
   declarations: [
@@ -14,6 +15,7 @@ import { ToolComponent } from './components/tool/tool.component';
     StatusBarComponent,
     ToolbarComponent,
     ToolComponent,
+    ZoomDirective,
   ],
   imports: [CommonModule, SharedModule],
   exports: [
