@@ -16,7 +16,6 @@ import { Point } from 'src/app/website/interfaces/point.interface';
 import { StatusBarService } from 'src/app/website/services/statusbar.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
 import { ZoomService } from 'src/app/website/services/zoom.service';
-import { Scale } from '../../interfaces/scale';
 
 @Component({
   selector: 'shape-container',
@@ -484,9 +483,23 @@ export class ShapeContainerComponent
 
   private setRotationValues(x: number, y: number) {
     const { width, height, left, top } = this.shapeContainer;
+    let newX = 0;
+    let newY = 0;
+
+    const canvasMaainContainer = this.renderer.selectRootElement(
+      '.canvas-main-container',
+      true
+    );
+
+    const scaledScrollLeft = canvasMaainContainer.scrollLeft / this.zoomFactor;
+    const scaledScrollTop = canvasMaainContainer.scrollTop / this.zoomFactor;
+
+    newX = x + scaledScrollLeft;
+    newY = y + scaledScrollTop;
+
     const halfHeight = top + height * 0.5;
     const halfWidth = left + width * 0.5;
-    const movingAngle = Math.atan2(y - halfHeight, x - halfWidth);
+    const movingAngle = Math.atan2(newY - halfHeight, newX - halfWidth);
 
     this.angle += ((movingAngle - this.initialAngle) * 180) / Math.PI;
 
