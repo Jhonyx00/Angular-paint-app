@@ -226,7 +226,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       .getMouseDownPosition()
       .subscribe((currentMouseDown) => {
         if (this.shapeContainerButtonId === 0) {
-          this.mouseDown(currentMouseDown);
+          this.onMouseDown(currentMouseDown);
         }
       });
   }
@@ -236,12 +236,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       .getMouseMovePosition()
       .subscribe((currentMouseMove) => {
         this.mouseMovePosition = currentMouseMove;
-        this.mouseMove(this.mouseMovePosition);
+        this.onMouseMove(this.mouseMovePosition);
       });
   }
 
   //MOUSE EVENTS
-  public mouseDown(mouseDownPosition: Point): void {
+  public onMouseDown(mouseDownPosition: Point): void {
     this.isDrawing = true;
 
     this.mouseDownPosition = {
@@ -275,7 +275,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
   }
 
-  public mouseMove(mouseMovePosition: Point | MouseEvent): void {
+  public onMouseMove(mouseMovePosition: Point): void {
     if (this.isDrawing) {
       switch (this.toolName.id) {
         case 1:

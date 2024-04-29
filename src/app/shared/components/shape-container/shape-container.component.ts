@@ -204,7 +204,7 @@ export class ShapeContainerComponent
     this.setShapeContainerReferenceProps();
   }
 
-  public mainContainerMouseDown(event: MouseEvent) {
+  public onMainContainerMouseDown(event: MouseEvent) {
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
     this.mouseDownPosition = { x: scaledX, y: scaledY };
@@ -230,7 +230,7 @@ export class ShapeContainerComponent
     }
   }
 
-  public mainContainerMouseMove(event: MouseEvent) {
+  public onMainContainerMouseMove(event: MouseEvent) {
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
 

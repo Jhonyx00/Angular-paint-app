@@ -1,7 +1,7 @@
 <div
   class="main-container"
-  (mousemove)="mainContainerMouseMove($event)"
-  (mousedown)="mainContainerMouseDown($event)"
+  (mousemove)="onMainContainerMouseMove($event)"
+  (mousedown)="onMainContainerMouseDown($event)"
   (mouseup)="onMainContainerMouseUp()"
   [ngStyle]="{
     zIndex: shapeContainer.isRendered ? 4 : 2
