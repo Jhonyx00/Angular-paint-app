@@ -243,14 +243,13 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   //MOUSE EVENTS
   public mouseDown(mouseDownPosition: Point): void {
     this.isDrawing = true;
-    // this.shapeContainer.zIndex = 2;
 
     this.mouseDownPosition = {
       x: mouseDownPosition.x,
       y: mouseDownPosition.y,
     };
 
-    //console.log('canvas component', mouseDownPosition.x, mouseDownPosition.y);
+    this.setToolName(this.shapeContainerButtonId);
 
     this.bounding.minX = this.mouseDownPosition.x;
     this.bounding.minY = this.mouseDownPosition.y;
@@ -301,7 +300,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
 
-    this.setToolName(this.shapeContainerButtonId);
     this.statusBarService.setCursorPosition(mouseMovePosition);
     this.statusBarService.setshapeContainerDimension({
       width: this.shapeContainer.width,
