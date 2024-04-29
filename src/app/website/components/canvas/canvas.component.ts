@@ -76,6 +76,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private shapeContainerButtonId: number = 0;
 
   private lastSelectedShape!: ToolName;
+
   private lastSelectedColor = '';
 
   //Objects
@@ -298,10 +299,9 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
         default:
           break;
       }
-    } else {
-      this.setToolName(this.shapeContainerButtonId);
     }
 
+    this.setToolName(this.shapeContainerButtonId);
     this.statusBarService.setCursorPosition(mouseMovePosition);
     this.statusBarService.setshapeContainerDimension({
       width: this.shapeContainer.width,
@@ -329,16 +329,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.bounding.maxX = 0;
       this.bounding.maxY = 0;
 
-      this.ctx.globalCompositeOperation = 'source-over';
+      //this.ctx.globalCompositeOperation = 'source-over';
     }
-  }
-
-  public mouseEnter(): void {
-    this.statusBarService.setOutsideCanvas(false);
-  }
-
-  public mouseLeave(): void {
-    this.statusBarService.setOutsideCanvas(true);
   }
 
   //CANVAS FUNCTIONS

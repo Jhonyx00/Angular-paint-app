@@ -148,7 +148,6 @@ export class ShapeContainerComponent
   initZoomFactor() {
     this.zoomService.getZoomFactor().subscribe((currentZoomFactor) => {
       this.zoomFactor = currentZoomFactor;
-      console.log(this.zoomFactor);
     });
   }
 
@@ -192,14 +191,6 @@ export class ShapeContainerComponent
       .subscribe((currentAuxComponent: ShapeContainer) => {
         this.shapeContainer = currentAuxComponent;
       });
-  }
-
-  public mouseEnter(): void {
-    this.statusBarService.setOutsideCanvas(false);
-  }
-
-  public mouseLeave(): void {
-    this.statusBarService.setOutsideCanvas(true);
   }
 
   public btnMouseDown(id: number) {

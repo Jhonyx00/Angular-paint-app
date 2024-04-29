@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Point } from './website/interfaces/point.interface';
 import { MouseEventService } from './website/services/mouse-event.service';
+import { StatusBarService } from './website/services/statusbar.service';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,10 @@ export class AppComponent {
     x: 0,
     y: 0,
   };
-  constructor(private mouseEventService: MouseEventService) {}
+  constructor(
+    private mouseEventService: MouseEventService,
+    private statusBarService: StatusBarService
+  ) {}
 
   title = 'PaintXD';
 
@@ -43,5 +47,13 @@ export class AppComponent {
 
   onMouseUp() {
     this.isOnContainer = false;
+  }
+
+  public mouseEnter(): void {
+    this.statusBarService.setOutsideCanvas(false);
+  }
+
+  public mouseLeave(): void {
+    this.statusBarService.setOutsideCanvas(true);
   }
 }
