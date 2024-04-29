@@ -202,13 +202,10 @@ export class ShapeContainerComponent
     this.statusBarService.setOutsideCanvas(true);
   }
 
-  public btnMouseDown(id: number, event: MouseEvent) {
-    const scaledX = event.clientX / this.zoomFactor;
-    const scaledY = event.clientY / this.zoomFactor;
+  public btnMouseDown(id: number) {
     this.isOnResizeButton = true;
     this.resizeButtonId = id; //identify the selected button
     this.dynamicComponentService.setResizeButtonId(10);
-    this.setDeltaXY(scaledX, scaledY);
   }
 
   public btnMouseUp() {
