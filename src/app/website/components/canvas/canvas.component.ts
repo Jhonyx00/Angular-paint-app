@@ -41,42 +41,22 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     private mouseEventService: MouseEventService
   ) {}
 
-  //Dynamic component
   @ViewChild('canvas', { static: true }) canvas!: ElementRef;
+  @ViewChild('canvasContainer', { static: true })
+  canvasContainer!: ElementRef;
   @ViewChild('shapeContainer', { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ShapeContainerComponent>;
   private isDrawing: boolean = false;
-
   private freeSelectPoints: Point[] = [];
-
   private ctx!: CanvasRenderingContext2D;
-
-  protected canvasDimension: Dimension = {
-    width: 0,
-    height: 0,
-  };
-
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private color: string = '';
   private auxColor: string = '';
-
-  private toolName: Tool = {
-    id: 0,
-    name: ToolName.Line,
-  };
-
-  private auxToolName: Tool = {
-    id: 0,
-    name: ToolName.Line,
-  };
-
   private imagesArray: string[] = [];
   private shapeContainerButtonId: number = 0;
-
   private lastSelectedShape!: ToolName;
-
   private lastSelectedColor = '';
 
   //Objects
@@ -93,6 +73,21 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     referenceHeight: 0,
     isRendered: false,
     rotation: 0,
+  };
+
+  protected canvasDimension: Dimension = {
+    width: 0,
+    height: 0,
+  };
+
+  private toolName: Tool = {
+    id: 0,
+    name: ToolName.Line,
+  };
+
+  private auxToolName: Tool = {
+    id: 0,
+    name: ToolName.Line,
   };
 
   private mouseDownPosition: Point = {
@@ -240,6 +235,21 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
+  onCanvasContainerMouseMove(event: MouseEvent) {
+    this.statusBarService.setCursorPosition({
+      x: event.offsetX,
+      y: event.offsetY,
+    });
+  }
+
+  public mouseEnter(): void {
+    this.statusBarService.setOutsideCanvas(false);
+  }
+
+  public mouseLeave(): void {
+    this.statusBarService.setOutsideCanvas(true);
+  }
+
   //MOUSE EVENTS
   public onMouseDown(mouseDownPosition: Point): void {
     this.isDrawing = true;
@@ -300,7 +310,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
 
-    this.statusBarService.setCursorPosition(mouseMovePosition);
     this.statusBarService.setshapeContainerDimension({
       width: this.shapeContainer.width,
       height: this.shapeContainer.height,
@@ -615,7 +624,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawEllipse() {
     const { width, height, top, left } = this.shapeContainer;
-    const endAngle = 2 * Math.PI;
+    const endAngle = Math.PI * 2;
 
     this.ctx.beginPath();
     this.ctx.ellipse(

@@ -13,7 +13,6 @@ import { ImageDataService } from 'src/app/shared/services/image.service';
 import { Subscription } from 'rxjs';
 import { DynamicComponentService } from '../../services/dynamic-component.service';
 import { Point } from 'src/app/website/interfaces/point.interface';
-import { StatusBarService } from 'src/app/website/services/statusbar.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
 import { ZoomService } from 'src/app/website/services/zoom.service';
 
@@ -30,7 +29,6 @@ export class ShapeContainerComponent
     private imageDataService: ImageDataService,
     private dynamicComponentService: DynamicComponentService,
     private renderer: Renderer2,
-    private statusBarService: StatusBarService,
     private zoomService: ZoomService
   ) {}
 
@@ -251,8 +249,6 @@ export class ShapeContainerComponent
     } else if (this.isOnResizeButton) {
       this.resizeShapeContainer(scaledX, scaledY);
     }
-
-    this.statusBarService.setCursorPosition({ x: scaledX, y: scaledY });
   }
 
   private selectArea(select: ToolName): void {

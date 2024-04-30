@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Point } from './website/interfaces/point.interface';
 import { MouseEventService } from './website/services/mouse-event.service';
 import { StatusBarService } from './website/services/statusbar.service';
@@ -9,16 +9,17 @@ import { StatusBarService } from './website/services/statusbar.service';
   styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-  mouseDownPosition: Point = {
-    x: 0,
-    y: 0,
-  };
   constructor(
     private mouseEventService: MouseEventService,
     private statusBarService: StatusBarService
   ) {}
 
   title = 'PaintXD';
+
+  mouseDownPosition: Point = {
+    x: 0,
+    y: 0,
+  };
 
   onWheel(event: WheelEvent, options: {}) {
     if (event.ctrlKey) {
@@ -47,13 +48,5 @@ export class AppComponent {
 
   onMouseUp() {
     this.isOnContainer = false;
-  }
-
-  public mouseEnter(): void {
-    this.statusBarService.setOutsideCanvas(false);
-  }
-
-  public mouseLeave(): void {
-    this.statusBarService.setOutsideCanvas(true);
   }
 }

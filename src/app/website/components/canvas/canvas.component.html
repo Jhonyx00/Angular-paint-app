@@ -1,4 +1,11 @@
-<div class="canvas-container" zoom>
+<div
+  zoom
+  class="canvas-container"
+  #canvasContainer
+  (mousemove)="onCanvasContainerMouseMove($event)"
+  (mouseleave)="mouseLeave()"
+  (mouseenter)="mouseEnter()"
+>
   <ng-template #shapeContainer></ng-template>
 
   <canvas

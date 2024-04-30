@@ -39,6 +39,8 @@ export class ZoomDirective implements OnInit {
       const scale = Math.abs(this.scaleRatio / 10);
       this.renderer.setStyle(this.htmlElement, 'transform', `scale(${scale})`);
 
+      console.log(scale);
+
       this.zoomService.setZommFactor(scale);
     }
   }
