@@ -291,7 +291,7 @@ export class ShapeContainerComponent
     if (this.selectedImage != undefined && !this.isImagePlaced) {
       this.imageDataService.setImage(this.selectedImage);
       const auxComponentUrl = this.auxCanvas.nativeElement.toDataURL();
-      this.renderer.setAttribute(this.resizedImage, 'src', auxComponentUrl);
+      this.resizedImage.src = auxComponentUrl;
       this.imageDataService.setImageDataUrl(auxComponentUrl);
       this.isImagePlaced = true;
     }
