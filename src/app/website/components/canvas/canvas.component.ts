@@ -235,6 +235,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
+  //MOUSE EVENTS
   onCanvasContainerMouseMove(event: MouseEvent) {
     this.statusBarService.setCursorPosition({
       x: event.offsetX,
@@ -250,7 +251,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.statusBarService.setOutsideCanvas(true);
   }
 
-  //MOUSE EVENTS
   public onMouseDown(mouseDownPosition: Point): void {
     this.isDrawing = true;
 
