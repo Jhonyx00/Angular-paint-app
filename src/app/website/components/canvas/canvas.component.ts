@@ -318,17 +318,19 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     if (this.toolName.id === 10) {
       this.setCurrentCanvasImage();
-
       this.setFreeSelectProperties();
+      this.imageDataService.setPath(this.freeSelectPoints);
       this.setShapeDrawnValues(true);
-
-      this.bounding.minX = 0;
-      this.bounding.minY = 0;
-      this.bounding.maxX = 0;
-      this.bounding.maxY = 0;
-
+      this.resetBoundingPoints();
       //this.ctx.globalCompositeOperation = 'source-over';
     }
+  }
+
+  private resetBoundingPoints() {
+    this.bounding.minX = 0;
+    this.bounding.minY = 0;
+    this.bounding.maxX = 0;
+    this.bounding.maxY = 0;
   }
 
   //CANVAS FUNCTIONS
@@ -393,18 +395,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private setFreeSelectProperties() {
     const boundingPoints = this.getMinMaxXY();
-
     const rectangleWidth = boundingPoints.maxX - boundingPoints.minX;
     const rectangleHeight = boundingPoints.maxY - boundingPoints.minY;
-
     this.shapeContainer.left = boundingPoints.minX;
     this.shapeContainer.top = boundingPoints.minY;
     this.shapeContainer.width = rectangleWidth;
     this.shapeContainer.height = rectangleHeight;
     this.shapeContainer.componentClass = 'Select2';
     this.shapeContainer.rotation = 0;
-
-    this.imageDataService.setPath(this.freeSelectPoints);
   }
 
   private resetShapeCotainerProps() {
@@ -419,6 +417,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.background = '';
     this.shapeContainer.componentClass = '';
     this.shapeContainer.isRendered = false;
+    this.shapeContainer.rotation = 0;
   }
 
   private paintShape(toolName: ToolName, color: string) {
@@ -512,9 +511,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     let rectangleHeight = y - this.mouseDownPosition.y;
     let newWidth = Math.abs(rectangleWidth);
     let newHeight = Math.abs(rectangleHeight);
-
-    //rotation
-    this.shapeContainer.rotation = 0;
 
     //dimension
     this.shapeContainer.width = newWidth;
