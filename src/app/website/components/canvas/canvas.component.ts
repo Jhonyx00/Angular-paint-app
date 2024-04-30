@@ -566,45 +566,36 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  private drawLine({ x, y }: Point): void {
+  private drawLine(mouseMovePosition: Point): void {
     this.ctx.beginPath();
     this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
-    this.ctx.lineTo(x, y);
+    this.ctx.lineTo(mouseMovePosition.x, mouseMovePosition.y);
     this.ctx.stroke();
-    this.mouseDownPosition.x = x;
-    this.mouseDownPosition.y = y;
+    this.mouseDownPosition.x = mouseMovePosition.x;
+    this.mouseDownPosition.y = mouseMovePosition.y;
+    this.freeSelectPoints.push(mouseMovePosition);
   }
 
-  private drawFreeSelect({ x, y }: Point): void {
+  private drawFreeSelect(mouseMovePosition: Point): void {
     //this.ctx.globalCompositeOperation = 'difference';
     this.ctx.strokeStyle = 'blue';
     this.ctx.lineWidth = 1;
-
-    this.ctx.beginPath();
-    this.ctx.moveTo(this.mouseDownPosition.x, this.mouseDownPosition.y);
-    this.ctx.lineTo(x, y);
-    this.ctx.stroke();
-
-    this.mouseDownPosition.x = x;
-    this.mouseDownPosition.y = y;
-
-    this.freeSelectPoints.push({ x, y });
-
-    this.setMinMaxXY(x, y);
+    this.drawLine(mouseMovePosition);
+    this.setMinMaxXY(mouseMovePosition);
   }
 
-  public setMinMaxXY(x: number, y: number) {
-    if (x < this.bounding.minX) {
-      this.bounding.minX = x;
+  public setMinMaxXY(mouseMovePosition: Point) {
+    if (mouseMovePosition.x < this.bounding.minX) {
+      this.bounding.minX = mouseMovePosition.x;
     }
-    if (y < this.bounding.minY) {
-      this.bounding.minY = y;
+    if (mouseMovePosition.y < this.bounding.minY) {
+      this.bounding.minY = mouseMovePosition.y;
     }
-    if (x > this.bounding.maxX) {
-      this.bounding.maxX = x;
+    if (mouseMovePosition.x > this.bounding.maxX) {
+      this.bounding.maxX = mouseMovePosition.x;
     }
-    if (y > this.bounding.maxY) {
-      this.bounding.maxY = y;
+    if (mouseMovePosition.y > this.bounding.maxY) {
+      this.bounding.maxY = mouseMovePosition.y;
     }
   }
 
