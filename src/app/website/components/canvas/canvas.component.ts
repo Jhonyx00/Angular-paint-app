@@ -374,9 +374,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       } else if (selectId === 2) {
         this.ctx.fillStyle = 'white'; //only if selection style is not transparent
         this.ctx.fillRect(left, top, width, height);
-
         this.ctx.drawImage(this.resizedImage, left, top, width, height);
-        this.ctx.fillStyle = this.color;
       }
     }
 
@@ -398,8 +396,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
     const rectangleWidth = boundingPoints.maxX - boundingPoints.minX;
     const rectangleHeight = boundingPoints.maxY - boundingPoints.minY;
-
-    console.log(boundingPoints);
 
     this.shapeContainer.left = boundingPoints.minX;
     this.shapeContainer.top = boundingPoints.minY;
@@ -576,7 +572,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private drawFreeSelect({ x, y }: Point): void {
     //this.ctx.globalCompositeOperation = 'difference';
-    this.ctx.strokeStyle = 'blue'; //check more cases like this
+    this.ctx.strokeStyle = 'blue';
     this.ctx.lineWidth = 1;
 
     this.ctx.beginPath();

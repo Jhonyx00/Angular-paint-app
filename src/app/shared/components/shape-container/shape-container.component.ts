@@ -45,6 +45,7 @@ export class ShapeContainerComponent
 
   private isOnShapeContainer: boolean = false;
 
+  private canvasMainContainer!: HTMLElement;
   private isOnResizeButton: boolean = false;
   private selectedImage: ImageData | undefined;
   private resizedImage = new Image();
@@ -84,7 +85,7 @@ export class ShapeContainerComponent
     y: 0,
   };
 
-  private mouseMovePosition: Point = {
+  private rotationMouseMove: Point = {
     x: 0,
     y: 0,
   };
@@ -141,10 +142,16 @@ export class ShapeContainerComponent
     this.initAuxComponentDimensions();
     this.initImage();
     this.initPath();
-
+    this.initMainCanvasContainer();
     this.initZoomFactor();
   }
 
+  initMainCanvasContainer() {
+    this.canvasMainContainer = this.renderer.selectRootElement(
+      '.canvas-main-container',
+      true
+    );
+  }
   initZoomFactor() {
     this.zoomService.getZoomFactor().subscribe((currentZoomFactor) => {
       this.zoomFactor = currentZoomFactor;
@@ -234,7 +241,10 @@ export class ShapeContainerComponent
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
 
-    this.mouseMovePosition = { x: scaledX, y: scaledY };
+    const { left, top } = this.canvasMainContainer.getBoundingClientRect();
+
+    this.rotationMouseMove.x = (event.clientX - left) / this.zoomFactor;
+    this.rotationMouseMove.y = (event.clientY - top) / this.zoomFactor;
 
     if (this.isOnShapeContainer) {
       this.moveShapeContainer(scaledX, scaledY);
@@ -242,7 +252,7 @@ export class ShapeContainerComponent
       this.resizeShapeContainer(scaledX, scaledY);
     }
 
-    this.statusBarService.setCursorPosition(this.mouseMovePosition);
+    this.statusBarService.setCursorPosition({ x: scaledX, y: scaledY });
   }
 
   private selectArea(select: ToolName): void {
@@ -461,7 +471,7 @@ export class ShapeContainerComponent
         break;
 
       case 9:
-        this.setRotationValues(x, y);
+        this.setRotationValues(this.rotationMouseMove);
 
         break;
       default:
@@ -469,21 +479,18 @@ export class ShapeContainerComponent
     }
   }
 
-  private setRotationValues(x: number, y: number) {
+  private setRotationValues(rotationMouseMove: Point) {
     const { width, height, left, top } = this.shapeContainer;
     let newX = 0;
     let newY = 0;
 
-    const canvasMaainContainer = this.renderer.selectRootElement(
-      '.canvas-main-container',
-      true
-    );
+    const scaledScrollLeft =
+      this.canvasMainContainer.scrollLeft / this.zoomFactor;
+    const scaledScrollTop =
+      this.canvasMainContainer.scrollTop / this.zoomFactor;
 
-    const scaledScrollLeft = canvasMaainContainer.scrollLeft / this.zoomFactor;
-    const scaledScrollTop = canvasMaainContainer.scrollTop / this.zoomFactor;
-
-    newX = x + scaledScrollLeft;
-    newY = y + scaledScrollTop;
+    newX = rotationMouseMove.x + scaledScrollLeft;
+    newY = rotationMouseMove.y + scaledScrollTop;
 
     const halfHeight = top + height * 0.5;
     const halfWidth = left + width * 0.5;

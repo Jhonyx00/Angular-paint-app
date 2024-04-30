@@ -8,7 +8,6 @@
 
 .canvas-main-container {
   width: 100%;
-
   overflow: auto;
   scrollbar-width: thin;
   background-color: rgb(174, 174, 174);

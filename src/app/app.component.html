@@ -2,14 +2,16 @@
   class="toolbar-canvas-container"
   (wheel)="onWheel($event, { passive: false })"
 >
+  <toolbar-component></toolbar-component>
+
   <div class="canvas-statusbar-container">
     <div
       class="canvas-main-container"
       (mousedown)="onMouseDown($event)"
       (mousemove)="onMouseMove($event)"
-      (mouseup)="onMouseUp()"
       (mouseleave)="mouseLeave()"
       (mouseenter)="mouseEnter()"
+      (mouseup)="onMouseUp()"
     >
       <canvas-component></canvas-component>
     </div>
@@ -18,5 +20,4 @@
       <statusbar-component></statusbar-component>
     </div>
   </div>
-  <toolbar-component></toolbar-component>
 </div>
