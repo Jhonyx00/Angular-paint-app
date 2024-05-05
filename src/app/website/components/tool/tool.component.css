@@ -1,8 +1,8 @@
 button {
   background-color: transparent;
   border: none;
-  width: 1.8em;
-  height: 1.8em;
+  width: 2em;
+  height: 2em;
   border-radius: 0.4em;
   padding: 0.2em;
 }
@@ -23,6 +23,14 @@ button:hover:not(.selected-tool) {
   grid-row-gap: 5px;
   grid-column-gap: 5px;
   padding: 5px;
+  position: absolute;
+  z-index: 5;
+
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(1em);
+
+  width: 120px;
+  border: 2px solid gray;
 }
 
 .tool-item-container span.tool-group {
@@ -33,15 +41,16 @@ button:hover:not(.selected-tool) {
 }
 
 .tool {
-  display: grid;
-  place-items: center;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 }
 
-.Actions,
+/* .Actions,
 .Select,
 .Pencils,
 .Erasers {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(1, 1fr);
   grid-row-gap: 2px;
   grid-column-gap: 2px;
   padding: 2px;
@@ -56,13 +65,13 @@ button:hover:not(.selected-tool) {
 }
 
 .File {
-  grid-template-columns: repeat(3, 1fr);
-}
+  grid-template-columns: repeat(1, 1fr);
+} */
 
 .selected-tool {
   outline: 2px solid #5286ff;
 }
 
-* {
+/* * {
   border: 1px solid blue;
-}
+} */

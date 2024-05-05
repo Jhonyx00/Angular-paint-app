@@ -1,9 +1,9 @@
 <div class="tool-item-container">
   <span class="tool-group">{{ toolGroupName }}</span>
-  <div class="tool" [ngClass]="toolGroupName">
+  <div class="tool">
     <button
       *ngFor="let item of toolItems"
-      (click)="sendToolName(item)"
+      (click)="setSelectedTool(item)"
       [ngClass]="{ 'selected-tool': item === selectedTool }"
     >
       <img class="icon" src="{{ item.icon }}" alt="" />

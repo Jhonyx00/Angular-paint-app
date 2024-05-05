@@ -1,8 +1,18 @@
-import { Component, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { ToolsService } from '../../services/tools.service';
 import { CanvasStateService } from 'src/app/website/services/canvas-state.service';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
 import { IconTool } from '../../interfaces/tool.interface';
+import { ShapeContainerComponent } from 'src/app/shared/components/shape-container/shape-container.component';
+import { ToolMenuComponent } from 'src/app/shared/components/tool-menu/tool-menu.component';
+import { ToolComponent } from '../tool/tool.component';
 
 @Component({
   selector: 'toolbar-component',
@@ -10,23 +20,13 @@ import { IconTool } from '../../interfaces/tool.interface';
   styleUrls: ['./toolbar.component.css'],
 })
 export class ToolbarComponent implements OnDestroy {
-  constructor(
-    private toolsService: ToolsService,
-    private canvasStateService: CanvasStateService
-  ) {}
-
-  public selectedTool!: IconTool;
-  public selectedFileTool!: IconTool;
-
+  constructor() {}
   public shapes = 'Shapes';
   public selection = 'Select';
   public pencils = 'Pencils';
   public erasers = 'Erasers';
   public files = 'File';
   public actions = 'Actions';
-
-  private imagesList = new Array();
-  private imagesListAux = new Array();
 
   ////Tool arrays
   public shapeItems: IconTool[] = [
@@ -127,81 +127,64 @@ export class ToolbarComponent implements OnDestroy {
   ];
   //
 
-  ngOnInit(): void {
-    this.initCanvasImageList();
+  public buttons = [
+    {
+      id: 1,
+      title: this.files,
+      icon: '',
+      toolItems: this.fileItems,
+    },
+    {
+      id: 2,
+      title: this.actions,
+      icon: '',
+      toolItems: this.actionItems,
+    },
+    {
+      id: 3,
+      title: this.shapes,
+      icon: '../../../../assets/svg/star.svg',
+      toolItems: this.shapeItems,
+    },
+    {
+      id: 4,
+      title: this.pencils,
+      icon: '../../../../assets/svg/pencil.svg',
+      toolItems: this.pencilItems,
+    },
+    {
+      id: 5,
+      title: this.selection,
+      icon: '../../../../assets/svg/select.svg',
+      toolItems: this.selectionItems,
+    },
+    {
+      id: 6,
+      title: this.erasers,
+      icon: '../../../../assets/svg/eraser.svg',
+      toolItems: this.eraserItems,
+    },
+  ];
+
+  @ViewChild('toolMenu', { read: ViewContainerRef })
+  private dynamicHost!: ViewContainerRef;
+  private componentRef!: ComponentRef<ToolComponent>;
+
+  openToolMenu(toolGroupName: string, toolItems: IconTool[]) {
+    this.deleteComponent();
+    this.createComponent(toolGroupName, toolItems);
+  }
+  //DINAMIC COMPONENT FUNCTIONS
+  private createComponent(toolGroupName: string, toolItems: IconTool[]): void {
+    this.componentRef = this.dynamicHost.createComponent(ToolComponent);
+    this.componentRef.instance.toolGroupName = toolGroupName;
+    this.componentRef.instance.toolItems = toolItems;
   }
 
-  public onClick() {
-    this.canvasStateService.setResetValue(false);
-  }
-
-  private initCanvasImageList(): void {
-    this.canvasStateService.getImageList().subscribe((currentList) => {
-      this.imagesList = currentList;
-    });
-  }
-
-  setSelectedTool(toolName: IconTool) {
-    if (
-      toolName.name == ToolName.Undo ||
-      toolName.name == ToolName.Redo ||
-      toolName.name == ToolName.Save
-    ) {
-      this.selectedFileTool = toolName;
-      switch (this.selectedFileTool.name) {
-        case ToolName.Undo:
-          this.undo();
-          break;
-
-        case ToolName.Redo:
-          this.redo();
-          break;
-
-        case ToolName.Save:
-          this.saveWork();
-          break;
-
-        default:
-          break;
-      }
-    } else {
-      this.selectedTool = toolName;
-      this.initSelectedTool();
+  private deleteComponent(): void {
+    if (this.componentRef) {
+      this.componentRef.destroy();
     }
-  }
-
-  initSelectedTool() {
-    this.toolsService.setSelectedButton(this.selectedTool);
-  }
-
-  private undo(): void {
-    if (this.imagesList.length > 0) {
-      this.imagesListAux.push(this.imagesList.pop());
-
-      console.log('undo list', this.imagesList);
-      this.canvasStateService.setImageList(this.imagesList);
-    } else {
-    }
-  }
-
-  private redo(): void {
-    if (this.imagesListAux.length > 0) {
-      this.imagesList.push(this.imagesListAux.pop());
-
-      console.log('redo list', this.imagesList);
-      this.canvasStateService.setImageList(this.imagesList);
-    } else {
-    }
-  }
-
-  private saveWork(): void {
-    const base64ImageData = this.imagesList[this.imagesList.length - 1];
-    let imageName = prompt('Enter image name');
-    const downloadLink = document.createElement('a');
-    downloadLink.href = base64ImageData;
-    downloadLink.download = imageName || 'image1';
-    downloadLink.click();
-    window.URL.revokeObjectURL(downloadLink.href);
   }
 
   ngOnDestroy(): void {

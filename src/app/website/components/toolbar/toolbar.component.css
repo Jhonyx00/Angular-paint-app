@@ -1,12 +1,22 @@
 .toolbar-container {
+  --size-unit: 40px;
   overflow: auto;
   scrollbar-width: none;
-  width: 100px;
+  width: var(--size-unit);
   height: 100%;
   display: flex;
   flex-direction: column;
 
-  background-color: rgb(237, 237, 237);
+  background-color: rgb(232, 232, 232);
+
+  button.btn {
+    width: var(--size-unit);
+    height: var(--size-unit);
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: inherit;
+  }
 }
 
 /* .toolbar-container:hover {

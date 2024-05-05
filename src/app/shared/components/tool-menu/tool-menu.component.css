@@ -1,0 +1,8 @@
+.tool-menu {
+  width: 100px;
+  height: 100px;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+
+  border: 2px solid gray;
+}

@@ -1,39 +1,16 @@
-<div class="toolbar-container" (click)="onClick()">
-  <tool-component
-    [toolItems]="fileItems"
-    [toolGroupName]="files"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="actionItems"
-    [toolGroupName]="actions"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="shapeItems"
-    [toolGroupName]="shapes"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="pencilItems"
-    [toolGroupName]="pencils"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="selectionItems"
-    [toolGroupName]="selection"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
-  <tool-component
-    [toolItems]="eraserItems"
-    [toolGroupName]="erasers"
-    [selectedTool]="selectedTool"
-    (onPropertiesSent)="setSelectedTool($event)"
-  ></tool-component>
+<div class="toolbar-container">
+  <ng-template #toolMenu></ng-template>
+
+  <!-- <div class="btn-option-container"> -->
+  <button
+    (click)="openToolMenu(button.title, button.toolItems)"
+    *ngFor="let button of buttons"
+    class="btn"
+    [ngClass]="'btn-' + button.title"
+  >
+    <img class="icon" src="{{ button.icon }}" alt="" />
+  </button>
+  <!-- </div> -->
+
   <color-palette-component></color-palette-component>
 </div>
