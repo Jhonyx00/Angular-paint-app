@@ -53,11 +53,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private color: string = '';
-  private auxColor: string = '';
   private imagesArray: string[] = [];
   private shapeContainerButtonId: number = 0;
-  private lastSelectedShape!: ToolName;
-  private lastSelectedColor = '';
 
   //Objects
   private shapeContainer: ShapeContainer = {
@@ -136,6 +133,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       true
     );
 
+    //SET width and height of CANVAS WHEN AN IMAGE IS OPENED
     const canvasWidth: number =
       canvasMainContainer.getBoundingClientRect().width;
     const canvasHeight: number =
@@ -171,7 +169,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private initColor(): void {
     this.toolsService.getSelectedColor().subscribe((currentColor) => {
       this.color = currentColor;
-      this.auxColor = this.color;
+
       this.ctx.strokeStyle = this.color;
       this.ctx.fillStyle = this.color;
       this.ctx.lineWidth = 1;
@@ -271,7 +269,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.removeShapeContainerImg();
       this.setShapeDrawnValues(false);
     } else if (this.toolName.id === 1) {
-      this.paintShape(this.toolName.name, this.color);
+      this.paintShape();
       this.deleteComponent();
       this.createComponent();
       this.setShapeDrawnValues(false);
@@ -362,9 +360,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private setToolName(buttonId: number) {
     if (buttonId === 0) {
       this.toolName = this.auxToolName; //toolName now is last tool selected
-      this.color = this.auxColor;
-      this.lastSelectedShape = this.toolName.name;
-      this.lastSelectedColor = this.color;
     }
   }
 
@@ -429,14 +424,14 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.shapeContainer.rotation = 0;
   }
 
-  private paintShape(toolName: ToolName, color: string) {
-    this.ctx.fillStyle = color;
+  private paintShape() {
+    this.ctx.fillStyle = this.shapeContainer.background;
 
     if (this.shapeContainer.rotation) {
       this.rotateShapeContainer();
     }
 
-    switch (toolName) {
+    switch (this.shapeContainer.componentClass) {
       case ToolName.Rectangle:
         this.drawRectangle();
         break;
@@ -500,7 +495,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ) {
       this.paintSelectedArea(10);
     } else {
-      this.paintShape(this.lastSelectedShape, this.lastSelectedColor);
+      this.paintShape();
     }
     this.dynamicHost.clear();
     this.setShapeDrawnValues(false);
@@ -639,6 +634,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     this.ctx.beginPath();
+    this.ctx.moveTo(polygonCoords[0].x, polygonCoords[0].y);
+
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
@@ -662,6 +659,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     this.ctx.beginPath();
+    this.ctx.moveTo(polygonCoords[0].x, polygonCoords[0].y);
+
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
@@ -680,6 +679,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     this.ctx.beginPath();
+    this.ctx.moveTo(polygonCoords[0].x, polygonCoords[0].y);
+
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
@@ -703,6 +704,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     this.ctx.beginPath();
+    this.ctx.moveTo(polygonCoords[0].x, polygonCoords[0].y);
+
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }
@@ -720,6 +723,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     ];
 
     this.ctx.beginPath();
+    this.ctx.moveTo(polygonCoords[0].x, polygonCoords[0].y);
+
     for (let i = 0; i < polygonCoords.length; i++) {
       this.ctx.lineTo(polygonCoords[i].x, polygonCoords[i].y);
     }

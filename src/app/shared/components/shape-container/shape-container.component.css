@@ -10,11 +10,14 @@
   .canvas-button-container {
     position: inherit;
     z-index: inherit;
+    cursor: move;
     .aux-canvas-container {
       width: inherit;
       height: inherit;
       position: relative;
+
       z-index: 4;
+
       .aux-canvas {
         width: inherit;
         height: inherit;
@@ -22,9 +25,6 @@
         inset: 0;
         z-index: inherit;
       }
-    }
-    .aux-canvas-container:hover {
-      cursor: move;
     }
   }
 }
@@ -38,17 +38,13 @@
   animation: frame 100ms ease-in 1;
 }
 
-.selected2 {
-  outline: 2px dashed blue;
-  animation: frame 100ms ease-in 1;
-}
 .aux-canvas-container:active ~ .btn-container {
   display: none;
 }
-
+/* 
 .aux-canvas-container:active {
   outline: none;
-}
+} */
 
 /* btn container */
 .btn-container {
@@ -73,31 +69,40 @@
   .btn7::after,
   .btn8::after {
     content: "";
-    width: 0.3em;
-    height: 0.3em;
-    border: 2px solid gray;
-    background-color: white;
+    width: 20%;
+    height: 20%;
+    /* border: 5% solid gray; */
+    background-color: gray;
     position: absolute;
   }
 
-  .btn9::after {
-    content: "";
-    width: 1em;
-    height: 1em;
-    border: 2px solid gray;
-    position: absolute;
-    border-radius: 50%;
-    background-color: white;
+  .btn9 {
+    top: var(--position-unit);
+    left: 50%;
+    transform: translate(-50%, -200%);
+    cursor: grab;
   }
 
-  .btn8::before {
+  .btn9::before {
     content: "";
     width: 0.2em;
     height: 100%;
     position: absolute;
-    top: 0;
-    transform: translateX(-50%);
+    bottom: 0;
+
+    transform: translate(-50%, 100%);
     background-color: gray;
+  }
+
+  .btn9::after {
+    content: "";
+    width: 80%;
+    height: 80%;
+    position: absolute;
+    border-radius: 50%;
+    background-color: gray;
+    bottom: 0;
+    transform: translateX(-50%);
   }
 
   .btn1 {
@@ -177,15 +182,6 @@
     transform: translate(-50%, -100%);
   }
   .btn8::after {
-    bottom: 0;
-    transform: translateX(-50%);
-  }
-  .btn9 {
-    top: -2em;
-    left: 50%;
-    transform: translate(-50%, -100%);
-  }
-  .btn9::after {
     bottom: 0;
     transform: translateX(-50%);
   }

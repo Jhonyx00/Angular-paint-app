@@ -62,3 +62,7 @@ button:hover:not(.selected-tool) {
 .selected-tool {
   outline: 2px solid #5286ff;
 }
+
+* {
+  border: 1px solid blue;
+}

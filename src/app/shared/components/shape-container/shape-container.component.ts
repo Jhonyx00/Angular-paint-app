@@ -42,7 +42,7 @@ export class ShapeContainerComponent
   private dynamicComponent$: Subscription | undefined;
 
   private isOnShapeContainer: boolean = false;
-
+  private isOnRotateButton: boolean = false;
   private canvasMainContainer!: HTMLElement;
   private isOnResizeButton: boolean = false;
   private selectedImage: ImageData | undefined;
@@ -79,11 +79,6 @@ export class ShapeContainerComponent
   };
 
   private mouseDownPosition: Point = {
-    x: 0,
-    y: 0,
-  };
-
-  private rotationMouseMove: Point = {
     x: 0,
     y: 0,
   };
@@ -128,11 +123,6 @@ export class ShapeContainerComponent
       id: 8,
       class: 'btn8',
       name: 'n-resize',
-    },
-    {
-      id: 9,
-      class: 'btn9',
-      name: 'grab',
     },
   ];
 
@@ -209,11 +199,20 @@ export class ShapeContainerComponent
     this.setShapeContainerReferenceProps();
   }
 
+  public btnRotateMouseDown() {
+    this.isOnRotateButton = true;
+    this.dynamicComponentService.setResizeButtonId(10);
+  }
+
+  public btnRotateMouseUp() {
+    this.isOnRotateButton = false;
+    this.setShapeContainerReferenceProps();
+  }
+
   public onMainContainerMouseDown(event: MouseEvent) {
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
     this.mouseDownPosition = { x: scaledX, y: scaledY };
-
     this.checkShapeContainerArea();
   }
 
@@ -236,18 +235,18 @@ export class ShapeContainerComponent
   }
 
   public onMainContainerMouseMove(event: MouseEvent) {
+    const { left, top } = this.canvasMainContainer.getBoundingClientRect();
+    const rotationScaledX = (event.clientX - left) / this.zoomFactor;
+    const rotationScaledY = (event.clientY - top) / this.zoomFactor;
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
 
-    const { left, top } = this.canvasMainContainer.getBoundingClientRect();
-
-    this.rotationMouseMove.x = (event.clientX - left) / this.zoomFactor;
-    this.rotationMouseMove.y = (event.clientY - top) / this.zoomFactor;
-
-    if (this.isOnShapeContainer) {
-      this.moveShapeContainer(scaledX, scaledY);
+    if (this.isOnRotateButton) {
+      this.setRotationValues(rotationScaledX, rotationScaledY);
     } else if (this.isOnResizeButton) {
       this.resizeShapeContainer(scaledX, scaledY);
+    } else if (this.isOnShapeContainer) {
+      this.moveShapeContainer(scaledX, scaledY);
     }
   }
 
@@ -343,10 +342,9 @@ export class ShapeContainerComponent
 
   public onMainContainerMouseUp() {
     this.dynamicComponentService.setResizeButtonId(0);
-
     this.isOnShapeContainer = false;
     this.isOnResizeButton = false;
-
+    this.isOnRotateButton = false;
     this.setShapeContainerReferenceProps();
   }
 
@@ -354,8 +352,6 @@ export class ShapeContainerComponent
     const scaledX = event.clientX / this.zoomFactor;
     const scaledY = event.clientY / this.zoomFactor;
     this.isOnShapeContainer = true;
-    this.isOnResizeButton = true;
-
     this.setDeltaXY(scaledX, scaledY);
   }
 
@@ -387,6 +383,7 @@ export class ShapeContainerComponent
     const newInverseWidth = referenceWidth + dX;
     const newInverseHeight = referenceHeight + dY;
     //set new values to shapeContainer if the new values are greather than zero
+
     switch (this.resizeButtonId) {
       case 1:
         if (newWidth > 0 && newHeight > 0) {
@@ -466,16 +463,12 @@ export class ShapeContainerComponent
         }
         break;
 
-      case 9:
-        this.setRotationValues(this.rotationMouseMove);
-
-        break;
       default:
         break;
     }
   }
 
-  private setRotationValues(rotationMouseMove: Point) {
+  private setRotationValues(x: number, y: number) {
     const { width, height, left, top } = this.shapeContainer;
     let newX = 0;
     let newY = 0;
@@ -485,8 +478,8 @@ export class ShapeContainerComponent
     const scaledScrollTop =
       this.canvasMainContainer.scrollTop / this.zoomFactor;
 
-    newX = rotationMouseMove.x + scaledScrollLeft;
-    newY = rotationMouseMove.y + scaledScrollTop;
+    newX = x + scaledScrollLeft;
+    newY = y + scaledScrollTop;
 
     const halfHeight = top + height * 0.5;
     const halfWidth = left + width * 0.5;

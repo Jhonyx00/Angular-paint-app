@@ -9,6 +9,9 @@
 >
   <div
     class="canvas-button-container"
+    [ngClass]="{
+      selected: this.shapeContainer.componentClass == 'Select'
+    }"
     [ngStyle]="{
         top: shapeContainer.top + 'px',
         left: shapeContainer.left + 'px',
@@ -16,15 +19,9 @@
         height: shapeContainer.height + 'px',
         transform: 'rotate(' + shapeContainer.rotation + 'deg)',
       }"
+    (mousedown)="onShapeContainerMouseDown($event)"
   >
-    <div
-      class="aux-canvas-container"
-      (mousedown)="onShapeContainerMouseDown($event)"
-      [ngClass]="{
-        selected: this.shapeContainer.componentClass == 'Select',
-        selected2: this.shapeContainer.componentClass == 'Select2'
-      }"
-    >
+    <div class="aux-canvas-container">
       <canvas
         #auxCanvas
         class="aux-canvas"
@@ -35,13 +32,22 @@
     </div>
 
     <div
+      fixedBorder
       class="btn-container"
       [ngClass]="{
-        selected: this.shapeContainer.componentClass != 'Select'
+        selected: this.shapeContainer.componentClass != 'Select' ,
+       
       }"
       *ngIf="shapeContainer.isRendered"
     >
       <button
+        fixedSize
+        class="btn9"
+        (mousedown)="btnRotateMouseDown()"
+        (mouseup)="btnRotateMouseUp()"
+      ></button>
+      <button
+        fixedSize
         *ngFor="let button of buttons"
         [ngClass]="button.class"
         [style.cursor]="button.name"
