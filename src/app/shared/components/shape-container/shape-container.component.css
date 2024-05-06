@@ -38,13 +38,18 @@
   animation: frame 100ms ease-in 1;
 }
 
-.aux-canvas-container:active ~ .btn-container {
-  display: none;
+.selected2 {
+  outline: 2px dashed blue;
+  animation: frame 100ms ease-in 1;
 }
-/* 
+
 .aux-canvas-container:active {
   outline: none;
-} */
+}
+
+.aux-canvas-container:active + .btn-container {
+  display: none;
+}
 
 /* btn container */
 .btn-container {
@@ -71,7 +76,6 @@
     content: "";
     width: 20%;
     height: 20%;
-    /* border: 5% solid gray; */
     background-color: gray;
     position: absolute;
   }

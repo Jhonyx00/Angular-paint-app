@@ -5,8 +5,8 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-
-  background-color: rgb(237, 237, 237);
+  border-right: 2px solid lightgray;
+  background-color: white;
 }
 
 /* .toolbar-container:hover {

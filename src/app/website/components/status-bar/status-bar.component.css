@@ -20,8 +20,8 @@
     }
 
     li:nth-child(2) {
-      border-left: 2px solid gray;
-      border-right: 2px solid gray;
+      border-left: 2px solid lightgray;
+      border-right: 2px solid lightgray;
     }
   }
 }

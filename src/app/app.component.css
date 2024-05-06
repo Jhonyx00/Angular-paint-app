@@ -22,5 +22,6 @@
 .status-bar-container {
   display: grid;
   place-items: center;
-  background-color: rgb(237, 237, 237);
+  border-top: 2px solid lightgray;
+  background-color: rgb(255, 255, 255);
 }

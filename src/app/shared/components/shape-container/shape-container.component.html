@@ -9,9 +9,6 @@
 >
   <div
     class="canvas-button-container"
-    [ngClass]="{
-      selected: this.shapeContainer.componentClass == 'Select'
-    }"
     [ngStyle]="{
         top: shapeContainer.top + 'px',
         left: shapeContainer.left + 'px',
@@ -21,7 +18,13 @@
       }"
     (mousedown)="onShapeContainerMouseDown($event)"
   >
-    <div class="aux-canvas-container">
+    <div
+      class="aux-canvas-container"
+      [ngClass]="{
+        selected: this.shapeContainer.componentClass == 'Select',
+        selected2: this.shapeContainer.componentClass == 'Select2'
+      }"
+    >
       <canvas
         #auxCanvas
         class="aux-canvas"
