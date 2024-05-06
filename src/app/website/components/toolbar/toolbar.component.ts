@@ -131,13 +131,13 @@ export class ToolbarComponent implements OnDestroy {
     {
       id: 1,
       title: this.files,
-      icon: '',
+      icon: '../../../../assets/svg/rectangle.svg',
       toolItems: this.fileItems,
     },
     {
       id: 2,
       title: this.actions,
-      icon: '',
+      icon: '../../../../assets/svg/rectangle.svg',
       toolItems: this.actionItems,
     },
     {
