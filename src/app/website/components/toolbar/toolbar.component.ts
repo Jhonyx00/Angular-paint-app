@@ -131,10 +131,6 @@ export class ToolbarComponent implements OnDestroy {
     this.initCanvasImageList();
   }
 
-  public onClick() {
-    this.canvasStateService.setResetValue(false);
-  }
-
   private initCanvasImageList(): void {
     this.canvasStateService.getImageList().subscribe((currentList) => {
       this.imagesList = currentList;
