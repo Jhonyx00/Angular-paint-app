@@ -41,10 +41,10 @@
 .aux-canvas-container:active ~ .btn-container {
   display: none;
 }
-/* 
-.aux-canvas-container:active {
+
+.canvas-button-container:active {
   outline: none;
-} */
+}
 
 /* btn container */
 .btn-container {
