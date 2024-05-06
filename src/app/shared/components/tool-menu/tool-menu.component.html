@@ -1,1 +1,7 @@
-<p>tool-menu works!</p>
+<div class="tool-menu">
+  <p>{{ toolGroupName }}</p>
+
+  <button *ngFor="let toolItem of toolItems">
+    {{ toolItem }}
+  </button>
+</div>

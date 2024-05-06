@@ -2,7 +2,46 @@
   class="toolbar-canvas-container"
   (wheel)="onWheel($event, { passive: false })"
 >
-  <toolbar-component></toolbar-component>
+  <div class="toolbar-container">
+    <!--  -->
+    <tool-component
+      [toolItems]="fileItems"
+      [toolGroupName]="files"
+    ></tool-component>
+    <tool-component
+      [toolItems]="actionItems"
+      [toolGroupName]="actions"
+    ></tool-component>
+    <tool-component
+      [toolItems]="shapeItems"
+      [toolGroupName]="shapes"
+    ></tool-component>
+    <tool-component
+      [toolItems]="pencilItems"
+      [toolGroupName]="pencils"
+    ></tool-component>
+    <tool-component
+      [toolItems]="selectionItems"
+      [toolGroupName]="selection"
+    ></tool-component>
+    <tool-component
+      [toolItems]="eraserItems"
+      [toolGroupName]="erasers"
+    ></tool-component>
+    <!--  -->
+    <!-- <button
+      (click)="openToolMenu(button.title, button.toolItems)"
+      *ngFor="let button of buttons"
+      class="btn"
+      [ngClass]="'btn-' + button.title"
+    >
+      <img class="icon" src="{{ button.icon }}" alt="" />
+    </button> -->
+
+    <color-palette-component></color-palette-component>
+  </div>
+
+  <ng-template #toolMenu></ng-template>
 
   <div class="canvas-statusbar-container">
     <div

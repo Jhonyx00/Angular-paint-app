@@ -2,6 +2,8 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Point } from './website/interfaces/point.interface';
 import { MouseEventService } from './website/services/mouse-event.service';
 import { StatusBarService } from './website/services/statusbar.service';
+import { ToolName } from './website/enums/tool-name.enum';
+import { IconTool } from './website/interfaces/tool.interface';
 
 @Component({
   selector: 'app-root',
@@ -62,4 +64,113 @@ export class AppComponent implements OnInit {
   onMouseUp() {
     this.isOnContainer = false;
   }
+
+  public shapes = 'Shapes';
+  public selection = 'Select';
+  public pencils = 'Pencils';
+  public erasers = 'Erasers';
+  public files = 'File';
+  public actions = 'Actions';
+
+  private imagesList = new Array();
+  private imagesListAux = new Array();
+
+  ////Tool arrays
+  public shapeItems: IconTool[] = [
+    {
+      id: 1,
+      name: ToolName.Rectangle,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    {
+      id: 1,
+      name: ToolName.Ellipse,
+      icon: '../../../../assets/svg/oval.svg',
+    },
+    {
+      id: 1,
+      name: ToolName.Hexagon,
+      icon: '../../../../assets/svg/hexagon.svg',
+    },
+    {
+      id: 1,
+      name: ToolName.Triangle,
+      icon: '../../../../assets/svg/triangle.svg',
+    },
+    {
+      id: 1,
+      name: ToolName.Pentagon,
+      icon: '../../../../assets/svg/pentagon.svg',
+    },
+    {
+      id: 1,
+      name: ToolName.Star,
+      icon: '../../../../assets/svg/star.svg',
+    },
+
+    {
+      id: 1,
+      name: ToolName.Rhombus,
+      icon: '../../../../assets/svg/rhombus.svg',
+    },
+  ];
+
+  public selectionItems: IconTool[] = [
+    {
+      id: 2,
+      name: ToolName.Select,
+      icon: '../../../../assets/svg/select.svg',
+    },
+    {
+      id: 10,
+      name: ToolName.Select2,
+      icon: '../../../../assets/svg/free-form-select.svg',
+    },
+  ];
+
+  public pencilItems: IconTool[] = [
+    {
+      id: 3,
+      name: ToolName.Line,
+      icon: '../../../../assets/svg/pencil.svg',
+    },
+    {
+      id: 3,
+      name: ToolName.Pencil,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+  ];
+
+  public eraserItems: IconTool[] = [
+    {
+      id: 4,
+      name: ToolName.Eraser,
+      icon: '../../../../assets/svg/eraser.svg',
+    },
+    {
+      id: 4,
+      name: ToolName.Eraser2,
+      icon: '../../../../assets/svg/oval.svg',
+    },
+  ];
+
+  public fileItems: IconTool[] = [
+    {
+      id: 5,
+      name: ToolName.Save,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    {
+      id: 5,
+      name: ToolName.Open,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    { id: 5, name: ToolName.File, icon: '../../../../assets/svg/undo.svg' },
+  ];
+
+  public actionItems: IconTool[] = [
+    { id: 6, name: ToolName.Undo, icon: '../../../../assets/svg/undo.svg' },
+    { id: 6, name: ToolName.Redo, icon: '../../../../assets/svg/redo.svg' },
+  ];
+  //
 }

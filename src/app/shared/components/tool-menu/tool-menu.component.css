@@ -1,0 +1,15 @@
+.tool-menu {
+  display: grid;
+  place-items: center;
+  grid-row-gap: 5px;
+  grid-column-gap: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 5;
+
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(1em);
+
+  width: 120px;
+  border: 2px solid gray;
+}

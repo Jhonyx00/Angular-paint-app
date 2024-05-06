@@ -4,7 +4,6 @@ import { SharedModule } from '../shared/shared.module';
 import { CanvasComponent } from './components/canvas/canvas.component';
 import { ColorPaletteComponent } from './components/color-palette/color-palette.component';
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
-import { ToolbarComponent } from './components/toolbar/toolbar.component';
 import { ToolComponent } from './components/tool/tool.component';
 import { ZoomDirective } from './directives/zoom.directive';
 
@@ -13,7 +12,6 @@ import { ZoomDirective } from './directives/zoom.directive';
     CanvasComponent,
     ColorPaletteComponent,
     StatusBarComponent,
-    ToolbarComponent,
     ToolComponent,
     ZoomDirective,
   ],
@@ -22,7 +20,6 @@ import { ZoomDirective } from './directives/zoom.directive';
     CanvasComponent,
     ColorPaletteComponent,
     StatusBarComponent,
-    ToolbarComponent,
     ToolComponent,
   ],
 })
