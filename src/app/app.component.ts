@@ -1,9 +1,17 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ComponentRef,
+  ElementRef,
+  OnInit,
+  ViewChild,
+  ViewContainerRef,
+} from '@angular/core';
 import { Point } from './website/interfaces/point.interface';
 import { MouseEventService } from './website/services/mouse-event.service';
 import { StatusBarService } from './website/services/statusbar.service';
 import { ToolName } from './website/enums/tool-name.enum';
 import { IconTool } from './website/interfaces/tool.interface';
+import { ToolMenuComponent } from './shared/components/tool-menu/tool-menu.component';
 
 @Component({
   selector: 'app-root',
@@ -173,4 +181,66 @@ export class AppComponent implements OnInit {
     { id: 6, name: ToolName.Redo, icon: '../../../../assets/svg/redo.svg' },
   ];
   //
+
+  //
+  public buttons = [
+    {
+      id: 1,
+      title: this.files,
+      icon: '../../../../assets/svg/rectangle.svg',
+      toolItems: this.fileItems,
+    },
+    {
+      id: 2,
+      title: this.actions,
+      icon: '../../../../assets/svg/rectangle.svg',
+      toolItems: this.actionItems,
+    },
+    {
+      id: 3,
+      title: this.shapes,
+      icon: '../../../../assets/svg/star.svg',
+      toolItems: this.shapeItems,
+    },
+    {
+      id: 4,
+      title: this.pencils,
+      icon: '../../../../assets/svg/pencil.svg',
+      toolItems: this.pencilItems,
+    },
+    {
+      id: 5,
+      title: this.selection,
+      icon: '../../../../assets/svg/select.svg',
+      toolItems: this.selectionItems,
+    },
+    {
+      id: 6,
+      title: this.erasers,
+      icon: '../../../../assets/svg/eraser.svg',
+      toolItems: this.eraserItems,
+    },
+  ];
+
+  ///
+  @ViewChild('toolMenu', { read: ViewContainerRef })
+  private dynamicHost!: ViewContainerRef;
+  private componentRef!: ComponentRef<ToolMenuComponent>;
+
+  openToolMenu(toolGroupName: string, toolItems: IconTool[]) {
+    this.deleteComponent();
+    this.createComponent(toolGroupName, toolItems);
+  }
+  //DINAMIC COMPONENT FUNCTIONS
+  private createComponent(toolGroupName: string, toolItems: IconTool[]): void {
+    this.componentRef = this.dynamicHost.createComponent(ToolMenuComponent);
+    this.componentRef.instance.toolGroupName = toolGroupName;
+    this.componentRef.instance.toolItems = toolItems;
+  }
+
+  private deleteComponent(): void {
+    if (this.componentRef) {
+      this.componentRef.destroy();
+    }
+  }
 }

@@ -1,12 +1,3 @@
-button {
-  background-color: transparent;
-  border: none;
-  width: 1.8em;
-  height: 1.8em;
-  border-radius: 0.4em;
-  padding: 0.2em;
-}
-
 .icon {
   width: 100%;
   height: 100%;
@@ -21,42 +12,61 @@ button:hover:not(.selected-tool) {
   display: grid;
   place-items: center;
   padding: 5px;
-}
 
-.tool-item-container span.tool-group {
-  font-size: 14px;
-  width: 100%;
-  padding: 0.2em;
-  text-align: center;
-}
+  button.option {
+    width: 100%;
+    font-size: 14px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border: none;
+    background-color: transparent;
+  }
+  button.option:hover {
+    background-color: lightgray;
+  }
+  .tool {
+    display: grid;
+    place-items: center;
 
-.tool {
-  display: grid;
-  place-items: center;
-}
+    button {
+      background-color: transparent;
+      border: none;
+      width: 1.8em;
+      height: 1.8em;
+      border-radius: 0.4em;
+      padding: 0.2em;
+    }
+  }
+  .Actions,
+  .Select,
+  .Pencils,
+  .Erasers {
+    grid-template-columns: repeat(2, 1fr);
+    grid-row-gap: 2px;
+    grid-column-gap: 2px;
+    padding: 2px;
+  }
 
-.Actions,
-.Select,
-.Pencils,
-.Erasers {
-  grid-template-columns: repeat(2, 1fr);
-  grid-row-gap: 2px;
-  grid-column-gap: 2px;
-  padding: 2px;
-}
+  .Shapes {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    grid-row-gap: 2px;
+    grid-column-gap: 2px;
+    padding: 2px;
+  }
 
-.Shapes {
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  grid-row-gap: 2px;
-  grid-column-gap: 2px;
-  padding: 2px;
-}
-
-.File {
-  grid-template-columns: repeat(3, 1fr);
+  .File {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .selected-tool {
   outline: 2px solid #5286ff;
 }
+
+/* * {
+  border: 1px solid red;
+} */

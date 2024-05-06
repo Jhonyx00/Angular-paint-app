@@ -1,5 +1,8 @@
 <div class="tool-item-container">
-  <span class="tool-group">{{ toolGroupName }} </span>
+  <button class="option">
+    {{ toolGroupName }}
+    <span>›</span>
+  </button>
   <div class="tool" [ngClass]="toolGroupName">
     <button
       *ngFor="let item of toolItems"
