@@ -1,17 +1,16 @@
 import {
   Component,
   ComponentRef,
-  ElementRef,
   OnInit,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { Point } from './website/interfaces/point.interface';
 import { MouseEventService } from './website/services/mouse-event.service';
 import { StatusBarService } from './website/services/statusbar.service';
 import { ToolName } from './website/enums/tool-name.enum';
-import { IconTool } from './website/interfaces/tool.interface';
+import { IconTool, Menu } from './website/interfaces/tool.interface';
 import { ToolMenuComponent } from './shared/components/tool-menu/tool-menu.component';
+import { ToolsService } from './website/services/tools.service';
 
 @Component({
   selector: 'app-root',
@@ -21,58 +20,11 @@ import { ToolMenuComponent } from './shared/components/tool-menu/tool-menu.compo
 export class AppComponent implements OnInit {
   constructor(
     private mouseEventService: MouseEventService,
-    private statusBarService: StatusBarService
+    private statusBarService: StatusBarService,
+    private toolsService: ToolsService
   ) {}
 
-  private isOutside = false;
-  ngOnInit(): void {
-    this.init();
-  }
-
-  init() {
-    this.statusBarService.getOutsideCanvas().subscribe((isOutside) => {
-      this.isOutside = isOutside;
-    });
-  }
-
-  title = 'PaintXD';
-
-  mouseDownPosition: Point = {
-    x: 0,
-    y: 0,
-  };
-
-  onWheel(event: WheelEvent, options: {}) {
-    if (event.ctrlKey) {
-      event.preventDefault();
-    }
-  }
-
-  private isOnContainer = false;
-
-  onMouseDown(event: MouseEvent) {
-    if (event.button === 0 && !this.isOutside) {
-      this.isOnContainer = true;
-      this.mouseEventService.setMouseDownPosition({
-        x: event.offsetX,
-        y: event.offsetY,
-      });
-    }
-  }
-
-  onMouseMove(event: MouseEvent) {
-    if (this.isOnContainer && !this.isOutside) {
-      this.mouseEventService.setMouseMovePosition({
-        x: event.offsetX,
-        y: event.offsetY,
-      });
-    }
-  }
-
-  onMouseUp() {
-    this.isOnContainer = false;
-  }
-
+  public title = 'PaintXD';
   public shapes = 'Shapes';
   public selection = 'Select';
   public pencils = 'Pencils';
@@ -80,9 +32,173 @@ export class AppComponent implements OnInit {
   public files = 'File';
   public actions = 'Actions';
 
-  private imagesList = new Array();
-  private imagesListAux = new Array();
+  private isOutside = false;
+  private isOnContainer = false;
 
+  //full
+  public allShapes: Menu = {
+    name: 'All shapes',
+    items: [
+      {
+        id: 1,
+        name: ToolName.Rectangle,
+        icon: '../../../../assets/svg/rectangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Ellipse,
+        icon: '../../../../assets/svg/oval.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Hexagon,
+        icon: '../../../../assets/svg/hexagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Triangle,
+        icon: '../../../../assets/svg/triangle.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Pentagon,
+        icon: '../../../../assets/svg/pentagon.svg',
+      },
+      {
+        id: 1,
+        name: ToolName.Star,
+        icon: '../../../../assets/svg/star.svg',
+      },
+
+      {
+        id: 1,
+        name: ToolName.Rhombus,
+        icon: '../../../../assets/svg/rhombus.svg',
+      },
+    ],
+  };
+
+  public allPencils: Menu = {
+    name: 'All pencils',
+    items: [
+      {
+        id: 3,
+        name: ToolName.Line,
+        icon: '../../../../assets/svg/pencil.svg',
+      },
+      {
+        id: 3,
+        name: ToolName.Pencil,
+        icon: '../../../../assets/svg/rectangle.svg',
+      },
+      {
+        id: 3,
+        name: ToolName.Pencil,
+        icon: '../../../../assets/svg/rectangle.svg',
+      },
+      {
+        id: 3,
+        name: ToolName.Pencil,
+        icon: '../../../../assets/svg/rectangle.svg',
+      },
+      {
+        id: 3,
+        name: ToolName.Pencil,
+        icon: '../../../../assets/svg/rectangle.svg',
+      },
+    ],
+  };
+  //
   ////Tool arrays
   public shapeItems: IconTool[] = [
     {
@@ -122,7 +238,6 @@ export class AppComponent implements OnInit {
       icon: '../../../../assets/svg/rhombus.svg',
     },
   ];
-
   public selectionItems: IconTool[] = [
     {
       id: 2,
@@ -135,7 +250,6 @@ export class AppComponent implements OnInit {
       icon: '../../../../assets/svg/free-form-select.svg',
     },
   ];
-
   public pencilItems: IconTool[] = [
     {
       id: 3,
@@ -148,7 +262,6 @@ export class AppComponent implements OnInit {
       icon: '../../../../assets/svg/rectangle.svg',
     },
   ];
-
   public eraserItems: IconTool[] = [
     {
       id: 4,
@@ -161,7 +274,6 @@ export class AppComponent implements OnInit {
       icon: '../../../../assets/svg/oval.svg',
     },
   ];
-
   public fileItems: IconTool[] = [
     {
       id: 5,
@@ -175,62 +287,71 @@ export class AppComponent implements OnInit {
     },
     { id: 5, name: ToolName.File, icon: '../../../../assets/svg/undo.svg' },
   ];
-
   public actionItems: IconTool[] = [
     { id: 6, name: ToolName.Undo, icon: '../../../../assets/svg/undo.svg' },
     { id: 6, name: ToolName.Redo, icon: '../../../../assets/svg/redo.svg' },
   ];
-  //
 
-  //
-  public buttons = [
-    {
-      id: 1,
-      title: this.files,
-      icon: '../../../../assets/svg/rectangle.svg',
-      toolItems: this.fileItems,
-    },
-    {
-      id: 2,
-      title: this.actions,
-      icon: '../../../../assets/svg/rectangle.svg',
-      toolItems: this.actionItems,
-    },
-    {
-      id: 3,
-      title: this.shapes,
-      icon: '../../../../assets/svg/star.svg',
-      toolItems: this.shapeItems,
-    },
-    {
-      id: 4,
-      title: this.pencils,
-      icon: '../../../../assets/svg/pencil.svg',
-      toolItems: this.pencilItems,
-    },
-    {
-      id: 5,
-      title: this.selection,
-      icon: '../../../../assets/svg/select.svg',
-      toolItems: this.selectionItems,
-    },
-    {
-      id: 6,
-      title: this.erasers,
-      icon: '../../../../assets/svg/eraser.svg',
-      toolItems: this.eraserItems,
-    },
-  ];
+  ngOnInit(): void {
+    this.init();
+    this.initTools();
+  }
+
+  init() {
+    this.statusBarService.getOutsideCanvas().subscribe((isOutside) => {
+      this.isOutside = isOutside;
+    });
+  }
+
+  initTools() {
+    this.toolsService.getOptions().subscribe((current) => {
+      if (current) {
+        this.deleteComponent();
+        this.createComponent(current.name, current.items);
+      } else {
+        this.deleteComponent();
+      }
+    });
+  }
+
+  onWheel(event: WheelEvent, options: {}) {
+    if (event.ctrlKey) {
+      event.preventDefault();
+    }
+  }
+
+  onMouseDown(event: MouseEvent) {
+    if (event.button === 0 && !this.isOutside) {
+      this.isOnContainer = true;
+      this.mouseEventService.setMouseDownPosition({
+        x: event.offsetX,
+        y: event.offsetY,
+      });
+    }
+  }
+
+  onMouseMove(event: MouseEvent) {
+    if (this.isOnContainer && !this.isOutside) {
+      this.mouseEventService.setMouseMovePosition({
+        x: event.offsetX,
+        y: event.offsetY,
+      });
+    }
+  }
+
+  onMouseUp() {
+    this.isOnContainer = false;
+  }
 
   ///
   @ViewChild('toolMenu', { read: ViewContainerRef })
   private dynamicHost!: ViewContainerRef;
   private componentRef!: ComponentRef<ToolMenuComponent>;
 
-  openToolMenu(toolGroupName: string, toolItems: IconTool[]) {
-    this.deleteComponent();
-    this.createComponent(toolGroupName, toolItems);
-  }
+  // openToolMenu(toolGroupName: string, toolItems: IconTool[]) {
+  //   this.deleteComponent();
+  //   this.createComponent(toolGroupName, toolItems);
+  // }
   //DINAMIC COMPONENT FUNCTIONS
   private createComponent(toolGroupName: string, toolItems: IconTool[]): void {
     this.componentRef = this.dynamicHost.createComponent(ToolMenuComponent);

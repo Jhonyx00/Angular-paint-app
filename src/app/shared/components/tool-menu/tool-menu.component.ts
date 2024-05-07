@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Renderer2 } from '@angular/core';
 import { IconTool } from 'src/app/website/interfaces/tool.interface';
 
 @Component({
@@ -7,9 +7,23 @@ import { IconTool } from 'src/app/website/interfaces/tool.interface';
   styleUrls: ['./tool-menu.component.css'],
 })
 export class ToolMenuComponent implements OnInit {
-  ngOnInit(): void {
-    console.log(this.toolItems);
-  }
+  constructor(private renderer: Renderer2) {}
+
   @Input() toolGroupName: string = '';
   @Input() toolItems: IconTool[] = [];
+
+  ngOnInit(): void {
+    this.initPosition();
+  }
+
+  initPosition() {
+    const toolItemBounding = this.renderer.selectRootElement('.Shapes', true);
+
+    const { width, top } = toolItemBounding.getBoundingClientRect();
+
+    const toolMenu = this.renderer.selectRootElement('.tool-menu', true);
+
+    this.renderer.setStyle(toolMenu, 'left', width + 'px');
+    this.renderer.setStyle(toolMenu, 'top', top + 'px');
+  }
 }

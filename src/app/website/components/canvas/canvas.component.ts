@@ -15,7 +15,7 @@ import { ToolsService } from '../../services/tools.service';
 import { ShapeContainerComponent } from '../../../shared/components/shape-container/shape-container.component';
 import { ShapeContainerService } from 'src/app/shared/services/shape-container.service';
 import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
-import { Point } from 'src/app/website/interfaces/point.interface';
+import { Point } from 'src/app/shared/interfaces/point.interface';
 import { ImageDataService } from '../../../shared/services/image.service';
 import { ToolName } from '../../enums/tool-name.enum';
 import { DynamicComponentService } from 'src/app/shared/services/dynamic-component.service';

@@ -1,7 +1,9 @@
 <div class="tool-menu">
   <p>{{ toolGroupName }}</p>
 
-  <button *ngFor="let toolItem of toolItems">
-    {{ toolItem }}
-  </button>
+  <div class="tool">
+    <button *ngFor="let toolItem of toolItems">
+      <img class="icon" src="{{ toolItem.icon }}" alt="" />
+    </button>
+  </div>
 </div>

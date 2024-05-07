@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Point } from 'src/app/website/interfaces/point.interface';
+import { Point } from 'src/app/shared/interfaces/point.interface';
 
 @Injectable({
   providedIn: 'root',

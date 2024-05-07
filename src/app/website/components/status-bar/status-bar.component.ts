@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatusBarService } from '../../services/statusbar.service';
-import { Point } from 'src/app/website/interfaces/point.interface';
+import { Point } from 'src/app/shared/interfaces/point.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
 
 @Component({

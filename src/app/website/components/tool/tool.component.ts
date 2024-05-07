@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { IconTool } from '../../interfaces/tool.interface';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { IconTool, Menu } from '../../interfaces/tool.interface';
 import { ToolName } from '../../enums/tool-name.enum';
 import { CanvasStateService } from '../../services/canvas-state.service';
 import { ToolsService } from '../../services/tools.service';
@@ -9,23 +9,35 @@ import { ToolsService } from '../../services/tools.service';
   templateUrl: './tool.component.html',
   styleUrls: ['./tool.component.css'],
 })
-export class ToolComponent {
+export class ToolComponent implements OnInit {
   constructor(
     private toolsService: ToolsService,
     private canvasStateService: CanvasStateService
   ) {}
+  ngOnInit(): void {
+    this.initCanvasImageList();
+  }
   @Input() toolItems: IconTool[] = [];
   @Input() toolGroupName: string = '';
-
+  @Input() subMenu: Menu = {
+    name: '',
+    items: [],
+  };
   private imagesList = new Array();
   private imagesListAux = new Array();
 
   public selectedTool!: IconTool;
   public selectedFileTool!: IconTool;
+
+  private isMenuOpen = false;
   private initCanvasImageList(): void {
     this.canvasStateService.getImageList().subscribe((currentList) => {
       this.imagesList = currentList;
     });
+  }
+
+  onClick() {
+    this.toolsService.setOptions(this.subMenu);
   }
 
   setSelectedTool(toolName: IconTool) {

@@ -15,10 +15,12 @@
     <tool-component
       [toolItems]="shapeItems"
       [toolGroupName]="shapes"
+      [subMenu]="allShapes"
     ></tool-component>
     <tool-component
       [toolItems]="pencilItems"
       [toolGroupName]="pencils"
+      [subMenu]="allPencils"
     ></tool-component>
     <tool-component
       [toolItems]="selectionItems"
@@ -29,14 +31,6 @@
       [toolGroupName]="erasers"
     ></tool-component>
     <!--  -->
-    <button
-      (click)="openToolMenu(button.title, button.toolItems)"
-      *ngFor="let button of buttons"
-      class="btn"
-      [ngClass]="'btn-' + button.title"
-    >
-      <img class="icon" src="{{ button.icon }}" alt="" />
-    </button>
 
     <color-palette-component></color-palette-component>
   </div>

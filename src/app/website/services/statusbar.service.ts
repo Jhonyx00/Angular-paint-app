@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Point } from '../interfaces/point.interface';
+import { Point } from '../../shared/interfaces/point.interface';
 import { Dimension } from '../interfaces/dimension.interface';
 
 @Injectable({

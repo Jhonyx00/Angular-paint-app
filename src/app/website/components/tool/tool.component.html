@@ -1,8 +1,19 @@
 <div class="tool-item-container">
-  <button class="option">
+  <button
+    class="option text"
+    (click)="onClick()"
+    *ngIf="toolGroupName == 'Shapes' || toolGroupName == 'Pencils'; else e"
+  >
     {{ toolGroupName }}
     <span>›</span>
   </button>
+
+  <ng-template #e>
+    <span class="text">
+      {{ toolGroupName }}
+    </span>
+  </ng-template>
+
   <div class="tool" [ngClass]="toolGroupName">
     <button
       *ngFor="let item of toolItems"

@@ -12,7 +12,7 @@ import { ShapeContainerService } from '../../services/shape-container.service';
 import { ImageDataService } from 'src/app/shared/services/image.service';
 import { Subscription } from 'rxjs';
 import { DynamicComponentService } from '../../services/dynamic-component.service';
-import { Point } from 'src/app/website/interfaces/point.interface';
+import { Point } from 'src/app/shared/interfaces/point.interface';
 import { ToolName } from 'src/app/website/enums/tool-name.enum';
 import { ZoomService } from 'src/app/website/services/zoom.service';
 
