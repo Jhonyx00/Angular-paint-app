@@ -308,7 +308,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       }
     }
 
-    this.statusBarService.setshapeContainerDimension({
+    this.statusBarService.setProps({
+      componentClass: this.shapeContainer.componentClass,
       width: this.shapeContainer.width,
       height: this.shapeContainer.height,
     });

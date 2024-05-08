@@ -6,8 +6,13 @@
   justify-content: space-between;
 
   .toolbar-container {
-    width: 100px;
-    border-right: 2px solid lightgray;
+    width: 150px;
+    background-color: rgb(234, 234, 234);
+
+    .tools {
+      display: flex;
+      justify-content: center;
+    }
   }
   .canvas-statusbar-container {
     display: grid;
@@ -24,7 +29,6 @@
     .status-bar-container {
       display: grid;
       place-items: center;
-      border-top: 2px solid lightgray;
       background-color: rgb(255, 255, 255);
     }
   }

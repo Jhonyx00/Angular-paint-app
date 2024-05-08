@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Point } from '../../shared/interfaces/point.interface';
 import { Dimension } from '../interfaces/dimension.interface';
+import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,10 @@ export class StatusBarService {
 
   private cursorPosition = new BehaviorSubject<Point>({ x: 0, y: 0 });
 
-  private shapeContainerDimension = new BehaviorSubject<Dimension>({
-    width: 0,
-    height: 0,
-  });
+  private props = new BehaviorSubject<
+    Pick<ShapeContainer, 'componentClass' | 'width' | 'height'>
+  >({ componentClass: '', width: 0, height: 0 });
+
   private isOutsideCanvas = new BehaviorSubject<boolean>(false);
   private canvasDimensions = new BehaviorSubject<Dimension>({
     width: 0,
@@ -33,8 +34,10 @@ export class StatusBarService {
     this.canvasDimensions.next(size);
   }
 
-  setshapeContainerDimension(dimension: Dimension) {
-    this.shapeContainerDimension.next(dimension);
+  setProps(
+    dimension: Pick<ShapeContainer, 'componentClass' | 'width' | 'height'>
+  ) {
+    this.props.next(dimension);
   }
 
   public getCursorPosition(): Observable<Point> {
@@ -49,7 +52,9 @@ export class StatusBarService {
     return this.canvasDimensions.asObservable();
   }
 
-  public getshapeContainerDimension(): Observable<Dimension> {
-    return this.shapeContainerDimension.asObservable();
+  public getProps(): Observable<
+    Pick<ShapeContainer, 'componentClass' | 'width' | 'height'>
+  > {
+    return this.props.asObservable();
   }
 }

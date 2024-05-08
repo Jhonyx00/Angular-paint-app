@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { StatusBarService } from '../../services/statusbar.service';
 import { Point } from 'src/app/shared/interfaces/point.interface';
 import { Dimension } from '../../interfaces/dimension.interface';
+import { ShapeContainer } from 'src/app/shared/interfaces/shape.interface';
 
 @Component({
   selector: 'statusbar-component',
@@ -21,7 +22,13 @@ export class StatusBarComponent implements OnInit {
     height: 0,
   };
 
-  public shapeContainerDimension: Dimension = {
+  // public shapeContainerDimension: Dimension = {
+  //   width: 0,
+  //   height: 0,
+  // };
+
+  public props: Pick<ShapeContainer, 'componentClass' | 'width' | 'height'> = {
+    componentClass: '',
     width: 0,
     height: 0,
   };
@@ -56,10 +63,8 @@ export class StatusBarComponent implements OnInit {
   }
 
   private displayShapeContainerDimension() {
-    this.statusBarService
-      .getshapeContainerDimension()
-      .subscribe((currentDimension) => {
-        this.shapeContainerDimension = currentDimension;
-      });
+    this.statusBarService.getProps().subscribe((currentProps) => {
+      this.props = currentProps;
+    });
   }
 }

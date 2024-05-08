@@ -31,9 +31,9 @@ export class ZoomDirective implements OnInit {
   @HostListener('window:wheel', ['$event']) onWheel(event: WheelEvent) {
     if (event.ctrlKey) {
       if (event.deltaY >= 100) {
-        this.scaleRatio -= 1;
+        this.scaleRatio /= 2;
       } else {
-        this.scaleRatio += 1;
+        this.scaleRatio *= 2;
       }
 
       const scale = Math.abs(this.scaleRatio / 10);

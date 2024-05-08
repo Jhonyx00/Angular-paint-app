@@ -27,12 +27,13 @@ export class ColorPaletteComponent implements AfterViewInit {
     this.colors[5] = '#ffd1f5';
     this.colors[5] = '#000000';
 
-    this.colors[6] = '#ffd1f5';
+    this.colors[6] = '#228000';
     this.colors[7] = '#ff0000';
     this.colors[8] = '#ffff00';
-    this.colors[9] = '#00ffff';
-    this.colors[10] = '#ffae00';
-    this.colors[11] = '#ffd1f5';
+
+    this.colors[9] = '#ff0000';
+    this.colors[10] = '#ffff00';
+    this.colors[11] = '#00ffff';
 
     this.input = this.renderer.selectRootElement('#color-chooser', false);
   }

@@ -3,19 +3,14 @@
     <ul>
       <li>
         <span class="size"
-          >Size: {{ canvasDimensions.width }},
+          >Dimension: {{ canvasDimensions.width }},
           {{ canvasDimensions.height }}pixels</span
         >
       </li>
       <li>
-        <span
-          *ngIf="
-            shapeContainerDimension.height > 0 ||
-            shapeContainerDimension.width > 0
-          "
-        >
-          Dimension: {{ shapeContainerDimension.width }} x
-          {{ shapeContainerDimension.height }}
+        <span *ngIf="props.height > 0 || props.width > 0">
+          {{ props.componentClass }}: {{ props.width }} x
+          {{ props.height }}
         </span>
       </li>
       <li>

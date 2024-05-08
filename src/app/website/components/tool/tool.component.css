@@ -3,32 +3,16 @@
   height: 100%;
 }
 
-button:hover:not(.selected-tool) {
-  cursor: pointer;
-  background-color: rgb(196, 196, 196);
-}
-
 .tool-item-container {
   display: grid;
   place-items: center;
+  gap: 5px;
   padding: 5px;
 
-  button.option {
-    width: 100%;
-    text-align: center;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 4px;
-    border: none;
-    background-color: transparent;
-  }
   .text {
     font-size: 14px;
   }
-  button.option:hover {
-    background-color: lightgray;
-  }
+
   .tool {
     display: grid;
     place-items: center;
@@ -36,31 +20,47 @@ button:hover:not(.selected-tool) {
     button {
       background-color: transparent;
       border: none;
-      width: 1.8em;
-      height: 1.8em;
+      width: 2em;
+      height: 2em;
       border-radius: 0.4em;
       padding: 0.2em;
     }
+    button:hover:not(.selected-tool) {
+      cursor: pointer;
+      background-color: rgb(170, 170, 170);
+    }
   }
+
   .Actions,
-  .Select,
-  .Pencils,
-  .Erasers {
+  .Select {
     grid-template-columns: repeat(2, 1fr);
-    grid-row-gap: 2px;
-    grid-column-gap: 2px;
-    padding: 2px;
+    gap: 5px;
+    padding: 5px;
+  }
+
+  .Tools {
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    outline: 1.4px solid gray;
+    border-radius: 0.4em;
+    padding: 5px;
+    gap: 5px;
   }
 
   .Shapes {
     grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    grid-row-gap: 2px;
-    grid-column-gap: 2px;
-    padding: 2px;
+    gap: 5px;
+    outline: 1.4px solid gray;
+    border-radius: 0.4em;
+    height: 101.33px;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    padding: 5px;
   }
 
   .File {
+    padding: 5px;
+    gap: 5px;
     grid-template-columns: repeat(3, 1fr);
   }
 }

@@ -8,8 +8,3 @@ export interface Tool {
 export interface IconTool extends Tool {
   icon: string;
 }
-
-export interface Menu {
-  name: string;
-  items: IconTool[];
-}

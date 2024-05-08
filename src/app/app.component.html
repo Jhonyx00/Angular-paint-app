@@ -15,27 +15,20 @@
     <tool-component
       [toolItems]="shapeItems"
       [toolGroupName]="shapes"
-      [subMenu]="allShapes"
     ></tool-component>
     <tool-component
-      [toolItems]="pencilItems"
-      [toolGroupName]="pencils"
-      [subMenu]="allPencils"
+      [toolItems]="toolsItems"
+      [toolGroupName]="tools"
     ></tool-component>
     <tool-component
       [toolItems]="selectionItems"
       [toolGroupName]="selection"
     ></tool-component>
-    <tool-component
-      [toolItems]="eraserItems"
-      [toolGroupName]="erasers"
-    ></tool-component>
+
     <!--  -->
 
     <color-palette-component></color-palette-component>
   </div>
-
-  <ng-template #toolMenu></ng-template>
 
   <div class="canvas-statusbar-container">
     <div

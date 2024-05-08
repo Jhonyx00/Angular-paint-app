@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ToolName } from '../enums/tool-name.enum';
-import { IconTool, Menu } from '../interfaces/tool.interface';
+import { IconTool } from '../interfaces/tool.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -33,15 +33,5 @@ export class ToolsService {
 
   public getSelectedColor(): Observable<string> {
     return this.selectedColor.asObservable();
-  }
-
-  private hasOptions = new Subject<Menu | null>();
-
-  public getOptions() {
-    return this.hasOptions.asObservable();
-  }
-
-  public setOptions(options: Menu | null) {
-    this.hasOptions.next(options);
   }
 }
