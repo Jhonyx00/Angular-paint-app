@@ -1,7 +1,8 @@
 import { ToolName } from '../enums/tool-name.enum';
 
 export interface Tool {
-  id: number;
+  toolGroupID: number;
+  toolId: number;
   name: ToolName;
 }
 

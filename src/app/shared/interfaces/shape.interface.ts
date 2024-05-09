@@ -1,3 +1,5 @@
+import { ToolName } from 'src/app/website/enums/tool-name.enum';
+
 export interface ShapeContainer {
   top: number;
   left: number;

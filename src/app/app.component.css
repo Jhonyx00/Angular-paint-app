@@ -7,7 +7,10 @@
 
   .toolbar-container {
     width: 150px;
-    background-color: rgb(234, 234, 234);
+    background-color: rgb(237, 237, 237);
+    height: 100%;
+    overflow: auto;
+    scrollbar-width: none;
 
     .tools {
       display: flex;

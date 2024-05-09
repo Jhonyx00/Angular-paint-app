@@ -9,6 +9,9 @@
   gap: 5px;
   padding: 5px;
 
+  box-shadow: 0px 0px 3px 3px lightgray;
+  border-radius: 0.4em;
+  margin: 10px;
   .text {
     font-size: 14px;
   }
@@ -27,7 +30,7 @@
     }
     button:hover:not(.selected-tool) {
       cursor: pointer;
-      background-color: rgb(170, 170, 170);
+      background-color: rgb(205, 205, 205);
     }
   }
 
@@ -41,8 +44,6 @@
   .Tools {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    outline: 1.4px solid gray;
-    border-radius: 0.4em;
     padding: 5px;
     gap: 5px;
   }
@@ -50,8 +51,6 @@
   .Shapes {
     grid-template-columns: repeat(3, 1fr);
     gap: 5px;
-    outline: 1.4px solid gray;
-    border-radius: 0.4em;
     height: 101.33px;
     overflow-y: scroll;
     scrollbar-width: thin;
@@ -59,7 +58,6 @@
   }
 
   .File {
-    padding: 5px;
     gap: 5px;
     grid-template-columns: repeat(3, 1fr);
   }

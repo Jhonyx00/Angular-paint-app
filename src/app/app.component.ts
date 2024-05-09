@@ -36,162 +36,211 @@ export class AppComponent implements OnInit {
   ////Tool arrays
   public shapeItems: IconTool[] = [
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 1,
       name: ToolName.Rectangle,
       icon: '../../../../assets/svg/rectangle.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 2,
       name: ToolName.Ellipse,
       icon: '../../../../assets/svg/oval.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 3,
       name: ToolName.Hexagon,
       icon: '../../../../assets/svg/hexagon.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 4,
       name: ToolName.Triangle,
       icon: '../../../../assets/svg/triangle.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 5,
       name: ToolName.Pentagon,
       icon: '../../../../assets/svg/pentagon.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 6,
       name: ToolName.Star,
       icon: '../../../../assets/svg/star.svg',
     },
 
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
     {
-      id: 1,
+      toolGroupID: 1,
+      toolId: 7,
+
       name: ToolName.Rhombus,
       icon: '../../../../assets/svg/rhombus.svg',
     },
   ];
   public selectionItems: IconTool[] = [
     {
-      id: 2,
+      toolGroupID: 2,
+      toolId: 1,
+
       name: ToolName.Select,
       icon: '../../../../assets/svg/select.svg',
     },
     {
-      id: 10,
+      toolGroupID: 10,
+      toolId: 2,
       name: ToolName.Select2,
       icon: '../../../../assets/svg/free-form-select.svg',
     },
   ];
   public toolsItems: IconTool[] = [
     {
-      id: 3,
+      toolGroupID: 3,
+      toolId: 1,
       name: ToolName.Line,
       icon: '../../../../assets/svg/pencil.svg',
     },
     {
-      id: 3,
-      name: ToolName.Pencil,
-      icon: '../../../../assets/svg/rectangle.svg',
-    },
-    {
-      id: 4,
+      toolGroupID: 4,
+      toolId: 2,
       name: ToolName.Eraser,
       icon: '../../../../assets/svg/eraser.svg',
     },
     {
-      id: 4,
+      toolGroupID: 3,
+      toolId: 3,
+      name: ToolName.Pencil,
+      icon: '../../../../assets/svg/rectangle.svg',
+    },
+    {
+      toolGroupID: 4,
+      toolId: 4,
       name: ToolName.Eraser2,
       icon: '../../../../assets/svg/oval.svg',
     },
@@ -199,20 +248,37 @@ export class AppComponent implements OnInit {
 
   public fileItems: IconTool[] = [
     {
-      id: 5,
+      toolGroupID: 5,
+      toolId: 1,
       name: ToolName.Save,
       icon: '../../../../assets/svg/rectangle.svg',
     },
     {
-      id: 5,
+      toolGroupID: 5,
+      toolId: 2,
       name: ToolName.Open,
       icon: '../../../../assets/svg/rectangle.svg',
     },
-    { id: 5, name: ToolName.File, icon: '../../../../assets/svg/undo.svg' },
+    {
+      toolGroupID: 5,
+      toolId: 3,
+      name: ToolName.File,
+      icon: '../../../../assets/svg/undo.svg',
+    },
   ];
   public actionItems: IconTool[] = [
-    { id: 6, name: ToolName.Undo, icon: '../../../../assets/svg/undo.svg' },
-    { id: 6, name: ToolName.Redo, icon: '../../../../assets/svg/redo.svg' },
+    {
+      toolGroupID: 6,
+      toolId: 1,
+      name: ToolName.Undo,
+      icon: '../../../../assets/svg/undo.svg',
+    },
+    {
+      toolGroupID: 6,
+      toolId: 2,
+      name: ToolName.Redo,
+      icon: '../../../../assets/svg/redo.svg',
+    },
   ];
 
   ngOnInit(): void {

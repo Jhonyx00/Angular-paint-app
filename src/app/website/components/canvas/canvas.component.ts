@@ -50,6 +50,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
   private isDrawing: boolean = false;
   private freeSelectPoints: Point[] = [];
   private ctx!: CanvasRenderingContext2D;
+
+  private ctxAux!: CanvasRenderingContext2D | null;
+
+  private auxCanvas!: HTMLCanvasElement;
   private resizedImage = new Image();
   private currentCanvasImage = new Image();
   private color: string = '';
@@ -72,18 +76,34 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     rotation: 0,
   };
 
+  private shapes = [
+    { name: 'Rectangle', path: 'M0 0, L0 150, L300 150, L300 0 Z' },
+    { name: 'Ellipse', path: 'M0 75 A150 75 0 1 0 300 75 A150 75 0 1 0 0 75' },
+    {
+      name: 'Hexagon',
+      path: 'M75 0, L0 75, L75 150, L225 150, L300 75, L225 0 Z',
+    },
+    { name: 'Triangle', path: 'M150 0, L0 150, L300 150 Z' },
+    { name: 'Pentagon', path: 'M150 0, L0 57, L54 150, L246 150, L300 57 Z' },
+    {
+      name: 'Star',
+      path: 'M150 0, L189 57, L300 57, L207 88.5, L246 150, L150 112.5, L54 150, L93 88.5, L0 57, L111 57, Z',
+    },
+    {
+      name: 'Rhombus',
+      path: 'M150 0, L0 75, L150,150 L300,75 Z',
+    },
+  ];
+
   protected canvasDimension: Dimension = {
     width: 0,
     height: 0,
   };
 
-  private toolName: Tool = {
-    id: 0,
-    name: ToolName.Line,
-  };
+  private toolId: number = 0;
 
-  private auxToolName: Tool = {
-    id: 0,
+  private toolName: Omit<Tool, 'toolId'> = {
+    toolGroupID: 0,
     name: ToolName.Line,
   };
 
@@ -179,10 +199,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private initTool(): void {
     this.toolsService.getSelectedButton().subscribe((currentTool: IconTool) => {
-      const id = currentTool.id;
+      this.toolId = currentTool.toolId;
+      const id = currentTool.toolGroupID;
       const name = currentTool.name;
-      this.toolName = { id: id, name: name };
-      this.auxToolName = { id: id, name: name };
+      this.toolName = { toolGroupID: id, name: name };
     });
   }
 
@@ -233,6 +253,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       });
   }
 
+  initAuxCanvas() {
+    this.auxCanvas = this.renderer.selectRootElement('.aux-canvas', true);
+    this.ctxAux = this.auxCanvas.getContext('2d');
+  }
   //MOUSE EVENTS
   onCanvasContainerMouseMove(event: MouseEvent) {
     this.statusBarService.setCursorPosition({
@@ -257,21 +281,27 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       y: mouseDownPosition.y,
     };
 
-    this.setToolName(this.shapeContainerButtonId);
-
     this.bounding.minX = this.mouseDownPosition.x;
     this.bounding.minY = this.mouseDownPosition.y;
 
-    if (this.toolName.id === 2 || this.toolName.id == 10) {
-      this.paintSelectedArea(this.toolName.id);
+    if (this.toolName.toolGroupID === 2) {
+      this.shapeContainer.background = 'transparent';
+    } else {
+      this.shapeContainer.background = this.color;
+    }
+
+    if (this.toolName.toolGroupID === 2 || this.toolName.toolGroupID == 10) {
+      this.paintSelectedArea(this.toolName.toolGroupID);
       this.deleteComponent();
       this.createComponent();
       this.removeShapeContainerImg();
       this.setShapeDrawnValues(false);
-    } else if (this.toolName.id === 1) {
+    } else if (this.toolName.toolGroupID === 1) {
       this.paintShape();
       this.deleteComponent();
       this.createComponent();
+      this.initAuxCanvas();
+      this.setAuxCanvasShape(this.toolId);
       this.setShapeDrawnValues(false);
     }
 
@@ -285,7 +315,7 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
 
   public onMouseMove(mouseMovePosition: Point): void {
     if (this.isDrawing) {
-      switch (this.toolName.id) {
+      switch (this.toolName.toolGroupID) {
         case 1:
         case 2:
           this.drawShapeContainer(mouseMovePosition, this.toolName.name);
@@ -319,12 +349,12 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     this.isDrawing = false;
 
     if (this.shapeContainer.width > 0 && this.shapeContainer.height > 0) {
-      if (this.toolName.id == 1 || this.toolName.id == 2) {
+      if (this.toolName.toolGroupID == 1 || this.toolName.toolGroupID == 2) {
         this.setShapeDrawnValues(true);
       }
     }
 
-    if (this.toolName.id === 10) {
+    if (this.toolName.toolGroupID === 10) {
       this.setCurrentCanvasImage();
       this.setFreeSelectProperties();
       this.imageDataService.setPath(this.freeSelectPoints);
@@ -358,14 +388,16 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     });
   }
 
-  private setToolName(buttonId: number) {
-    if (buttonId === 0) {
-      this.toolName = this.auxToolName; //toolName now is last tool selected
-    }
-  }
-
   private setShapeDrawnValues(value: boolean) {
     this.shapeContainer.isRendered = value;
+  }
+
+  public setAuxCanvasShape(id: number) {
+    if (this.ctxAux) {
+      this.ctxAux.fillStyle = this.shapeContainer.background;
+      const path = new Path2D(this.shapes[id - 1].path);
+      this.ctxAux.fill(path);
+    }
   }
 
   private paintSelectedArea(selectId: number): void {
@@ -526,12 +558,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     //class
     this.shapeContainer.componentClass = toolName;
 
-    //background
-    if (this.toolName.id === 2) {
-      this.shapeContainer.background = 'transparent';
-    } else {
-      this.shapeContainer.background = this.color;
-    }
     // Quadrant 1
     if (rectangleWidth > 0 && rectangleHeight < 0) {
       this.shapeContainer.top = y;
@@ -560,6 +586,10 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.shapeContainer.referenceTop = this.mouseDownPosition.y;
       this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
+
+    // ctx.fillStyle = this.shapeContainer.background;
+    // const path = new Path2D('M150 0, L0 150, L300 150');
+    // ctx.fill(path);
   }
 
   private drawLine(mouseMovePosition: Point): void {

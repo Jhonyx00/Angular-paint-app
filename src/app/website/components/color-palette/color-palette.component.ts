@@ -18,22 +18,20 @@ export class ColorPaletteComponent implements AfterViewInit {
   private input!: HTMLInputElement;
 
   ngAfterViewInit(): void {
-    this.colors[0] = '#0000ff';
-    this.colors[1] = '#00ff00';
-    this.colors[2] = '#ff0000';
-    this.colors[3] = '#ffff00';
-    this.colors[4] = '#00ffff';
-    this.colors[5] = '#ffae00';
-    this.colors[5] = '#ffd1f5';
-    this.colors[5] = '#000000';
+    this.colors[0] = '#ece6d0';
+    this.colors[1] = '#df9d81';
+    this.colors[2] = '#d7e235';
+    this.colors[3] = '#c5b82b';
+    this.colors[4] = '#f7512b';
+    this.colors[5] = '#008a93';
+    this.colors[8] = '#5f89ca';
+    this.colors[7] = '#b7ce5a';
 
-    this.colors[6] = '#228000';
-    this.colors[7] = '#ff0000';
-    this.colors[8] = '#ffff00';
+    this.colors[6] = '#7b4b59';
+    this.colors[9] = '#b070db';
+    this.colors[10] = '#3b4d1b';
 
-    this.colors[9] = '#ff0000';
-    this.colors[10] = '#ffff00';
-    this.colors[11] = '#00ffff';
+    this.colors[11] = '#ccdaf0';
 
     this.input = this.renderer.selectRootElement('#color-chooser', false);
   }

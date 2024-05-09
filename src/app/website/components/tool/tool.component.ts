@@ -33,6 +33,7 @@ export class ToolComponent implements OnInit {
   }
 
   setSelectedTool(toolName: IconTool) {
+    this.canvasStateService.setResetValue(false);
     if (
       toolName.name == ToolName.Undo ||
       toolName.name == ToolName.Redo ||

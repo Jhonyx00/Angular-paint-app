@@ -3,6 +3,9 @@
   place-items: center;
   gap: 5px;
   padding: 5px;
+  box-shadow: 0px 0px 3px 3px lightgray;
+  border-radius: 0.4em;
+  margin: 10px;
 }
 
 .tool-container span {
@@ -13,6 +16,8 @@
 .color-input-container {
   display: grid;
   place-items: center;
+  padding: 5px;
+  width: 100%;
 
   .color-chooser {
     cursor: pointer;
@@ -29,8 +34,6 @@
   place-items: center;
   grid-template-rows: repeat(3, 1fr);
   grid-template-columns: repeat(4, 1fr);
-  padding: 2px;
-  /* border: 1px solid gray; */
 
   .palette-item {
     width: 1.2em;
@@ -42,6 +45,3 @@
     cursor: pointer;
   }
 }
-/* * {
-  border: 1px solid blue;
-} */
