@@ -238,8 +238,8 @@ export class ShapeContainerComponent
     const { left, top } = this.canvasMainContainer.getBoundingClientRect();
     const rotationScaledX = (event.clientX - left) / this.zoomFactor;
     const rotationScaledY = (event.clientY - top) / this.zoomFactor;
-    const scaledX = event.clientX / this.zoomFactor;
-    const scaledY = event.clientY / this.zoomFactor;
+    const scaledX = Math.floor(event.clientX / this.zoomFactor);
+    const scaledY = Math.floor(event.clientY / this.zoomFactor);
 
     if (this.isOnRotateButton) {
       this.setRotationValues(rotationScaledX, rotationScaledY);
@@ -349,8 +349,8 @@ export class ShapeContainerComponent
   }
 
   public onShapeContainerMouseDown(event: MouseEvent) {
-    const scaledX = event.clientX / this.zoomFactor;
-    const scaledY = event.clientY / this.zoomFactor;
+    const scaledX = Math.floor(event.clientX / this.zoomFactor);
+    const scaledY = Math.floor(event.clientY / this.zoomFactor);
     this.isOnShapeContainer = true;
     this.setDeltaXY(scaledX, scaledY);
   }
