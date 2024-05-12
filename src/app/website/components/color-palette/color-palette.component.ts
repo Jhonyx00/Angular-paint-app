@@ -13,7 +13,7 @@ export class ColorPaletteComponent implements AfterViewInit {
     private renderer: Renderer2
   ) {}
 
-  public colors = new Array<string>(12);
+  public colors = new Array<string>(15);
 
   private input!: HTMLInputElement;
 
@@ -32,7 +32,9 @@ export class ColorPaletteComponent implements AfterViewInit {
     this.colors[10] = '#3b4d1b';
 
     this.colors[11] = '#ccdaf0';
-
+    this.colors[12] = '#ffcac0';
+    this.colors[13] = '#cdeaf0';
+    this.colors[14] = '#abdaf4';
     this.input = this.renderer.selectRootElement('#color-chooser', false);
   }
 
