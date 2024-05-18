@@ -289,7 +289,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
     } else {
       this.shapeContainer.background = this.color;
     }
-
     if (this.toolName.toolGroupID === 2 || this.toolName.toolGroupID == 10) {
       this.paintSelectedArea(this.toolName.toolGroupID);
       this.deleteComponent();
@@ -304,11 +303,8 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.setAuxCanvasShape(this.toolId);
       this.setShapeDrawnValues(false);
     }
-
     this.resetShapeCotainerProps();
-
     this.freeSelectPoints = [];
-
     //get the canvas image and push it to images list
     this.imagesArray.push(this.canvas.nativeElement.toDataURL());
   }
@@ -586,10 +582,6 @@ export class CanvasComponent implements AfterViewInit, OnInit, OnDestroy {
       this.shapeContainer.referenceTop = this.mouseDownPosition.y;
       this.shapeContainer.referenceLeft = this.mouseDownPosition.x;
     }
-
-    // ctx.fillStyle = this.shapeContainer.background;
-    // const path = new Path2D('M150 0, L0 150, L300 150');
-    // ctx.fill(path);
   }
 
   private drawLine(mouseMovePosition: Point): void {

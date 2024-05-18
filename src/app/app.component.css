@@ -1,12 +1,12 @@
 .toolbar-canvas-container {
   height: 100vh;
   width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+
+  display: grid;
+  grid-template-columns: 130px calc(100% - 130px);
 
   .toolbar-container {
-    width: 150px;
+    /* width: 150px; */
     background-color: rgb(237, 237, 237);
     height: 100%;
     overflow: auto;
